@@ -3,307 +3,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot - Gemini API</title>
+    <title>Arcade Tic-Tac-Toe: Split Screen Dashboard</title>
     <style>
         :root {
-            --primary-color: #2563eb;
-            --bg-color: #f3f4f6;
-            --chat-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-light: #6b7280;
-            --bot-bubble: #e5e7eb;
-            --user-bubble: #2563eb;
+            --bg: #05070f;
+            --surface: rgba(13, 18, 33, 0.75);
+            --surface-border: rgba(255, 255, 255, 0.06);
+            --text: #f8fafc;
+            --text-muted: #64748b;
+            
+            /* Theme 1: Neon Cyberpunk */
+            --p1-color: #00f2fe;
+            --p1-glow: rgba(0, 242, 254, 0.5);
+            --p2-color: #f355da;
+            --p2-glow: rgba(243, 85, 218, 0.5);
+            --board-lines: rgba(255, 255, 255, 0.03);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            background-color: var(--bg-color);
+       body {
+    background-color: var(--bg);
+    background-image: url("space.jpg"); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    color: var(--text);
+    overflow: hidden;
+        }
+
+        /* Split Layout Main Containers */
+        .dashboard-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100vw;
             height: 100vh;
         }
 
-        /* Solid Chat Container (No Glass Effect) */
-        .chat-container {
-            width: 100%;
-            max-width: 500px;
-            height: 85vh;
-            background-color: var(--chat-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        /* LEFT SIDEBAR: Controls & Scores */
+        .sidebar {
+            width: 360px;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--surface-border);
+            padding: 40px 30px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            border: 1px solid #e5e7eb;
+            gap: 30px;
+            z-index: 10;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            animation: slideLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Header with SVG Icon */
-        .chat-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 16px;
-            text-align: center;
-            font-size: 1.25rem;
-            font-weight: 600;
+        /* RIGHT MAIN: Centered Game Board */
+        .main-game-area {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+            position: relative;
+            perspective: 1200px; /* Enhanced 3D Perspective Depth */
         }
 
-        .chat-box {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--p1-color), var(--p2-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(243, 85, 218, 0.2);
+        }
+
+        /* Config Panels Styles */
+        .config-section {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            background-color: var(--chat-bg);
+            gap: 20px;
         }
 
-        /* Message Animations */
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 700;
         }
 
-        .message {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            line-height: 1.5;
+        select {
+            background: #090d16;
+            border: 1px solid var(--surface-border);
+            color: var(--text);
+            padding: 14px;
+            border-radius: 14px;
             font-size: 0.95rem;
-            animation: slideInUp 0.3s ease-out forwards;
-            word-wrap: break-word;
-        }
-
-        .message.user {
-            align-self: flex-end;
-            background-color: var(--user-bubble);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.bot {
-            align-self: flex-start;
-            background-color: var(--bot-bubble);
-            color: var(--text-main);
-            border-bottom-left-radius: 4px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .bot-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            fill: var(--primary-color);
-        }
-
-        .loading {
-            align-self: flex-start;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            animation: pulse 1.5s infinite ease-in-out;
-            display: none;
-            padding: 10px 20px;
-        }
-
-        /* Input Area */
-        .input-area {
-            display: flex;
-            padding: 16px;
-            background-color: var(--chat-bg);
-            border-top: 1px solid #e5e7eb;
-            gap: 12px;
-        }
-
-        .input-area input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 24px;
             outline: none;
-            font-size: 1rem;
-            transition: border-color 0.2s;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            transition: all 0.3s;
         }
 
-        .input-area input:focus {
-            border-color: var(--primary-color);
+        select:focus {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
         }
 
-        .input-area button {
-            background-color: var(--primary-color);
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .theme-chip {
+            background: #090d16;
+            border: 1px solid var(--surface-border);
+            padding: 12px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .theme-chip.active {
+            border-color: var(--text);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(255,255,255,0.05);
+        }
+
+        /* Scoreboard inside Sidebar */
+        .score-board {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .score-slot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .score-slot.active-turn {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .score-slot.active-turn.p1-turn { color: var(--p1-color); text-shadow: 0 0 15px var(--p1-glow); }
+        .score-slot.active-turn.p2-turn { color: var(--p2-color); text-shadow: 0 0 15px var(--p2-glow); }
+
+        .score-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .score-val {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
             border: none;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: auto; /* Push to bottom of sidebar */
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- GAMEPLAY AREA (CENTERED) --- */
+        .game-view {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            animation: zoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .status-bar {
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            height: 30px;
+            color: var(--text);
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .board-wrapper {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 16px;
+            width: 440px;
+            height: 440px;
+            background: var(--board-lines);
+            padding: 16px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+            transform-style: preserve-3d;
+        }
+
+        .cell {
+            background: #0a0e1a;
+            border-radius: 18px;
             cursor: pointer;
             display: flex;
-            justify-content: center;
             align-items: center;
-            transition: transform 0.2s, background-color 0.2s;
+            justify-content: center;
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0px);
+            border: 1px solid rgba(255, 255, 255, 0.01);
         }
 
-        .input-area button:hover {
-            background-color: #1d4ed8;
-            transform: scale(1.05);
+        /* Crazy 3D Pop on Hover */
+        .cell:hover:not(.taken) {
+            background: #121829;
+            transform: translateZ(25px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            border-color: rgba(255,255,255,0.05);
         }
 
-        .input-area button:active {
-            transform: scale(0.95);
+        .cell:active:not(.taken) {
+            transform: translateZ(10px);
         }
 
-        .input-area button svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
+        .cell.taken { cursor: not-allowed; }
+
+        /* Animated SVG Vectors */
+        svg {
+            width: 55%;
+            height: 55%;
+            overflow: visible;
         }
+
+        .stroke-x {
+            stroke: var(--p1-color);
+            stroke-width: 13;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawLine 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            filter: drop-shadow(0 0 10px var(--p1-glow));
+        }
+        .stroke-x-2 { animation-delay: 0.12s; }
+
+        .stroke-o {
+            stroke: var(--p2-color);
+            stroke-width: 13;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 240;
+            stroke-dashoffset: 240;
+            animation: drawLine 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            filter: drop-shadow(0 0 10px var(--p2-glow));
+        }
+
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+
+        /* Win Strike Laser Line */
+        .strike-line {
+            position: absolute;
+            border-radius: 10px;
+            z-index: 10;
+            transform-origin: left center;
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), scale 0.5s;
+            scale: 0 1;
+            pointer-events: none;
+        }
+        .strike-line.active { scale: 1 1; }
+        .strike-line.p1-win { background: var(--p1-color); box-shadow: 0 0 30px var(--p1-color), 0 0 10px #fff; }
+        .strike-line.p2-win { background: var(--p2-color); box-shadow: 0 0 30px var(--p2-color), 0 0 10px #fff; }
+
+        /* Win Visual Polish Animations */
+        .cell.highlight-win {
+            animation: ultraWin 0.6s infinite alternate ease-in-out;
+            z-index: 5;
+        }
+        @keyframes ultraWin {
+            from { transform: translateZ(20px) scale(1); background: rgba(255,255,255,0.02); }
+            to { transform: translateZ(40px) scale(1.06); background: rgba(255,255,255,0.05); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        }
+
+        /* Screen Feedback FX */
+        .shake-screen { animation: blastShake 0.4s ease-in-out; }
+        @keyframes blastShake {
+            0%, 100% { transform: translateX(0) scale(1); }
+            15%, 45%, 75% { transform: translateX(-8px) scale(0.99); }
+            30%, 60%, 90% { transform: translateX(8px) scale(1.01); }
+        }
+
+        /* Keyframe Entrance Loaders */
+        @keyframes slideLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9) translateZ(-100px); } to { opacity: 1; transform: scale(1) translateZ(0); } }
     </style>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
-                <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a5 5 0 0 1 5 5v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a5 5 0 0 1 5-5h1V5.73A2 2 0 1 1 12 2zm3 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"></path>
-            </svg>
-            AI Assistant
+    <div class="dashboard-container" id="boardLayout">
+        
+        <div class="sidebar">
+            <div>
+                <h1>Tic Tac Toe</h1>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px;">Tactical AI System v4.0</p>
+            </div>
+
+            <div class="config-section">
+                <div class="input-group">
+                    <label>Battle Mode</label>
+                    <select id="gameMode">
+                        <option value="ai-medium">AI: Adaptable Core</option>
+                        <option value="ai-impossible">AI: Unbeatable Omega</option>
+                        <option value="ai-easy">AI: Sandbox Node</option>
+                        <option value="pvp">Pass & Play (Friend)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>UI Matrix Theme</label>
+                    <div class="theme-grid">
+                        <div class="theme-chip active" data-theme="cyber">Neon</div>
+                        <div class="theme-chip" data-theme="emerald">Classic</div>
+                        <div class="theme-chip" data-theme="sunset">Amber</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-board">
+                <label style="margin-bottom: 5px;">Data Records</label>
+                <div class="score-slot active-turn p1-turn" id="slotP1">
+                    <span class="score-label" id="lblP1">You (X)</span>
+                    <span class="score-val" id="scoreP1">0</span>
+                </div>
+                <div class="score-slot" id="slotTie">
+                    <span class="score-label">Ties</span>
+                    <span class="score-val" id="scoreTie">0</span>
+                </div>
+                <div class="score-slot" id="slotP2">
+                    <span class="score-label" id="lblP2">AI (O)</span>
+                    <span class="score-val" id="scoreP2">0</span>
+                </div>
+            </div>
+
+            <button class="action-btn" id="btnRestart">Reset Matrix</button>
         </div>
 
-        <div class="chat-box" id="chat-box">
-            <div class="message bot">
-                <svg class="bot-icon" viewBox="0 0 24 24">
-                    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a5 5 0 0 1 5 5v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a5 5 0 0 1 5-5h1V5.73A2 2 0 1 1 12 2z"></path>
-                </svg>
-                <span>Hello! Main aapki kya madad kar sakta hoon?</span>
+        <div class="main-game-area">
+            <div class="game-view">
+                <div class="status-bar" id="statusBar">Initialize Matrix</div>
+                
+                <div class="board-wrapper" id="board3DContainer">
+                    <div class="strike-line" id="strikeLine"></div>
+                    <div class="board" id="board">
+                        <div class="cell" data-idx="0"></div>
+                        <div class="cell" data-idx="1"></div>
+                        <div class="cell" data-idx="2"></div>
+                        <div class="cell" data-idx="3"></div>
+                        <div class="cell" data-idx="4"></div>
+                        <div class="cell" data-idx="5"></div>
+                        <div class="cell" data-idx="6"></div>
+                        <div class="cell" data-idx="7"></div>
+                        <div class="cell" data-idx="8"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <div class="loading" id="loading-indicator">AI is typing...</div>
 
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()" title="Send">
-                <svg viewBox="0 0 24 24">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-                </svg>
-            </button>
-        </div>
     </div>
 
     <script>
-        // ======= APNI API KEY YAHAN DALEN =======
-        const API_KEY = 'AQ.Ab8RN6Ie_Fp4PiFCECVBMGULDxaEWhEbo-bT209_Vkhl8zvO2Q'; 
-        // ==========================================
+        let grid = ["", "", "", "", "", "", "", "", ""];
+        let currentSign = "X"; 
+        let activeMatch = true;
+        let p1Score = 0, p2Score = 0, tieScore = 0;
 
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-        const loadingIndicator = document.getElementById('loading-indicator');
+        const uiLayout = document.getElementById('boardLayout');
+        const uiBoard = document.getElementById('board');
+        const ui3DContainer = document.getElementById('board3DContainer');
+        const uiCells = document.querySelectorAll('.cell');
+        const uiStatus = document.getElementById('statusBar');
+        const uiRestart = document.getElementById('btnRestart');
+        const uiMode = document.getElementById('gameMode');
+        const uiStrike = document.getElementById('strikeLine');
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
+        const lineTracks = [
+            [0, 1, 2, 16.5, 5, 0, 90],      // Row 0
+            [3, 4, 5, 50, 5, 0, 90],        // Row 1
+            [6, 7, 8, 83.5, 5, 0, 90],      // Row 2
+            [0, 3, 6, 5, 16.5, 90, 90],     // Col 0
+            [1, 4, 7, 5, 50, 90, 90],       // Col 1
+            [2, 5, 8, 5, 83.5, 90, 90],     // Col 2
+            [0, 4, 8, 6, 6, 45, 122],       // Diag L
+            [2, 4, 6, 6, 94, 135, 122]      // Diag R
+        ];
 
-        async function sendMessage() {
-            const text = userInput.value.trim();
-            if (!text) return;
+        const themes = {
+            cyber: { p1: '#00f2fe', p1g: 'rgba(0, 242, 254, 0.5)', p2: '#f355da', p2g: 'rgba(243, 85, 218, 0.5)', bg: '#05070f', lines: 'rgba(255, 255, 255, 0.03)' },
+            emerald: { p1: '#10b981', p1g: 'rgba(16, 185, 129, 0.5)', p2: '#f59e0b', p2g: 'rgba(245, 158, 11, 0.5)', bg: '#04140e', lines: 'rgba(255, 255, 255, 0.03)' },
+            sunset: { p1: '#f43f5e', p1g: 'rgba(244, 63, 94, 0.5)', p2: '#38bdf8', p2g: 'rgba(56, 189, 248, 0.5)', bg: '#140c0c', lines: 'rgba(255, 255, 255, 0.04)' }
+        };
 
-            // Add user message to UI
-            appendMessage(text, 'user');
-            userInput.value = '';
-            
-            // Show loading
-            loadingIndicator.style.display = 'block';
-            chatBox.scrollTop = chatBox.scrollHeight;
+        const loadX = () => `<svg viewBox="0 0 100 100"><line x1="15" y1="15" x2="85" y2="85" class="stroke-x" /><line x1="85" y1="15" x2="15" y2="85" class="stroke-x stroke-x-2" /></svg>`;
+        const loadO = () => `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="33" class="stroke-o" /></svg>`;
 
-            try {
-                // Call Google Gemini API
-                const botReply = await fetchGeminiResponse(text);
-                
-                // Hide loading & show bot message
-                loadingIndicator.style.display = 'none';
-                appendMessage(botReply, 'bot');
-            } catch (error) {
-                loadingIndicator.style.display = 'none';
-                appendMessage("Sorry, network error ya API limit poori ho gayi hai. Kripya check karein.", 'bot');
-                console.error("API Error:", error);
-            }
-        }
+        // Immersive 3D Gyro Tilt Effect over board container
+        uiLayout.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            ui3DContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${-yAxis}deg)`;
+        });
 
-        function appendMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender);
-            
-            if(sender === 'bot') {
-                // Add Bot Icon for bot messages
-                messageDiv.innerHTML = `
-                    <svg class="bot-icon" viewBox="0 0 24 24">
-                        <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a5 5 0 0 1 5 5v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a5 5 0 0 1 5-5h1V5.73A2 2 0 1 1 12 2z"></path>
-                    </svg>
-                    <span></span>
-                `;
-                // Securely add text to span
-                messageDiv.querySelector('span').textContent = text;
-            } else {
-                messageDiv.textContent = text;
-            }
+        uiLayout.addEventListener('mouseleave', () => {
+            ui3DContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
 
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        async function fetchGeminiResponse(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-            
-            const requestBody = {
-                contents: [{
-                    parts: [{ text: prompt }]
-                }]
-            };
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
+        // Theme Switcher Engine
+        document.querySelectorAll('.theme-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                document.querySelectorAll('.theme-chip').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                const design = themes[e.target.dataset.theme];
+                const r = document.documentElement.style;
+                r.setProperty('--p1-color', design.p1);
+                r.setProperty('--p1-glow', design.p1g);
+                r.setProperty('--p2-color', design.p2);
+                r.setProperty('--p2-glow', design.p2g);
+                r.setProperty('--bg', design.bg);
+                r.setProperty('--board-lines', design.lines);
+                toggleScoreHighlights();
             });
+        });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        uiMode.addEventListener('change', () => {
+            const mode = uiMode.value;
+            document.getElementById('lblP1').innerText = mode === 'pvp' ? "Player 1 (X)" : "You (X)";
+            document.getElementById('lblP2').innerText = mode === 'pvp' ? "Player 2 (O)" : "AI (O)";
+            wipeBoard();
+            p1Score = 0; p2Score = 0; tieScore = 0;
+            updateScores();
+        });
+
+        uiCells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                const location = parseInt(cell.dataset.idx);
+                if (grid[location] !== "" || !activeMatch) return;
+
+                processMove(cell, location, currentSign);
+                if (!activeMatch) return;
+
+                if (uiMode.value.startsWith('ai') && currentSign === "O") {
+                    setTimeout(triggerAI, 400); 
+                }
+            });
+        });
+
+        uiRestart.addEventListener('click', wipeBoard);
+        uiStatus.innerText = "Your Turn";
+
+        function processMove(target, index, sign) {
+            grid[index] = sign;
+            target.innerHTML = sign === "X" ? loadX() : loadO();
+            target.classList.add('taken');
+            currentSign = currentSign === "X" ? "O" : "X";
+            toggleScoreHighlights();
+            evaluateBoard();
+        }
+
+        function toggleScoreHighlights() {
+            const s1 = document.getElementById('slotP1');
+            const s2 = document.getElementById('slotP2');
+            s1.className = "score-slot";
+            s2.className = "score-slot";
+
+            if (currentSign === "X") {
+                s1.classList.add('active-turn', 'p1-turn');
+                uiStatus.innerText = uiMode.value === 'pvp' ? "Player 1 (X) Turn" : "Your Turn";
+                uiStatus.style.color = "var(--p1-color)";
+            } else {
+                s2.classList.add('active-turn', 'p2-turn');
+                uiStatus.innerText = uiMode.value === 'pvp' ? "Player 2 (O) Turn" : "AI Thinking...";
+                uiStatus.style.color = "var(--p2-color)";
+            }
+        }
+
+        function evaluateBoard() {
+            let victoryMatched = false;
+            let trackInfo = null;
+
+            for (let i = 0; i < lineTracks.length; i++) {
+                const [a, b, c] = lineTracks[i];
+                if (grid[a] && grid[a] === grid[b] && grid[a] === grid[c]) {
+                    victoryMatched = true;
+                    trackInfo = lineTracks[i];
+                    break;
+                }
             }
 
-            const data = await response.json();
+            if (victoryMatched) {
+                const winner = currentSign === "X" ? "O" : "X"; 
+                triggerVictorySequence(trackInfo, winner);
+                activeMatch = false;
+                return;
+            }
+
+            if (!grid.includes("")) {
+                uiStatus.innerText = "Matrix Lock! Tie Match";
+                uiStatus.style.color = "var(--text-muted)";
+                tieScore++;
+                updateScores();
+                activeMatch = false;
+            }
+        }
+
+        function triggerVictorySequence(track, victor) {
+            const [a, b, c, top, left, deg, len] = track;
+            [a, b, c].forEach(i => uiCells[i].classList.add('highlight-win'));
+
+            uiStrike.className = `strike-line active ${victor === 'X' ? 'p1-win' : 'p2-win'}`;
+            uiStrike.style.top = `${top}%`;
+            uiStrike.style.left = `${left}%`;
+            uiStrike.style.transform = `rotate(${deg}deg)`;
             
-            // Extract text from Gemini API response structure
-            if (data && data.candidates && data.candidates.length > 0) {
-                return data.candidates[0].content.parts[0].text;
+            if (deg === 90) {
+                uiStrike.style.width = '8px';
+                uiStrike.style.height = `${len}%`;
+                uiStrike.style.transformOrigin = 'center top';
             } else {
-                return "I couldn't process that. Please try again.";
+                uiStrike.style.height = '8px';
+                uiStrike.style.width = `${len}%`;
+                uiStrike.style.transformOrigin = 'left center';
+            }
+
+            uiLayout.classList.add('shake-screen');
+            setTimeout(() => uiLayout.classList.remove('shake-screen'), 400);
+
+            if (victor === "X") {
+                uiStatus.innerText = uiMode.value === 'pvp' ? "Player 1 Dominated!" : "Victory Accomplished!";
+                uiStatus.style.color = "var(--p1-color)";
+                p1Score++;
+            } else {
+                uiStatus.innerText = uiMode.value === 'pvp' ? "Player 2 Dominated!" : "AI System Overdrive!";
+                uiStatus.style.color = "var(--p2-color)";
+                p2Score++;
+            }
+            updateScores();
+        }
+
+        function updateScores() {
+            document.getElementById('scoreP1').innerText = p1Score;
+            document.getElementById('scoreP2').innerText = p2Score;
+            document.getElementById('scoreTie').innerText = tieScore;
+        }
+
+        function wipeBoard() {
+            grid = ["", "", "", "", "", "", "", "", ""];
+            currentSign = "X";
+            activeMatch = true;
+            uiStrike.className = "strike-line";
+            uiStrike.style = "";
+            toggleScoreHighlights();
+            uiCells.forEach(cell => {
+                cell.innerHTML = "";
+                cell.className = "cell";
+            });
+        }
+
+        /* --- Minimax Computer Artificial Intelligence Array Engine --- */
+        function triggerAI() {
+            if (!activeMatch) return;
+            const style = uiMode.value;
+            let decision;
+
+            if (style === 'ai-easy') decision = pickRandomIndex();
+            else if (style === 'ai-medium') decision = Math.random() > 0.35 ? calculateBestIndex() : pickRandomIndex();
+            else if (style === 'ai-impossible') decision = calculateBestIndex();
+
+            if (decision !== undefined && decision !== null) {
+                processMove(uiCells[decision], decision, "O");
+            }
+        }
+
+        function pickRandomIndex() {
+            let options = [];
+            grid.forEach((v, i) => { if (v === "") options.push(i); });
+            return options[Math.floor(Math.random() * options.length)];
+        }
+
+        function calculateBestIndex() {
+            let extremeVal = -Infinity;
+            let finalPick;
+            for (let i = 0; i < 9; i++) {
+                if (grid[i] === "") {
+                    grid[i] = "O";
+                    let stepScore = pathFinderMinimax(grid, 0, false);
+                    grid[i] = "";
+                    if (stepScore > extremeVal) {
+                        extremeVal = stepScore;
+                        finalPick = i;
+                    }
+                }
+            }
+            return finalPick;
+        }
+
+        const evaluationWeights = { O: 10, X: -10, tie: 0 };
+
+        function discoverStateWinner(mockState) {
+            for (let i = 0; i < lineTracks.length; i++) {
+                const [a, b, c] = lineTracks[i];
+                if (mockState[a] && mockState[a] === mockState[b] && mockState[a] === mockState[c]) {
+                    return mockState[a];
+                }
+            }
+            if (!mockState.includes("")) return 'tie';
+            return null;
+        }
+
+        function pathFinderMinimax(mockState, timelineDepth, scaleMaximizing) {
+            let check = discoverStateWinner(mockState);
+            if (check !== null) return evaluationWeights[check];
+
+            if (scaleMaximizing) {
+                let ceilingScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (mockState[i] === "") {
+                        mockState[i] = "O";
+                        let returns = pathFinderMinimax(mockState, timelineDepth + 1, false);
+                        mockState[i] = "";
+                        ceilingScore = Math.max(returns, ceilingScore);
+                    }
+                }
+                return ceilingScore;
+            } else {
+                let floorScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (mockState[i] === "") {
+                        mockState[i] = "X";
+                        let returns = pathFinderMinimax(mockState, timelineDepth + 1, true);
+                        mockState[i] = "";
+                        floorScore = Math.min(returns, floorScore);
+                    }
+                }
+                return floorScore;
             }
         }
     </script>
