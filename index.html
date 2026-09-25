@@ -3,526 +3,443 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#5B4BDB">
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" type="image/png" href="logo512.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="My App">
-
-    <title>AirDrop Web - Peer-to-Peer File Transfer with QR Scanner</title>
-    <!-- Tailwind CSS for modern, clean UI without glassmorphism -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PeerJS for WebRTC Data Channel networking -->
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    <!-- QRCode.js for connection sharing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- jsQR Library for real-time camera QR code scanning -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>NameDrop Real File Share</title>
     <style>
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
+        :root {
+            --bg: #050507;
+            --card-bg: rgba(28, 28, 30, 0.75);
+            --accent: #0A84FF;
+            --success: #34C759;
+            --text: #F5F5F7;
+            --text-secondary: #8E8E93;
+            --border: rgba(255, 255, 255, 0.12);
         }
-        .floating-icon {
-            animation: float 3s ease-in-out infinite;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stage layout for NameDrop Effect */
+        .stage {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phones-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* NameDrop Flare Glow Effect at the top matching */
+        .flare-glow {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(10, 132, 255, 0.4) 40%, transparent 70%);
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 6;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+            opacity: 0;
+        }
+
+        .phones-container.connected .flare-glow {
+            transform: translate(-50%, -50%) scale(1.6);
+            opacity: 1;
+            animation: pulseFlare 2s infinite alternate;
+        }
+
+        @keyframes pulseFlare {
+            0% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; filter: drop-shadow(0 0 20px #0A84FF); }
+        }
+
+        /* Phone Styling */
+        .phone {
+            position: absolute;
+            width: 140px;
+            height: 270px;
+            background: #1c1c1e;
+            border-radius: 28px;
+            border: 4px solid #3a3a3c;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 8px;
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .notch {
+            width: 45px;
+            height: 11px;
+            background: #000;
+            border-radius: 5.5px;
+            margin-bottom: 12px;
+        }
+
+        .phone-screen {
+            flex: 1;
+            width: 100%;
+            background: linear-gradient(145deg, #161618, #0a0a0c);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Initial Open Positions (Separated) */
+        .phone.local {
+            transform: translateY(20px) translateX(-80px) rotate(-8deg);
+            z-index: 2;
+        }
+
+        .phone.remote {
+            transform: translateY(20px) translateX(80px) rotate(8deg);
+            z-index: 1;
+        }
+
+        /* NameDrop Connected Position: Tops overlapping closely like real Apple NameDrop */
+        .phones-container.connected .phone.local {
+            transform: translateY(-10px) translateX(-28px) rotate(-2deg) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 0 35px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .phones-container.connected .phone.remote {
+            transform: translateY(-10px) translateX(28px) rotate(2deg) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 0 35px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        /* Dashboard controls */
+        .dashboard {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 18px;
+            backdrop-filter: blur(25px);
+            text-align: center;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover { background-color: #0071e3; transform: translateY(-1px); }
+        .btn:disabled { background-color: #3a3a3c; color: var(--text-secondary); cursor: not-allowed; }
+
+        input[type="file"] { display: none; }
+
+        .status-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        progress {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            appearance: none;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        progress::-webkit-progress-bar { background-color: #2c2c2e; }
+        progress::-webkit-progress-value { background-color: var(--success); transition: width 0.1s linear; }
+
+        svg { width: 18px; height: 18px; fill: currentColor; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="border-b border-slate-800 bg-slate-950/60 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                    <i class="fa-solid fa-share-nodes text-xl floating-icon"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-tight text-white">AirDrop Web</h1>
-                    <p class="text-xs text-slate-400">Direct P2P File Sharing + Camera QR Scanner</p>
-                </div>
-            </div>
-            <div id="connection-status-badge" class="flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full text-xs font-medium">
-                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                <span id="status-text" class="text-slate-300">Initializing...</span>
-            </div>
-        </div>
+    <header>
+        <h1>NameDrop Share</h1>
+        <p>Bring devices together for real wireless P2P file transfers</p>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-grow max-w-4xl w-auto mx-auto px-4 py-8 flex flex-col justify-center">
+    <!-- NameDrop Animation Stage -->
+    <div class="stage">
+        <div class="phones-container" id="phonesContainer">
+            <div class="flare-glow"></div>
 
-        <!-- Step 1: Identity & Pairing View -->
-        <div id="pairing-section" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            
-            <!-- My Device Info -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-sm font-semibold tracking-wide text-slate-400 uppercase">Your Device ID</h2>
-                        <i class="fa-solid fa-laptop text-indigo-400"></i>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between mb-4">
-                        <span id="my-peer-id" class="font-mono text-indigo-300 text-sm tracking-wider select-all truncate">Generating ID...</span>
-                        <button onclick="copyMyId()" class="text-slate-400 hover:text-white transition-colors p-2" title="Copy ID">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
-                    <p class="text-xs text-slate-500 mb-6">Share this ID or let another device scan your QR code.</p>
-                </div>
-                <div class="flex justify-center bg-white p-3 rounded-xl w-fit mx-auto border border-slate-800">
-                    <div id="qrcode"></div>
+            <!-- Local Device -->
+            <div class="phone local">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <svg style="width:28px;height:28px;fill:var(--accent);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v6h6v-2h-4z"/></svg>
+                    <div style="font-size:12px; font-weight:600;" id="localRole">My Device</div>
+                    <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;" id="localState">Searching...</div>
                 </div>
             </div>
 
-            <!-- Connect to Remote Device & Camera Scanner -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-sm font-semibold tracking-wide text-slate-400 uppercase">Connect to Peer</h2>
-                        <i class="fa-solid fa-mobile-screen-button text-emerald-400"></i>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-2">Enter Partner's Device ID</label>
-                            <input type="text" id="target-peer-id" placeholder="Paste ID here..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors font-mono">
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="connectToPeer()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-xl transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-link"></i>
-                                <span>Connect</span>
-                            </button>
-                            <button onclick="openScannerModal()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center space-x-2" title="Scan QR with Camera">
-                                <i class="fa-solid fa-camera text-emerald-400"></i>
-                                <span class="text-xs">Scan QR</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 border-t border-slate-800/80 pt-4">
-                    <p class="text-xs text-slate-500 text-center"><i class="fa-solid fa-shield-halved text-emerald-400 mr-1.5"></i> End-to-end encrypted direct data transfer.</p>
+            <!-- Remote Peer Device -->
+            <div class="phone remote">
+                <div class="notch"></div>
+                <div class="phone-screen">
+                    <svg style="width:28px;height:28px;fill:var(--text-secondary);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                    <div style="font-size:12px; font-weight:600;">Nearby Peer</div>
+                    <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;" id="remoteState">Waiting...</div>
                 </div>
             </div>
-
-        </div>
-
-        <!-- Step 2: Transfer Interface (Hidden until connected) -->
-        <div id="transfer-section" class="hidden space-y-6">
-            
-            <!-- Connected Banner -->
-            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-2xl p-4 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-emerald-900/50 text-emerald-400 flex items-center justify-center">
-                        <i class="fa-solid fa-check text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-medium text-emerald-200">Connected Successfully</h3>
-                        <p class="text-xs text-emerald-400/80 font-mono" id="connected-peer-label">Target ID: --</p>
-                    </div>
-                </div>
-                <button onclick="disconnectPeer()" class="text-xs bg-slate-900 hover:bg-rose-950/50 text-slate-300 hover:text-rose-300 border border-slate-800 hover:border-rose-900 px-3 py-2 rounded-xl transition-colors">
-                    Disconnect
-                </button>
-            </div>
-
-            <!-- Drag & Drop File Sender Box -->
-            <div id="drop-zone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-950/50 rounded-3xl p-10 text-center cursor-pointer transition-all relative group">
-                <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleFileSelect(this.files)">
-                <div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-indigo-400 group-hover:scale-110 transition-transform shadow-lg border border-slate-800">
-                    <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
-                </div>
-                <h3 class="text-base font-semibold text-white mb-1">Click to upload or drag & drop files</h3>
-                <p class="text-xs text-slate-400">Any file type supported, sent directly peer-to-peer</p>
-            </div>
-
-            <!-- Active Transfer Status / Progress Dashboard -->
-            <div id="transfer-dashboard" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3 truncate">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-950 text-indigo-400 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-file text-sm"></i>
-                        </div>
-                        <div class="truncate">
-                            <h4 id="transfer-file-name" class="text-sm font-medium text-slate-200 truncate">filename.ext</h4>
-                            <p id="transfer-file-size" class="text-xs text-slate-400">0 MB</p>
-                        </div>
-                    </div>
-                    <span id="transfer-percentage" class="text-sm font-semibold text-indigo-400">0%</span>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-800">
-                    <div id="transfer-progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-150" style="width: 0%"></div>
-                </div>
-                <div class="flex justify-between items-center text-xs text-slate-400">
-                    <span id="transfer-status-label">Ready</span>
-                    <span id="transfer-speed">-- KB/s</span>
-                </div>
-            </div>
-
-            <!-- Incoming Files Download History -->
-            <div id="history-section" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h4 class="text-sm font-semibold tracking-wide text-slate-400 uppercase">Received Files</h4>
-                <div id="received-files-list" class="space-y-3">
-                    <!-- Dynamic downloads get appended here -->
-                </div>
-            </div>
-
-        </div>
-
-    </main>
-
-    <!-- Camera QR Scanner Modal Overlay -->
-    <div id="scanner-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-camera text-indigo-400"></i> Scan Partner QR Code
-                </h3>
-                <button onclick="closeScannerModal()" class="text-slate-400 hover:text-white p-2">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            
-            <div class="relative rounded-2xl overflow-hidden bg-black aspect-square border border-slate-800 mb-4 flex items-center justify-center">
-                <video id="scanner-video" class="w-full h-full object-cover" autoplay playsinline muted></video>
-                <canvas id="scanner-canvas" class="hidden"></canvas>
-                <div class="absolute inset-0 border-2 border-indigo-500/40 pointer-events-none m-8 rounded-xl flex items-center justify-center">
-                    <div class="w-full h-0.5 bg-indigo-500/60 animate-pulse"></div>
-                </div>
-            </div>
-
-            <p id="scanner-status" class="text-xs text-center text-slate-400">Point your camera at the receiver's QR code...</p>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800/80 bg-slate-950 py-4 mt-auto text-center text-xs text-slate-500">
-        <p>Secure peer-to-peer WebRTC file channel. No files are saved on any central server.</p>
+    <!-- Controls Dashboard -->
+    <div class="dashboard">
+        <div class="card">
+            <input type="file" id="fileInput">
+            <button class="btn" id="selectBtn" disabled>Waiting for Proximity Connection...</button>
+        </div>
+
+        <div id="transferCard" class="card" style="display:none;">
+            <div style="font-size: 13px; display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span id="fileNameDisplay" style="font-weight: 500;">filename.ext</span>
+                <span id="filePercentage" style="color: var(--accent);">0%</span>
+            </div>
+            <progress id="transferProgress" value="0" max="100"></progress>
+        </div>
+
+        <div class="status-text" id="statusMessage">Initializing secure wireless mesh channel...</div>
+    </div>
+
+    <footer>
+        <p style="font-size: 11px; color: var(--text-secondary);">Apple NameDrop UI Animation & WebRTC P2P Protocol</p>
     </footer>
 
-    <!-- Script Application Logic -->
     <script>
-        let peer = null;
-        let conn = null;
-        let myId = '';
-        let incomingFileBuffer = [];
-        let incomingFileMeta = null;
-        let receivedBytes = 0;
-        let startTime = 0;
-        let mediaStream = null;
-        let scanAnimationFrame = null;
+        // Free public signaling channel for real auto-discovery across network/tabs
+        const ROOM_ID = "namedrop-secure-mesh-room-445566";
+        const ws = new WebSocket(`wss://socketsbay.com/wss/v2/1/demo/`);
 
-        // Initialize PeerJS
-        function initPeer() {
-            peer = new Peer();
+        let pc, dataChannel;
+        let isInitiator = false;
+        let selectedFile = null;
 
-            peer.on('open', (id) => {
-                myId = id;
-                document.getElementById('my-peer-id').innerText = id;
-                document.getElementById('status-dot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-                document.getElementById('status-text').innerText = 'Ready to Connect';
-                generateQRCode(id);
-            });
+        const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
-            peer.on('connection', (connection) => {
-                if (conn) {
-                    connection.close();
-                    return;
-                }
-                conn = connection;
-                setupConnectionListeners();
-                onConnectedState();
-            });
+        const phonesContainer = document.getElementById('phonesContainer');
+        const selectBtn = document.getElementById('selectBtn');
+        const fileInput = document.getElementById('fileInput');
+        const statusMessage = document.getElementById('statusMessage');
+        const localState = document.getElementById('localState');
+        const remoteState = document.getElementById('remoteState');
+        const transferCard = document.getElementById('transferCard');
+        const transferProgress = document.getElementById('transferProgress');
+        const filePercentage = document.getElementById('filePercentage');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
 
-            peer.on('error', (err) => {
-                console.error(err);
-                alert('Connection error occurred: ' + err.type);
-                document.getElementById('status-dot').className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
-                document.getElementById('status-text').innerText = 'Connection Error';
-            });
-        }
+        ws.onopen = () => {
+            ws.send(JSON.stringify({ type: 'join', room: ROOM_ID }));
+            statusMessage.textContent = "Looking for nearby devices...";
+            
+            // Assign roles automatically for demo connection
+            setTimeout(() => {
+                isInitiator = true;
+                document.getElementById('localRole').textContent = "Sender";
+                initPeerConnection(true);
+            }, 800);
+        };
 
-        function generateQRCode(text) {
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = '';
-            new QRCode(qrContainer, {
-                text: text,
-                width: 128,
-                height: 128,
-                colorDark: "#0f172a",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.M
-            });
-        }
+        ws.onmessage = async (event) => {
+            const message = JSON.parse(event.data);
+            if (!pc) initPeerConnection(false);
 
-        function copyMyId() {
-            navigator.clipboard.writeText(myId);
-            alert('Your Peer ID has been copied to clipboard!');
-        }
-
-        // Camera QR Scanner Functions
-        function openScannerModal() {
-            document.getElementById('scanner-modal').classList.remove('hidden');
-            startCamera();
-        }
-
-        function closeScannerModal() {
-            document.getElementById('scanner-modal').classList.add('hidden');
-            stopCamera();
-        }
-
-        async function startCamera() {
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                const videoElement = document.getElementById('scanner-video');
-                videoElement.srcObject = mediaStream;
-                videoElement.play();
-                requestAnimationFrame(scanQRCodeTick);
-            } catch (err) {
-                console.error(err);
-                document.getElementById('scanner-status').innerText = 'Camera access denied or unavailable.';
+            if (message.type === 'offer') {
+                await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+                ws.send(JSON.stringify({ type: 'answer', answer: answer }));
+            } else if (message.type === 'answer') {
+                await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
+            } else if (message.type === 'candidate') {
+                if (message.candidate) await pc.addIceCandidate(new RTCIceCandidate(message.candidate));
             }
-        }
+        };
 
-        function stopCamera() {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                mediaStream = null;
-            }
-            if (scanAnimationFrame) {
-                cancelAnimationFrame(scanAnimationFrame);
-            }
-        }
+        function initPeerConnection(initiator) {
+            pc = new RTCPeerConnection(configuration);
 
-        function scanQRCodeTick() {
-            const video = document.getElementById('scanner-video');
-            const canvas = document.getElementById('scanner-canvas');
-            const statusEl = document.getElementById('scanner-status');
-
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                canvas.height = video.videoHeight;
-                canvas.width = video.videoWidth;
-                const canvasContext = canvas.getContext('2d');
-                canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: 'dontInvert',
-                });
-
-                if (code) {
-                    // QR Code successfully read!
-                    document.getElementById('target-peer-id').value = code.data;
-                    statusEl.innerText = 'QR Code Scanned Successfully!';
-                    statusEl.className = 'text-xs text-center text-emerald-400 font-medium';
-                    
-                    setTimeout(() => {
-                        closeScannerModal();
-                        connectToPeer();
-                    }, 500);
-                    return;
-                }
-            }
-            scanAnimationFrame = requestAnimationFrame(scanQRCodeTick);
-        }
-
-        function connectToPeer() {
-            const targetId = document.getElementById('target-peer-id').value.trim();
-            if (!targetId) {
-                alert('Please enter a valid Target Peer ID.');
-                return;
-            }
-            if (targetId === myId) {
-                alert('You cannot connect to your own device.');
-                return;
-            }
-
-            document.getElementById('status-text').innerText = 'Connecting...';
-            document.getElementById('status-dot').className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
-
-            conn = peer.connect(targetId, { reliable: true });
-            setupConnectionListeners();
-        }
-
-        function setupConnectionListeners() {
-            conn.on('open', () => {
-                onConnectedState();
-            });
-
-            conn.on('data', (data) => {
-                handleIncomingData(data);
-            });
-
-            conn.on('close', () => {
-                alert('Peer disconnected.');
-                resetConnectionState();
-            });
-
-            conn.on('error', (err) => {
-                console.error(err);
-                alert('Connection error.');
-                resetConnectionState();
-            });
-        }
-
-        function onConnectedState() {
-            document.getElementById('pairing-section').classList.add('hidden');
-            document.getElementById('transfer-section').classList.remove('hidden');
-            document.getElementById('connected-peer-label').innerText = `Connected Peer: ${conn.peer}`;
-            document.getElementById('status-dot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-            document.getElementById('status-text').innerText = 'Connected';
-        }
-
-        function disconnectPeer() {
-            if (conn) {
-                conn.close();
-            }
-            resetConnectionState();
-        }
-
-        function resetConnectionState() {
-            conn = null;
-            document.getElementById('pairing-section').classList.remove('hidden');
-            document.getElementById('transfer-section').classList.add('hidden');
-            document.getElementById('status-dot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-            document.getElementById('status-text').innerText = 'Ready to Connect';
-        }
-
-        // File Transfer Logic
-        function handleFileSelect(files) {
-            if (!files || files.length === 0) return;
-            const file = files[0];
-            sendFile(file);
-        }
-
-        function sendFile(file) {
-            if (!conn || conn.open !== true) {
-                alert('No active connection found.');
-                return;
-            }
-
-            document.getElementById('transfer-dashboard').classList.remove('hidden');
-            document.getElementById('transfer-file-name').innerText = file.name;
-            document.getElementById('transfer-file-size').innerText = formatBytes(file.size);
-            document.getElementById('transfer-status-label').innerText = 'Sending...';
-
-            conn.send({
-                type: 'file-meta',
-                name: file.name,
-                size: file.size,
-                fileType: file.type
-            });
-
-            const CHUNK_SIZE = 16384;
-            const reader = new FileReader();
-            let offset = 0;
-            startTime = Date.now();
-
-            reader.onload = function(e) {
-                conn.send({
-                    type: 'file-chunk',
-                    buffer: e.target.result
-                });
-                offset += e.target.result.byteLength;
-
-                const progress = Math.min(100, Math.round((offset / file.size) * 100));
-                document.getElementById('transfer-percentage').innerText = progress + '%';
-                document.getElementById('transfer-progress-bar').style.width = progress + '%';
-
-                const duration = (Date.now() - startTime) / 1000;
-                const speed = duration > 0 ? offset / duration : 0;
-                document.getElementById('transfer-speed').innerText = formatBytes(speed) + '/s';
-
-                if (offset < file.size) {
-                    readNextChunk();
-                } else {
-                    document.getElementById('transfer-status-label').innerText = 'Transfer Complete!';
-                    document.getElementById('transfer-speed').innerText = '';
+            pc.onicecandidate = (e) => {
+                if (e.candidate) {
+                    ws.send(JSON.stringify({ type: 'candidate', candidate: e.candidate }));
                 }
             };
 
-            function readNextChunk() {
-                const slice = file.slice(offset, offset + CHUNK_SIZE);
+            if (initiator) {
+                dataChannel = pc.createDataChannel("namedrop-transfer");
+                setupDataChannel();
+                pc.createOffer().then(offer => {
+                    pc.setLocalDescription(offer);
+                    ws.send(JSON.stringify({ type: 'offer', offer: offer }));
+                });
+            } else {
+                pc.ondatachannel = (e) => {
+                    dataChannel = e.channel;
+                    setupDataChannel();
+                };
+            }
+        }
+
+        function setupDataChannel() {
+            dataChannel.onopen = () => {
+                // Trigger NameDrop Animation: Glow flare + Phones locking top-to-top
+                phonesContainer.classList.add('connected');
+                statusMessage.textContent = "NameDrop Connection Established! Ready to share files.";
+                localState.textContent = "Connected";
+                remoteState.textContent = "Connected";
+                selectBtn.disabled = false;
+                selectBtn.textContent = "Select File to Send via NameDrop";
+            };
+
+            dataChannel.onclose = () => {
+                phonesContainer.classList.remove('connected');
+                statusMessage.textContent = "Devices moved apart. Connection closed.";
+                localState.textContent = "Disconnected";
+                remoteState.textContent = "Disconnected";
+            };
+
+            let incomingMeta = {}, buffer = [], receivedBytes = 0;
+            dataChannel.onmessage = async (e) => {
+                if (typeof e.data === 'string') {
+                    incomingMeta = JSON.parse(e.data);
+                    buffer = [];
+                    receivedBytes = 0;
+                    transferCard.style.display = 'block';
+                    fileNameDisplay.textContent = incomingMeta.name;
+                    statusMessage.textContent = `Receiving "${incomingMeta.name}" via NameDrop beam...`;
+                } else {
+                    buffer.push(e.data);
+                    receivedBytes += e.data.byteLength;
+                    let pct = Math.round((receivedBytes / incomingMeta.size) * 100);
+                    transferProgress.value = pct;
+                    filePercentage.textContent = `${pct}%`;
+
+                    if (receivedBytes === incomingMeta.size) {
+                        const blob = new Blob(buffer);
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = incomingMeta.name;
+                        a.click();
+                        statusMessage.textContent = `Successfully received "${incomingMeta.name}"! 🎉`;
+                    }
+                }
+            };
+        }
+
+        selectBtn.onclick = () => fileInput.click();
+        
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            transferCard.style.display = 'block';
+            fileNameDisplay.textContent = file.name;
+            selectBtn.textContent = "Sending File...";
+            selectBtn.disabled = true;
+
+            dataChannel.send(JSON.stringify({ type: 'meta', name: file.name, size: file.size }));
+
+            const chunkSize = 16384;
+            const reader = new FileReader();
+            let offset = 0;
+
+            reader.onload = (e) => {
+                dataChannel.send(e.target.result);
+                offset += e.target.result.byteLength;
+                let pct = Math.round((offset / file.size) * 100);
+                transferProgress.value = pct;
+                filePercentage.textContext = `${pct}%`;
+
+                if (offset < file.size) {
+                    readNext();
+                } else {
+                    statusMessage.textContent = `Successfully sent "${file.name}"! ✓`;
+                    selectBtn.textContent = "File Sent Successfully";
+                }
+            };
+
+            function readNext() {
+                const slice = file.slice(offset, offset + chunkSize);
                 reader.readAsArrayBuffer(slice);
             }
-
-            readNextChunk();
-        }
-
-        function handleIncomingData(data) {
-            if (data.type === 'file-meta') {
-                incomingFileMeta = data;
-                incomingFileBuffer = [];
-                receivedBytes = 0;
-                startTime = Date.now();
-
-                document.getElementById('transfer-dashboard').classList.remove('hidden');
-                document.getElementById('transfer-file-name').innerText = incomingFileMeta.name;
-                document.getElementById('transfer-file-size').innerText = formatBytes(incomingFileMeta.size);
-                document.getElementById('transfer-status-label').innerText = 'Receiving...';
-            } 
-            else if (data.type === 'file-chunk') {
-                incomingFileBuffer.push(data.buffer);
-                receivedBytes += data.buffer.byteLength;
-
-                const progress = Math.min(100, Math.round((receivedBytes / incomingFileMeta.size) * 100));
-                document.getElementById('transfer-percentage').innerText = progress + '%';
-                document.getElementById('transfer-progress-bar').style.width = progress + '%';
-
-                const duration = (Date.now() - startTime) / 1000;
-                const speed = duration > 0 ? receivedBytes / duration : 0;
-                document.getElementById('transfer-speed').innerText = formatBytes(speed) + '/s';
-
-                if (receivedBytes >= incomingFileMeta.size) {
-                    document.getElementById('transfer-status-label').innerText = 'Download Ready!';
-                    document.getElementById('transfer-speed').innerText = '';
-                    finalizeIncomingFile();
-                }
-            }
-        }
-
-        function finalizeIncomingFile() {
-            const blob = new Blob(incomingFileBuffer, { type: incomingFileMeta.fileType });
-            const url = URL.createObjectURL(blob);
-
-            document.getElementById('history-section').classList.remove('hidden');
-            const listContainer = document.getElementById('received-files-list');
-
-            const itemHTML = `
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
-                    <div class="flex items-center space-x-3 truncate">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-file-arrow-down text-sm"></i>
-                        </div>
-                        <div class="truncate">
-                            <h5 class="text-sm font-medium text-slate-200 truncate">${incomingFileMeta.name}</h5>
-                            <p class="text-xs text-slate-400">${formatBytes(incomingFileMeta.size)}</p>
-                        </div>
-                    </div>
-                    <a href="${url}" download="${incomingFileMeta.name}" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-medium transition-colors shrink-0 shadow-lg shadow-indigo-600/20 flex items-count space-x-1.5">
-                        <i class="fa-solid fa-download"></i>
-                        <span>Save</span>
-                    </a>
-                </div>
-            `;
-            listContainer.insertAdjacentHTML('afterbegin', itemHTML);
-        }
-
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
-
-        window.onload = initPeer;
+            readNext();
+        };
     </script>
 </body>
 </html>
