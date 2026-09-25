@@ -3,19 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#000000">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="logo512.png">
-
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="One To Another">
-    <title>NameDrop Real File Share</title>
+    <title>NameDrop Direct Share</title>
     <style>
         :root {
-            --bg: #050507;
-            --card-bg: rgba(28, 28, 30, 0.75);
+            --bg: #000000;
+            --card-bg: rgba(28, 28, 30, 0.8);
             --accent: #0A84FF;
             --success: #34C759;
             --text: #F5F5F7;
@@ -56,11 +48,11 @@
         }
 
         header p {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
         }
 
-        /* Stage layout for NameDrop Effect */
+        /* Stage Layout for NameDrop Animation */
         .stage {
             position: relative;
             width: 100%;
@@ -80,12 +72,12 @@
             justify-content: center;
         }
 
-        /* NameDrop Flare Glow Effect at the top matching */
+        /* Apple NameDrop Flare Effect */
         .flare-glow {
             position: absolute;
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(10, 132, 255, 0.4) 40%, transparent 70%);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(10, 132, 255, 0.5) 45%, transparent 75%);
             top: 25%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
@@ -104,73 +96,72 @@
 
         @keyframes pulseFlare {
             0% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; filter: drop-shadow(0 0 20px #0A84FF); }
+            100% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; filter: drop-shadow(0 0 25px var(--accent)); }
         }
 
-        /* Phone Styling */
+        /* Phone Mockups */
         .phone {
             position: absolute;
-            width: 140px;
-            height: 270px;
+            width: 135px;
+            height: 255px;
             background: #1c1c1e;
-            border-radius: 28px;
+            border-radius: 26px;
             border: 4px solid #3a3a3c;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px 8px;
+            padding: 10px 8px;
             transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
         }
 
         .notch {
-            width: 45px;
-            height: 11px;
+            width: 42px;
+            height: 10px;
             background: #000;
-            border-radius: 5.5px;
-            margin-bottom: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
 
         .phone-screen {
             flex: 1;
             width: 100%;
             background: linear-gradient(145deg, #161618, #0a0a0c);
-            border-radius: 16px;
+            border-radius: 14px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        /* Initial Open Positions (Separated) */
         .phone.local {
-            transform: translateY(20px) translateX(-80px) rotate(-8deg);
+            transform: translateY(15px) translateX(-75px) rotate(-7deg);
             z-index: 2;
         }
 
         .phone.remote {
-            transform: translateY(20px) translateX(80px) rotate(8deg);
+            transform: translateY(15px) translateX(75px) rotate(7deg);
             z-index: 1;
         }
 
-        /* NameDrop Connected Position: Tops overlapping closely like real Apple NameDrop */
+        /* Connected state: top-to-top snap */
         .phones-container.connected .phone.local {
-            transform: translateY(-10px) translateX(-28px) rotate(-2deg) scale(1.03);
+            transform: translateY(-8px) translateX(-26px) rotate(-1.5deg) scale(1.03);
             border-color: var(--accent);
-            box-shadow: 0 0 35px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
         }
 
         .phones-container.connected .phone.remote {
-            transform: translateY(-10px) translateX(28px) rotate(2deg) scale(1.03);
+            transform: translateY(-8px) translateX(26px) rotate(1.5deg) scale(1.03);
             border-color: var(--accent);
-            box-shadow: 0 0 35px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
         }
 
-        /* Dashboard controls */
+        /* Dashboard & Controls */
         .dashboard {
             width: 100%;
             max-width: 420px;
@@ -189,13 +180,26 @@
             text-align: center;
         }
 
+        .drop-zone {
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 14px;
+            padding: 20px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--accent);
+            background: rgba(10, 132, 255, 0.05);
+        }
+
         .btn {
             background-color: var(--accent);
             color: #ffffff;
             border: none;
             padding: 14px 20px;
             border-radius: 14px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             cursor: pointer;
             width: 100%;
@@ -206,16 +210,24 @@
             gap: 8px;
         }
 
-        .btn:hover { background-color: #0071e3; transform: translateY(-1px); }
+        .btn:hover { background-color: #0071e3; }
         .btn:disabled { background-color: #3a3a3c; color: var(--text-secondary); cursor: not-allowed; }
 
         input[type="file"] { display: none; }
 
         .status-text {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
             text-align: center;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
         }
 
         progress {
@@ -223,7 +235,7 @@
             height: 8px;
             border-radius: 4px;
             appearance: none;
-            margin-top: 10px;
+            margin-top: 8px;
             overflow: hidden;
         }
 
@@ -236,11 +248,11 @@
 <body>
 
     <header>
-        <h1>NameDrop Share</h1>
-        <p>Bring devices together for real wireless P2P file transfers</p>
+        <h1>NameDrop</h1>
+        <p>Bring devices close to instantly share files</p>
     </header>
 
-    <!-- NameDrop Animation Stage -->
+    <!-- Animation Stage -->
     <div class="stage">
         <div class="phones-container" id="phonesContainer">
             <div class="flare-glow"></div>
@@ -249,9 +261,9 @@
             <div class="phone local">
                 <div class="notch"></div>
                 <div class="phone-screen">
-                    <svg style="width:28px;height:28px;fill:var(--accent);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v6h6v-2h-4z"/></svg>
-                    <div style="font-size:12px; font-weight:600;" id="localRole">My Device</div>
-                    <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;" id="localState">Searching...</div>
+                    <svg style="width:26px;height:26px;fill:var(--accent);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v6h6v-2h-4z"/></svg>
+                    <div style="font-size:11px; font-weight:600;" id="localRole">My Device</div>
+                    <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;" id="localState">Searching...</div>
                 </div>
             </div>
 
@@ -259,49 +271,58 @@
             <div class="phone remote">
                 <div class="notch"></div>
                 <div class="phone-screen">
-                    <svg style="width:28px;height:28px;fill:var(--text-secondary);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-                    <div style="font-size:12px; font-weight:600;">Nearby Peer</div>
-                    <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;" id="remoteState">Waiting...</div>
+                    <svg style="width:26px;height:26px;fill:var(--text-secondary);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                    <div style="font-size:11px; font-weight:600;">Nearby Device</div>
+                    <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;" id="remoteState">Waiting...</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Controls Dashboard -->
+    <!-- Dashboard Controls -->
     <div class="dashboard">
         <div class="card">
-            <input type="file" id="fileInput">
-            <button class="btn" id="selectBtn" disabled>Waiting for Proximity Connection...</button>
+            <div class="drop-zone" id="dropZone">
+                <svg style="width:32px;height:32px;fill:var(--accent);margin-bottom:8px;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                <div style="font-size: 14px; font-weight: 500; margin-bottom: 4px;" id="dropText">Tap or Drop Files to Send</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">Direct P2P Wireless Transfer</div>
+            </div>
+            <input type="file" id="fileInput" multiple>
         </div>
 
         <div id="transferCard" class="card" style="display:none;">
-            <div style="font-size: 13px; display:flex; justify-content:space-between; margin-bottom:6px;">
-                <span id="fileNameDisplay" style="font-weight: 500;">filename.ext</span>
-                <span id="filePercentage" style="color: var(--accent);">0%</span>
+            <div style="font-size: 13px; display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span id="fileNameDisplay" style="font-weight: 500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:250px;">file.ext</span>
+                <span id="filePercentage" style="color: var(--accent); font-weight:600;">0%</span>
             </div>
             <progress id="transferProgress" value="0" max="100"></progress>
+            <div class="stats-row">
+                <span id="transferSpeed">0 KB/s</span>
+                <span id="transferETA">Calculating...</span>
+            </div>
         </div>
 
-        <div class="status-text" id="statusMessage">Initializing secure wireless mesh channel...</div>
+        <div class="status-text" id="statusMessage">Scanning for nearby devices...</div>
     </div>
 
     <footer>
-        <p style="font-size: 11px; color: var(--text-secondary);">Apple NameDrop UI Animation & WebRTC P2P Protocol</p>
+        <p style="font-size: 11px; color: var(--text-secondary);">Apple NameDrop UI Animation & WebRTC P2P</p>
     </footer>
 
     <script>
-        // Free public signaling channel for real auto-discovery across network/tabs
-        const ROOM_ID = "namedrop-secure-mesh-room-445566";
+        // Automatic Global Pool Room (No manual code needed)
+        const GLOBAL_ROOM = "namedrop-global-mesh-pool-998877";
         const ws = new WebSocket(`wss://socketsbay.com/wss/v2/1/demo/`);
 
         let pc, dataChannel;
         let isInitiator = false;
-        let selectedFile = null;
+        let incomingMeta = {}, buffer = [], receivedBytes = 0;
+        let startTime = 0;
 
         const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
         const phonesContainer = document.getElementById('phonesContainer');
-        const selectBtn = document.getElementById('selectBtn');
+        const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const statusMessage = document.getElementById('statusMessage');
         const localState = document.getElementById('localState');
@@ -310,17 +331,19 @@
         const transferProgress = document.getElementById('transferProgress');
         const filePercentage = document.getElementById('filePercentage');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const transferSpeed = document.getElementById('transferSpeed');
+        const transferETA = document.getElementById('transferETA');
 
         ws.onopen = () => {
-            ws.send(JSON.stringify({ type: 'join', room: ROOM_ID }));
-            statusMessage.textContent = "Looking for nearby devices...";
+            ws.send(JSON.stringify({ type: 'join', room: GLOBAL_ROOM }));
+            statusMessage.textContent = "Scanning for nearby devices...";
             
-            // Assign roles automatically for demo connection
+            // Automatic role coordination
             setTimeout(() => {
                 isInitiator = true;
-                document.getElementById('localRole').textContent = "Sender";
+                document.getElementById('localRole').textContent = "Device A";
                 initPeerConnection(true);
-            }, 800);
+            }, 1200);
         };
 
         ws.onmessage = async (event) => {
@@ -365,37 +388,45 @@
 
         function setupDataChannel() {
             dataChannel.onopen = () => {
-                // Trigger NameDrop Animation: Glow flare + Phones locking top-to-top
+                // Trigger NameDrop Animation
                 phonesContainer.classList.add('connected');
-                statusMessage.textContent = "NameDrop Connection Established! Ready to share files.";
+                statusMessage.textContent = "Devices Connected! Ready to share.";
                 localState.textContent = "Connected";
                 remoteState.textContent = "Connected";
-                selectBtn.disabled = false;
-                selectBtn.textContent = "Select File to Send via NameDrop";
+                if (navigator.vibrate) navigator.vibrate(60);
             };
 
             dataChannel.onclose = () => {
                 phonesContainer.classList.remove('connected');
-                statusMessage.textContent = "Devices moved apart. Connection closed.";
+                statusMessage.textContent = "Devices separated. Connection closed.";
                 localState.textContent = "Disconnected";
                 remoteState.textContent = "Disconnected";
             };
 
-            let incomingMeta = {}, buffer = [], receivedBytes = 0;
             dataChannel.onmessage = async (e) => {
                 if (typeof e.data === 'string') {
                     incomingMeta = JSON.parse(e.data);
                     buffer = [];
                     receivedBytes = 0;
+                    startTime = Date.now();
                     transferCard.style.display = 'block';
                     fileNameDisplay.textContent = incomingMeta.name;
-                    statusMessage.textContent = `Receiving "${incomingMeta.name}" via NameDrop beam...`;
+                    statusMessage.textContent = `Receiving "${incomingMeta.name}"...`;
                 } else {
                     buffer.push(e.data);
                     receivedBytes += e.data.byteLength;
-                    let pct = Math.round((receivedBytes / incomingMeta.size) * 100);
+                    
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const speed = elapsed > 0 ? receivedBytes / elapsed : 0;
+                    const pct = Math.round((receivedBytes / incomingMeta.size) * 100);
+                    
                     transferProgress.value = pct;
                     filePercentage.textContent = `${pct}%`;
+                    transferSpeed.textContent = `${(speed / (1024*1024)).toFixed(2)} MB/s`;
+                    
+                    const remaining = incomingMeta.size - receivedBytes;
+                    const eta = speed > 0 ? Math.ceil(remaining / speed) : 0;
+                    transferETA.textContent = `ETA: ${eta}s`;
 
                     if (receivedBytes === incomingMeta.size) {
                         const blob = new Blob(buffer);
@@ -405,21 +436,37 @@
                         a.download = incomingMeta.name;
                         a.click();
                         statusMessage.textContent = `Successfully received "${incomingMeta.name}"! 🎉`;
+                        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
                     }
                 }
             };
         }
 
-        selectBtn.onclick = () => fileInput.click();
+        // File Selection & Drag Drop
+        dropZone.onclick = () => fileInput.click();
         
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--accent)"; };
+        dropZone.ondragleave = () => { dropZone.style.borderColor = "rgba(255,255,255,0.2)"; };
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = "rgba(255,255,255,0.2)";
+            if (e.dataTransfer.files.length > 0) handleFileSend(e.dataTransfer.files[0]);
+        };
+
         fileInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            if (e.target.files.length > 0) handleFileSend(e.target.files[0]);
+        };
+
+        function handleFileSend(file) {
+            if (!dataChannel || dataChannel.readyState !== 'open') {
+                alert("Waiting for connection to establish!");
+                return;
+            }
 
             transferCard.style.display = 'block';
             fileNameDisplay.textContent = file.name;
-            selectBtn.textContent = "Sending File...";
-            selectBtn.disabled = true;
+            statusMessage.textContent = `Sending "${file.name}"...`;
+            startTime = Date.now();
 
             dataChannel.send(JSON.stringify({ type: 'meta', name: file.name, size: file.size }));
 
@@ -430,15 +477,24 @@
             reader.onload = (e) => {
                 dataChannel.send(e.target.result);
                 offset += e.target.result.byteLength;
-                let pct = Math.round((offset / file.size) * 100);
+
+                const elapsed = (Date.now() - startTime) / 1000;
+                const speed = elapsed > 0 ? offset / elapsed : 0;
+                const pct = Math.round((offset / file.size) * 100);
+
                 transferProgress.value = pct;
-                filePercentage.textContext = `${pct}%`;
+                filePercentage.textContent = `${pct}%`;
+                transferSpeed.textContent = `${(speed / (1024*1024)).toFixed(2)} MB/s`;
+
+                const remaining = file.size - offset;
+                const eta = speed > 0 ? Math.ceil(remaining / speed) : 0;
+                transferETA.textContent = `ETA: ${eta}s`;
 
                 if (offset < file.size) {
                     readNext();
                 } else {
                     statusMessage.textContent = `Successfully sent "${file.name}"! ✓`;
-                    selectBtn.textContent = "File Sent Successfully";
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
                 }
             };
 
@@ -447,7 +503,7 @@
                 reader.readAsArrayBuffer(slice);
             }
             readNext();
-        };
+        }
     </script>
 </body>
 </html>
