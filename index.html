@@ -2,507 +2,854 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NameDrop Direct Share</title>
-    <style>
-        :root {
-            --bg: #000000;
-            --card-bg: rgba(28, 28, 30, 0.8);
-            --accent: #0A84FF;
-            --success: #34C759;
-            --text: #F5F5F7;
-            --text-secondary: #8E8E93;
-            --border: rgba(255, 255, 255, 0.12);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 40px 20px;
-            overflow-x: hidden;
-        }
-
-        header {
-            text-align: center;
-            z-index: 10;
-        }
-
-        header h1 {
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-        }
-
-        header p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* Stage Layout for NameDrop Animation */
-        .stage {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 380px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .phones-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Apple NameDrop Flare Effect */
-        .flare-glow {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(10, 132, 255, 0.5) 45%, transparent 75%);
-            top: 25%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 6;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
-            opacity: 0;
-        }
-
-        .phones-container.connected .flare-glow {
-            transform: translate(-50%, -50%) scale(1.6);
-            opacity: 1;
-            animation: pulseFlare 2s infinite alternate;
-        }
-
-        @keyframes pulseFlare {
-            0% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; filter: drop-shadow(0 0 25px var(--accent)); }
-        }
-
-        /* Phone Mockups */
-        .phone {
-            position: absolute;
-            width: 135px;
-            height: 255px;
-            background: #1c1c1e;
-            border-radius: 26px;
-            border: 4px solid #3a3a3c;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 8px;
-            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        .notch {
-            width: 42px;
-            height: 10px;
-            background: #000;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .phone-screen {
-            flex: 1;
-            width: 100%;
-            background: linear-gradient(145deg, #161618, #0a0a0c);
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .phone.local {
-            transform: translateY(15px) translateX(-75px) rotate(-7deg);
-            z-index: 2;
-        }
-
-        .phone.remote {
-            transform: translateY(15px) translateX(75px) rotate(7deg);
-            z-index: 1;
-        }
-
-        /* Connected state: top-to-top snap */
-        .phones-container.connected .phone.local {
-            transform: translateY(-8px) translateX(-26px) rotate(-1.5deg) scale(1.03);
-            border-color: var(--accent);
-            box-shadow: 0 0 30px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
-        }
-
-        .phones-container.connected .phone.remote {
-            transform: translateY(-8px) translateX(26px) rotate(1.5deg) scale(1.03);
-            border-color: var(--accent);
-            box-shadow: 0 0 30px rgba(10, 132, 255, 0.5), 0 20px 40px rgba(0,0,0,0.8);
-        }
-
-        /* Dashboard & Controls */
-        .dashboard {
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 10;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 18px;
-            backdrop-filter: blur(25px);
-            text-align: center;
-        }
-
-        .drop-zone {
-            border: 2px dashed rgba(255,255,255,0.2);
-            border-radius: 14px;
-            padding: 20px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .drop-zone:hover {
-            border-color: var(--accent);
-            background: rgba(10, 132, 255, 0.05);
-        }
-
-        .btn {
-            background-color: var(--accent);
-            color: #ffffff;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn:hover { background-color: #0071e3; }
-        .btn:disabled { background-color: #3a3a3c; color: var(--text-secondary); cursor: not-allowed; }
-
-        input[type="file"] { display: none; }
-
-        .status-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-align: center;
-            margin-top: 4px;
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-        }
-
-        progress {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            appearance: none;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-
-        progress::-webkit-progress-bar { background-color: #2c2c2e; }
-        progress::-webkit-progress-value { background-color: var(--success); transition: width 0.1s linear; }
-
-        svg { width: 18px; height: 18px; fill: currentColor; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>NameDrop</h1>
-        <p>Bring devices close to instantly share files</p>
-    </header>
-
-    <!-- Animation Stage -->
-    <div class="stage">
-        <div class="phones-container" id="phonesContainer">
-            <div class="flare-glow"></div>
-
-            <!-- Local Device -->
-            <div class="phone local">
-                <div class="notch"></div>
-                <div class="phone-screen">
-                    <svg style="width:26px;height:26px;fill:var(--accent);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v6h6v-2h-4z"/></svg>
-                    <div style="font-size:11px; font-weight:600;" id="localRole">My Device</div>
-                    <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;" id="localState">Searching...</div>
-                </div>
-            </div>
-
-            <!-- Remote Peer Device -->
-            <div class="phone remote">
-                <div class="notch"></div>
-                <div class="phone-screen">
-                    <svg style="width:26px;height:26px;fill:var(--text-secondary);margin-bottom:6px;" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-                    <div style="font-size:11px; font-weight:600;">Nearby Device</div>
-                    <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;" id="remoteState">Waiting...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dashboard Controls -->
-    <div class="dashboard">
-        <div class="card">
-            <div class="drop-zone" id="dropZone">
-                <svg style="width:32px;height:32px;fill:var(--accent);margin-bottom:8px;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-                <div style="font-size: 14px; font-weight: 500; margin-bottom: 4px;" id="dropText">Tap or Drop Files to Send</div>
-                <div style="font-size: 11px; color: var(--text-secondary);">Direct P2P Wireless Transfer</div>
-            </div>
-            <input type="file" id="fileInput" multiple>
-        </div>
-
-        <div id="transferCard" class="card" style="display:none;">
-            <div style="font-size: 13px; display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span id="fileNameDisplay" style="font-weight: 500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:250px;">file.ext</span>
-                <span id="filePercentage" style="color: var(--accent); font-weight:600;">0%</span>
-            </div>
-            <progress id="transferProgress" value="0" max="100"></progress>
-            <div class="stats-row">
-                <span id="transferSpeed">0 KB/s</span>
-                <span id="transferETA">Calculating...</span>
-            </div>
-        </div>
-
-        <div class="status-text" id="statusMessage">Scanning for nearby devices...</div>
-    </div>
-
-    <footer>
-        <p style="font-size: 11px; color: var(--text-secondary);">Apple NameDrop UI Animation & WebRTC P2P</p>
-    </footer>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iOS 18 Contacts & Phone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
-        // Automatic Global Pool Room (No manual code needed)
-        const GLOBAL_ROOM = "namedrop-global-mesh-pool-998877";
-        const ws = new WebSocket(`wss://socketsbay.com/wss/v2/1/demo/`);
-
-        let pc, dataChannel;
-        let isInitiator = false;
-        let incomingMeta = {}, buffer = [], receivedBytes = 0;
-        let startTime = 0;
-
-        const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-
-        const phonesContainer = document.getElementById('phonesContainer');
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const statusMessage = document.getElementById('statusMessage');
-        const localState = document.getElementById('localState');
-        const remoteState = document.getElementById('remoteState');
-        const transferCard = document.getElementById('transferCard');
-        const transferProgress = document.getElementById('transferProgress');
-        const filePercentage = document.getElementById('filePercentage');
-        const fileNameDisplay = document.getElementById('fileNameDisplay');
-        const transferSpeed = document.getElementById('transferSpeed');
-        const transferETA = document.getElementById('transferETA');
-
-        ws.onopen = () => {
-            ws.send(JSON.stringify({ type: 'join', room: GLOBAL_ROOM }));
-            statusMessage.textContent = "Scanning for nearby devices...";
-            
-            // Automatic role coordination
-            setTimeout(() => {
-                isInitiator = true;
-                document.getElementById('localRole').textContent = "Device A";
-                initPeerConnection(true);
-            }, 1200);
-        };
-
-        ws.onmessage = async (event) => {
-            const message = JSON.parse(event.data);
-            if (!pc) initPeerConnection(false);
-
-            if (message.type === 'offer') {
-                await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
-                ws.send(JSON.stringify({ type: 'answer', answer: answer }));
-            } else if (message.type === 'answer') {
-                await pc.setRemoteDescription(new RTCSessionDescription(message.answer));
-            } else if (message.type === 'candidate') {
-                if (message.candidate) await pc.addIceCandidate(new RTCIceCandidate(message.candidate));
-            }
-        };
-
-        function initPeerConnection(initiator) {
-            pc = new RTCPeerConnection(configuration);
-
-            pc.onicecandidate = (e) => {
-                if (e.candidate) {
-                    ws.send(JSON.stringify({ type: 'candidate', candidate: e.candidate }));
-                }
-            };
-
-            if (initiator) {
-                dataChannel = pc.createDataChannel("namedrop-transfer");
-                setupDataChannel();
-                pc.createOffer().then(offer => {
-                    pc.setLocalDescription(offer);
-                    ws.send(JSON.stringify({ type: 'offer', offer: offer }));
-                });
-            } else {
-                pc.ondatachannel = (e) => {
-                    dataChannel = e.channel;
-                    setupDataChannel();
-                };
-            }
-        }
-
-        function setupDataChannel() {
-            dataChannel.onopen = () => {
-                // Trigger NameDrop Animation
-                phonesContainer.classList.add('connected');
-                statusMessage.textContent = "Devices Connected! Ready to share.";
-                localState.textContent = "Connected";
-                remoteState.textContent = "Connected";
-                if (navigator.vibrate) navigator.vibrate(60);
-            };
-
-            dataChannel.onclose = () => {
-                phonesContainer.classList.remove('connected');
-                statusMessage.textContent = "Devices separated. Connection closed.";
-                localState.textContent = "Disconnected";
-                remoteState.textContent = "Disconnected";
-            };
-
-            dataChannel.onmessage = async (e) => {
-                if (typeof e.data === 'string') {
-                    incomingMeta = JSON.parse(e.data);
-                    buffer = [];
-                    receivedBytes = 0;
-                    startTime = Date.now();
-                    transferCard.style.display = 'block';
-                    fileNameDisplay.textContent = incomingMeta.name;
-                    statusMessage.textContent = `Receiving "${incomingMeta.name}"...`;
-                } else {
-                    buffer.push(e.data);
-                    receivedBytes += e.data.byteLength;
-                    
-                    const elapsed = (Date.now() - startTime) / 1000;
-                    const speed = elapsed > 0 ? receivedBytes / elapsed : 0;
-                    const pct = Math.round((receivedBytes / incomingMeta.size) * 100);
-                    
-                    transferProgress.value = pct;
-                    filePercentage.textContent = `${pct}%`;
-                    transferSpeed.textContent = `${(speed / (1024*1024)).toFixed(2)} MB/s`;
-                    
-                    const remaining = incomingMeta.size - receivedBytes;
-                    const eta = speed > 0 ? Math.ceil(remaining / speed) : 0;
-                    transferETA.textContent = `ETA: ${eta}s`;
-
-                    if (receivedBytes === incomingMeta.size) {
-                        const blob = new Blob(buffer);
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = incomingMeta.name;
-                        a.click();
-                        statusMessage.textContent = `Successfully received "${incomingMeta.name}"! 🎉`;
-                        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        iosBg: '#F2F2F7',
+                        iosCard: '#FFFFFF',
+                        iosBlue: '#007AFF',
+                        iosGreen: '#34C759',
+                        iosRed: '#FF3B30',
+                        iosGray: '#8E8E93',
+                        iosLightGray: '#E5E5EA',
+                        iosSeparator: 'rgba(60, 60, 67, 0.18)',
+                        iosGroupedBg: '#EFEFF4'
+                    },
+                    fontFamily: {
+                        sf: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
                     }
                 }
-            };
+            }
+        }
+    </script>
+    <style>
+        /* iOS Authentic Typography Stack */
+        body, input, button {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            touch-action: manipulation;
         }
 
-        // File Selection & Drag Drop
-        dropZone.onclick = () => fileInput.click();
-        
-        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--accent)"; };
-        dropZone.ondragleave = () => { dropZone.style.borderColor = "rgba(255,255,255,0.2)"; };
-        dropZone.ondrop = (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = "rgba(255,255,255,0.2)";
-            if (e.dataTransfer.files.length > 0) handleFileSend(e.dataTransfer.files[0]);
-        };
+        /* 120 FPS Fluid Spring Animations & Curves */
+        .ios-spring-touch {
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, opacity 0.15s ease;
+            will-change: transform;
+        }
+        .ios-spring-touch:active {
+            transform: scale(0.94);
+            opacity: 0.82;
+        }
 
-        fileInput.onchange = (e) => {
-            if (e.target.files.length > 0) handleFileSend(e.target.files[0]);
-        };
+        /* Keypad press animation */
+        .keypad-btn-press {
+            transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.15s ease;
+            will-change: transform;
+        }
+        .keypad-btn-press:active {
+            transform: scale(0.86);
+            background-color: #D1D1D6 !important;
+        }
 
-        function handleFileSend(file) {
-            if (!dataChannel || dataChannel.readyState !== 'open') {
-                alert("Waiting for connection to establish!");
+        /* Sheet & View Animations */
+        @keyframes iosSlideUp {
+            0% { transform: translateY(100%); opacity: 0.8; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes iosSlideDown {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+        @keyframes iosFadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-ios-sheet-up {
+            animation: iosSlideUp 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity;
+        }
+        .animate-ios-sheet-down {
+            animation: iosSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity;
+        }
+        .animate-ios-fade {
+            animation: iosFadeIn 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* iOS Glassmorphism Translucent Backdrops */
+        .ios-glass-header {
+            background: rgba(249, 249, 249, 0.88);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+        }
+        .ios-glass-nav {
+            background: rgba(249, 249, 249, 0.92);
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+        }
+
+        /* Hide Scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Dynamic Alphabet Index Bar Hover Indicator */
+        .alphabet-letter {
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+        .alphabet-letter:active {
+            transform: scale(1.4);
+            color: #007AFF;
+        }
+    </style>
+</head>
+<body class="bg-iosBg text-black h-screen flex flex-col justify-between overflow-hidden font-sf select-none">
+
+    <!-- TOP iOS HEADER VIEW -->
+    <header id="appHeader" class="ios-glass-header border-b border-iosSeparator sticky top-0 z-30 px-4 pt-10 pb-2 transition-all">
+        <div id="headerContent" class="flex items-center justify-between">
+            <!-- Populated dynamically via JS -->
+        </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main id="mainContent" class="flex-1 overflow-y-auto relative no-scrollbar pb-24 animate-ios-fade">
+        <!-- Tab views dynamically injected here -->
+    </main>
+
+    <!-- iOS 18 BOTTOM NAVIGATION BAR -->
+    <nav class="ios-glass-nav border-t border-iosSeparator fixed bottom-0 left-0 right-0 z-40 pb-safe pt-1.5 px-2 flex justify-around items-center h-16">
+        <button onclick="switchTab('favorites')" id="nav-favorites" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
+            <i class="fa-solid fa-star text-[19px] mb-0.5"></i>
+            <span class="text-[10px] font-medium tracking-tight">Favorites</span>
+        </button>
+        <button onclick="switchTab('recents')" id="nav-recents" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
+            <i class="fa-solid fa-clock-rotate-left text-[19px] mb-0.5"></i>
+            <span class="text-[10px] font-medium tracking-tight">Recents</span>
+        </button>
+        <button onclick="switchTab('contacts')" id="nav-contacts" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosBlue">
+            <i class="fa-solid fa-user-group text-[19px] mb-0.5"></i>
+            <span class="text-[10px] font-semibold tracking-tight">Contacts</span>
+        </button>
+        <button onclick="switchTab('keypad')" id="nav-keypad" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
+            <i class="fa-solid fa-calculator text-[19px] mb-0.5"></i>
+            <span class="text-[10px] font-medium tracking-tight">Keypad</span>
+        </button>
+        <button onclick="switchTab('voicemail')" id="nav-voicemail" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
+            <i class="fa-solid fa-voicemail text-[19px] mb-0.5"></i>
+            <span class="text-[10px] font-medium tracking-tight">Voicemail</span>
+        </button>
+    </nav>
+
+    <!-- MODAL OVERLAY (Contact Detail, Add, Edit) -->
+    <div id="modalOverlay" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex-col justify-end transition-opacity duration-300">
+        <div id="modalCard" class="bg-iosBg w-full h-[94%] rounded-t-[32px] shadow-2xl flex flex-col overflow-hidden transform translate-y-full">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <!-- NATIVE CALLING & FEEDBACK TOAST -->
+    <div id="toast" class="fixed top-14 left-1/2 transform -translate-x-1/2 z-50 bg-black/85 text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 max-w-xs text-center border border-white/10">
+        Opening default phone app...
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // State Management
+        let currentTab = 'contacts';
+        let contacts = [];
+        let recents = [];
+        let searchQuery = '';
+        let keypadNumber = '';
+
+        // Default iOS Contacts Dataset
+        const defaultContacts = [
+            {
+                id: '1',
+                name: 'Apple Support',
+                phone: '1-800-692-7753',
+                email: 'support@apple.com',
+                address: '1 Apple Park Way, Cupertino, CA',
+                avatarType: 'preset',
+                avatarValue: 'fa-apple',
+                favorite: true
+            },
+            {
+                id: '2',
+                name: 'Tim Cook',
+                phone: '+14089961010',
+                email: 'tcook@apple.com',
+                address: 'One Infinite Loop, Cupertino, CA',
+                avatarType: 'gradient',
+                avatarValue: '#007AFF,#5856D6',
+                favorite: true
+            },
+            {
+                id: '3',
+                name: 'Elena Rostova',
+                phone: '+15552348811',
+                email: 'elena.rostova@design.io',
+                address: '742 Evergreen Terrace, Springfield',
+                avatarType: 'preset',
+                avatarValue: 'fa-user-nurse',
+                favorite: true
+            },
+            {
+                id: '4',
+                name: 'Marcus Vance',
+                phone: '+15554920033',
+                email: 'marcus.v@devcorp.com',
+                address: '42 Wallaby Way, Sydney',
+                avatarType: 'url',
+                avatarValue: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+                favorite: false
+            },
+            {
+                id: '5',
+                name: 'Sophia Chen',
+                phone: '+15558849921',
+                email: 'sophia@venturecap.com',
+                address: '88 Market St, San Francisco, CA',
+                avatarType: 'gradient',
+                avatarValue: '#FF2D55,#FF9500',
+                favorite: false
+            }
+        ];
+
+        const defaultRecents = [
+            { id: 'r1', name: 'Tim Cook', phone: '+14089961010', type: 'outgoing', time: 'Today, 2:45 PM', count: 2 },
+            { id: 'r2', name: 'Elena Rostova', phone: '+15552348811', type: 'incoming', time: 'Yesterday, 11:20 AM', count: 1 },
+            { id: 'r3', name: '+1 (555) 321-9988', phone: '+15553219988', type: 'missed', time: 'Oct 12, 4:15 PM', count: 1 }
+        ];
+
+        // Global Native Phone Calling Trigger via tel: protocol
+        function initiateRealCall(phone, contactName = '') {
+            if (!phone) {
+                showToast('No phone number available!');
                 return;
             }
 
-            transferCard.style.display = 'block';
-            fileNameDisplay.textContent = file.name;
-            statusMessage.textContent = `Sending "${file.name}"...`;
-            startTime = Date.now();
+            const sanitizedNumber = phone.replace(/[^0-9+]/g, '');
+            logRecent(contactName || phone, phone, 'outgoing');
 
-            dataChannel.send(JSON.stringify({ type: 'meta', name: file.name, size: file.size }));
+            showToast(`Calling ${sanitizedNumber} via default phone app...`);
 
-            const chunkSize = 16384;
-            const reader = new FileReader();
-            let offset = 0;
+            // Execute Native Cellular/Phone Dialer App directly
+            setTimeout(() => {
+                window.location.href = `tel:${sanitizedNumber}`;
+            }, 300);
+        }
 
-            reader.onload = (e) => {
-                dataChannel.send(e.target.result);
-                offset += e.target.result.byteLength;
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            switchTab('contacts');
+        });
 
-                const elapsed = (Date.now() - startTime) / 1000;
-                const speed = elapsed > 0 ? offset / elapsed : 0;
-                const pct = Math.round((offset / file.size) * 100);
-
-                transferProgress.value = pct;
-                filePercentage.textContent = `${pct}%`;
-                transferSpeed.textContent = `${(speed / (1024*1024)).toFixed(2)} MB/s`;
-
-                const remaining = file.size - offset;
-                const eta = speed > 0 ? Math.ceil(remaining / speed) : 0;
-                transferETA.textContent = `ETA: ${eta}s`;
-
-                if (offset < file.size) {
-                    readNext();
-                } else {
-                    statusMessage.textContent = `Successfully sent "${file.name}"! ✓`;
-                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                }
-            };
-
-            function readNext() {
-                const slice = file.slice(offset, offset + chunkSize);
-                reader.readAsArrayBuffer(slice);
+        function loadData() {
+            const storedContacts = localStorage.getItem('ios18_contacts_db');
+            const storedRecents = localStorage.getItem('ios18_recents_db');
+            
+            if (storedContacts) {
+                try { contacts = JSON.parse(storedContacts); } catch(e) { contacts = defaultContacts; }
+            } else {
+                contacts = defaultContacts;
+                saveContacts();
             }
-            readNext();
+
+            if (storedRecents) {
+                try { recents = JSON.parse(storedRecents); } catch(e) { recents = defaultRecents; }
+            } else {
+                recents = defaultRecents;
+                saveRecents();
+            }
+        }
+
+        function saveContacts() {
+            localStorage.setItem('ios18_contacts_db', JSON.stringify(contacts));
+        }
+
+        function saveRecents() {
+            localStorage.setItem('ios18_recents_db', JSON.stringify(recents));
+        }
+
+        // Tab Navigation
+        function switchTab(tab) {
+            currentTab = tab;
+            ['favorites', 'recents', 'contacts', 'keypad', 'voicemail'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (btn) {
+                    if (t === tab) {
+                        btn.className = 'ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosBlue';
+                        btn.querySelector('span').className = 'text-[10px] font-semibold tracking-tight';
+                    } else {
+                        btn.className = 'ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray';
+                        btn.querySelector('span').className = 'text-[10px] font-medium tracking-tight';
+                    }
+                }
+            });
+
+            renderHeader();
+            renderBody();
+        }
+
+        // Render iOS Dynamic Header
+        function renderHeader() {
+            const headerContent = document.getElementById('headerContent');
+            if (!headerContent) return;
+
+            if (currentTab === 'contacts') {
+                headerContent.innerHTML = `
+                    <div class="flex items-center justify-between w-full">
+                        <button onclick="openAddContactModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch flex items-center">
+                            <i class="fa-solid fa-plus text-lg mr-1"></i> Add
+                        </button>
+                        <h1 class="text-[17px] font-semibold text-black tracking-tight">Contacts</h1>
+                        <button onclick="showToast('Lists feature ready')" class="text-iosBlue text-[17px] font-normal ios-spring-touch">Lists</button>
+                    </div>
+                `;
+            } else if (currentTab === 'favorites') {
+                headerContent.innerHTML = `
+                    <div class="flex items-center justify-between w-full">
+                        <button onclick="openAddContactModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch">
+                            <i class="fa-solid fa-plus text-lg"></i>
+                        </button>
+                        <h1 class="text-[17px] font-semibold text-black tracking-tight">Favorites</h1>
+                        <div class="w-6"></div>
+                    </div>
+                `;
+            } else if (currentTab === 'recents') {
+                headerContent.innerHTML = `
+                    <div class="flex items-center justify-between w-full">
+                        <div class="flex bg-iosGroupedBg rounded-lg p-0.5 border border-iosSeparator/30">
+                            <button class="px-3 py-1 text-xs font-semibold bg-white rounded-md shadow-xs">All</button>
+                            <button class="px-3 py-1 text-xs text-iosGray">Missed</button>
+                        </div>
+                        <h1 class="text-[17px] font-semibold text-black tracking-tight">Recents</h1>
+                        <button onclick="clearRecents()" class="text-iosBlue text-sm font-normal ios-spring-touch">Clear</button>
+                    </div>
+                `;
+            } else if (currentTab === 'keypad') {
+                headerContent.innerHTML = `<h1 class="text-[17px] font-semibold text-black text-center w-full tracking-tight">Keypad</h1>`;
+            } else if (currentTab === 'voicemail') {
+                headerContent.innerHTML = `<h1 class="text-[17px] font-semibold text-black text-center w-full tracking-tight">Voicemail</h1>`;
+            }
+        }
+
+        // Render Body Content
+        function renderBody() {
+            const main = document.getElementById('mainContent');
+            if (!main) return;
+            
+            if (currentTab === 'contacts') renderContactsView(main);
+            else if (currentTab === 'favorites') renderFavoritesView(main);
+            else if (currentTab === 'recents') renderRecentsView(main);
+            else if (currentTab === 'keypad') renderKeypadView(main);
+            else if (currentTab === 'voicemail') renderVoicemailView(main);
+        }
+
+        // --- 1. CONTACTS VIEW WITH ALPHABET INDEX ---
+        function renderContactsView(container) {
+            let filtered = contacts.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.phone.includes(searchQuery));
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+            let groups = {};
+            filtered.forEach(c => {
+                let firstLetter = c.name.charAt(0).toUpperCase();
+                if (!/[A-Z]/.test(firstLetter)) firstLetter = '#';
+                if (!groups[firstLetter]) groups[firstLetter] = [];
+                groups[firstLetter].push(c);
+            });
+
+            const sortedKeys = Object.keys(groups).sort();
+
+            container.innerHTML = `
+                <!-- iOS Search Bar -->
+                <div class="px-4 py-2">
+                    <div class="relative flex items-center">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-iosGray text-sm"></i>
+                        <input type="text" id="searchInput" oninput="handleSearch(this.value)" value="${searchQuery}" placeholder="Search" class="w-full pl-9 pr-8 py-2 bg-[#E3E3E9] rounded-xl text-[15px] text-black placeholder-iosGray focus:outline-none border border-black/5 transition-all">
+                        ${searchQuery ? `<button onclick="handleSearch('')" class="absolute right-3 text-iosGray"><i class="fa-solid fa-circle-xmark"></i></button>` : ''}
+                    </div>
+                </div>
+
+                <!-- My Profile Row -->
+                <div class="px-4 py-2">
+                    <div onclick="openMyCard()" class="bg-white rounded-2xl p-3.5 flex items-center space-x-3.5 shadow-xs border border-iosSeparator/30 cursor-pointer ios-spring-touch">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-iosBlue to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-xs">
+                            ME
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-black text-[15px]">My Card</h3>
+                            <p class="text-xs text-iosGray">Personal Profile • Tap to open</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Right Alphabet Scroll Index -->
+                <div class="fixed right-1 top-32 bottom-20 z-20 flex flex-col justify-center items-center text-[10px] font-bold text-iosBlue select-none pr-1 space-y-0.5">
+                    ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#'].map(k => 
+                        `<a href="#group-${k}" class="alphabet-letter">${k}</a>`
+                    ).join('')}
+                </div>
+
+                <!-- Grouped Contacts List -->
+                <div class="px-4 pb-12 pr-6">
+                    ${sortedKeys.length === 0 ? `
+                        <div class="text-center py-20 text-iosGray">
+                            <i class="fa-solid fa-address-book text-4xl mb-2 text-gray-300"></i>
+                            <p class="text-sm font-medium">No Contacts Found</p>
+                        </div>
+                    ` : sortedKeys.map(letter => `
+                        <div id="group-${letter}" class="mb-4 scroll-mt-20">
+                            <div class="text-xs font-semibold text-iosGray px-2 py-1 sticky top-0 bg-iosBg/90 backdrop-blur-md z-10">${letter}</div>
+                            <div class="bg-white rounded-2xl overflow-hidden border border-iosSeparator/30 divide-y divide-iosSeparator/20">
+                                ${groups[letter].map(c => `
+                                    <div class="px-4 py-3 flex items-center justify-between active:bg-iosGroupedBg transition-colors">
+                                        <div onclick="openContactDetail('${c.id}')" class="flex items-center space-x-3.5 flex-1 cursor-pointer">
+                                            ${getAvatarMarkup(c, 'w-10 h-10', 'text-sm')}
+                                            <div>
+                                                <h4 class="font-medium text-black text-[15px] tracking-tight">${highlightMatch(c.name, searchQuery)}</h4>
+                                                <p class="text-xs text-iosGray">${c.phone}</p>
+                                            </div>
+                                        </div>
+                                        <button onclick="initiateRealCall('${c.phone}', '${c.name}')" class="w-9 h-9 rounded-full bg-iosGreen/12 text-iosGreen flex items-center justify-center ios-spring-touch ml-2">
+                                            <i class="fa-solid fa-phone text-xs"></i>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function handleSearch(val) {
+            searchQuery = val;
+            renderContactsView(document.getElementById('mainContent'));
+        }
+
+        // --- 2. FAVORITES VIEW ---
+        function renderFavoritesView(container) {
+            let favs = contacts.filter(c => c.favorite);
+            container.innerHTML = `
+                <div class="px-4 py-3">
+                    <h2 class="text-2xl font-bold tracking-tight mb-4">Favorites</h2>
+                    ${favs.length === 0 ? `
+                        <div class="text-center py-20 text-iosGray">
+                            <i class="fa-solid fa-star text-4xl mb-3 text-amber-300"></i>
+                            <p class="font-semibold text-black text-base">No Favorites Yet</p>
+                            <p class="text-xs mt-1 max-w-xs mx-auto">Tap the star icon inside any contact card to pin them here.</p>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-2 gap-3">
+                            ${favs.map(c => `
+                                <div onclick="openContactDetail('${c.id}')" class="bg-white p-4 rounded-2xl border border-iosSeparator/30 shadow-xs flex flex-col items-center text-center cursor-pointer ios-spring-touch relative">
+                                    ${getAvatarMarkup(c, 'w-16 h-16', 'text-xl mb-2')}
+                                    <h4 class="font-semibold text-[15px] text-black truncate w-full tracking-tight">${c.name}</h4>
+                                    <p class="text-xs text-iosGray truncate w-full mt-0.5">${c.phone}</p>
+                                    <div class="mt-3 flex gap-2 w-full justify-center">
+                                        <button onclick="event.stopPropagation(); initiateRealCall('${c.phone}', '${c.name}')" class="w-9 h-9 rounded-full bg-iosGreen text-white flex items-center justify-center ios-spring-touch shadow-xs">
+                                            <i class="fa-solid fa-phone text-xs"></i>
+                                        </button>
+                                        <button onclick="event.stopPropagation(); showToast('Messaging ${c.name}')" class="w-9 h-9 rounded-full bg-iosGroupedBg text-iosBlue flex items-center justify-center ios-spring-touch">
+                                            <i class="fa-solid fa-message text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // --- 3. RECENTS VIEW ---
+        function renderRecentsView(container) {
+            container.innerHTML = `
+                <div class="px-4 py-2">
+                    <h2 class="text-2xl font-bold tracking-tight mb-3">Recents</h2>
+                    <div class="bg-white rounded-2xl overflow-hidden border border-iosSeparator/30 divide-y divide-iosSeparator/20">
+                        ${recents.length === 0 ? `<div class="p-8 text-center text-iosGray text-sm">No recent calls</div>` : recents.map(r => `
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <div class="flex items-start space-x-3">
+                                    <div class="text-iosGray mt-1">
+                                        <i class="fa-solid ${r.type === 'missed' ? 'fa-phone-slash text-iosRed' : 'fa-phone text-iosBlue'} text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-[15px] ${r.type === 'missed' ? 'text-iosRed font-semibold' : 'text-black'} tracking-tight">${r.name} ${r.count > 1 ? `(${r.count})` : ''}</h4>
+                                        <p class="text-xs text-iosGray">${r.phone} • ${r.time}</p>
+                                    </div>
+                                </div>
+                                <button onclick="initiateRealCall('${r.phone}', '${r.name}')" class="w-9 h-9 rounded-full bg-iosGreen/12 text-iosGreen flex items-center justify-center ios-spring-touch">
+                                    <i class="fa-solid fa-phone text-xs"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function clearRecents() {
+            recents = [];
+            saveRecents();
+            renderRecentsView(document.getElementById('mainContent'));
+            showToast('Recents cleared');
+        }
+
+        function logRecent(name, phone, type) {
+            recents.unshift({
+                id: Date.now().toString(),
+                name,
+                phone,
+                type,
+                time: 'Just now',
+                count: 1
+            });
+            saveRecents();
+        }
+
+        // --- 4. KEYPAD DIALER VIEW ---
+        function renderKeypadView(container) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-between h-[calc(100vh-140px)] px-6 max-w-sm mx-auto pt-2 pb-6">
+                    <!-- Dial Display -->
+                    <div class="h-20 flex items-center justify-center relative w-full mt-2">
+                        <span id="keypadDisplay" class="text-4xl font-light tracking-wide text-black text-center truncate px-8">${keypadNumber}</span>
+                        ${keypadNumber ? `<button onclick="backspaceKeypad()" class="absolute right-2 text-iosGray text-2xl ios-spring-touch"><i class="fa-solid fa-delete-left"></i></button>` : ''}
+                    </div>
+
+                    <!-- iOS Spring Touch Keypad Grid -->
+                    <div class="grid grid-cols-3 gap-5 w-full my-auto">
+                        ${[
+                            {n: '1', sub: ''}, {n: '2', sub: 'A B C'}, {n: '3', sub: 'D E F'},
+                            {n: '4', sub: 'G H I'}, {n: '5', sub: 'J K L'}, {n: '6', sub: 'M N O'},
+                            {n: '7', sub: 'P Q R S'}, {n: '8', sub: 'T U V'}, {n: '9', sub: 'W X Y Z'},
+                            {n: '*', sub: ''}, {n: '0', sub: '+'}, {n: '#', sub: ''}
+                        ].map(k => `
+                            <button onclick="pressKey('${k.n}')" class="w-20 h-20 mx-auto rounded-full bg-[#E5E5EA] flex flex-col items-center justify-center keypad-btn-press shadow-xs">
+                                <span class="text-3xl font-normal text-black leading-none">${k.n}</span>
+                                ${k.sub ? `<span class="text-[9px] font-bold text-iosGray tracking-widest mt-1">${k.sub}</span>` : ''}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <!-- Call Button Launcher -->
+                    <div class="w-full flex justify-center pt-2">
+                        <button id="keypadCallBtn" onclick="handleKeypadCall()" class="w-20 h-20 rounded-full bg-iosGreen text-white flex items-center justify-center text-3xl shadow-lg ios-spring-touch ${!keypadNumber ? 'opacity-35 pointer-events-none' : ''}">
+                            <i class="fa-solid fa-phone"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function pressKey(n) {
+            keypadNumber += n;
+            updateKeypadDisplay();
+        }
+
+        function backspaceKeypad() {
+            keypadNumber = keypadNumber.slice(0, -1);
+            updateKeypadDisplay();
+        }
+
+        function updateKeypadDisplay() {
+            const display = document.getElementById('keypadDisplay');
+            const callBtn = document.getElementById('keypadCallBtn');
+            if (display) display.innerText = keypadNumber;
+            if (callBtn) {
+                if (keypadNumber) {
+                    callBtn.classList.remove('opacity-35', 'pointer-events-none');
+                } else {
+                    callBtn.classList.add('opacity-35', 'pointer-events-none');
+                }
+            }
+        }
+
+        function handleKeypadCall() {
+            if (keypadNumber) {
+                initiateRealCall(keypadNumber, keypadNumber);
+            }
+        }
+
+        // --- 5. VOICEMAIL VIEW ---
+        function renderVoicemailView(container) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-[65vh] px-6 text-center text-iosGray">
+                    <div class="w-16 h-16 rounded-full bg-iosGroupedBg flex items-center justify-center text-iosBlue text-2xl mb-4 shadow-xs">
+                        <i class="fa-solid fa-voicemail"></i>
+                    </div>
+                    <h3 class="font-semibold text-black text-lg mb-1 tracking-tight">Visual Voicemail</h3>
+                    <p class="text-xs text-iosGray max-w-xs mb-6">No recorded voicemail messages from carrier service.</p>
+                    <button onclick="initiateRealCall('*86', 'Voicemail Carrier')" class="bg-iosBlue text-white px-6 py-2.5 rounded-full text-sm font-medium shadow-xs ios-spring-touch">Call Voicemail Carrier</button>
+                </div>
+            `;
+        }
+
+        // Avatar Helper
+        function getAvatarMarkup(contact, sizeClass = 'w-10 h-10', textClass = 'text-sm') {
+            if (contact.avatarType === 'url' && contact.avatarValue) {
+                return `<img src="${contact.avatarValue}" alt="${contact.name}" class="${sizeClass} rounded-full object-cover border border-iosSeparator/30 shadow-xs" onerror="this.onerror=null;this.src='https://placehold.co/150x150/EFEFF4/007AFF?text=User';">`;
+            } else if (contact.avatarType === 'gradient' && contact.avatarValue) {
+                const colors = contact.avatarValue.split(',');
+                const initials = contact.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                return `<div class="${sizeClass} rounded-full flex items-center justify-center font-bold text-white shadow-xs border border-iosSeparator/30" style="background: linear-gradient(135deg, ${colors[0] || '#007AFF'}, ${colors[1] || '#5856D6'});"><span class="${textClass}">${initials}</span></div>`;
+            } else {
+                const icon = contact.avatarValue || 'fa-user';
+                return `<div class="${sizeClass} rounded-full bg-iosGroupedBg text-iosBlue flex items-center justify-center ${textClass} border border-iosSeparator/30 shadow-xs"><i class="fa-solid ${icon}"></i></div>`;
+            }
+        }
+
+        function highlightMatch(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, `<span class="bg-amber-200 font-semibold">$1</span>`);
+        }
+
+        // CONTACT DETAIL SHEET
+        function openContactDetail(id) {
+            const c = contacts.find(item => item.id === id);
+            if (!c) return;
+
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalCard = document.getElementById('modalCard');
+
+            modalCard.innerHTML = `
+                <!-- Modal Bar -->
+                <div class="ios-glass-header border-b border-iosSeparator px-4 py-3 flex items-center justify-between">
+                    <button onclick="closeModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch flex items-center">
+                        <i class="fa-solid fa-chevron-left mr-1.5 text-sm"></i> Back
+                    </button>
+                    <button onclick="openEditContactModal('${c.id}')" class="text-iosBlue text-[17px] font-semibold ios-spring-touch">Edit</button>
+                </div>
+
+                <!-- Detail Body -->
+                <div class="flex-1 overflow-y-auto px-4 py-6 bg-iosBg no-scrollbar space-y-6">
+                    <div class="flex flex-col items-center text-center">
+                        ${getAvatarMarkup(c, 'w-24 h-24', 'text-3xl mb-2')}
+                        <h2 class="text-2xl font-bold text-black mt-2 tracking-tight">${c.name}</h2>
+                    </div>
+
+                    <!-- Quick Call & Actions -->
+                    <div class="grid grid-cols-4 gap-2 px-2">
+                        <button onclick="initiateRealCall('${c.phone}', '${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosGreen border border-iosSeparator/30 shadow-xs ios-spring-touch">
+                            <i class="fa-solid fa-phone text-lg mb-1"></i>
+                            <span class="text-[10px] font-semibold text-black">call</span>
+                        </button>
+                        <button onclick="showToast('Messaging ${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosBlue border border-iosSeparator/30 shadow-xs ios-spring-touch">
+                            <i class="fa-solid fa-message text-lg mb-1"></i>
+                            <span class="text-[10px] font-semibold text-black">message</span>
+                        </button>
+                        <button onclick="showToast('FaceTime with ${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosBlue border border-iosSeparator/30 shadow-xs ios-spring-touch">
+                            <i class="fa-solid fa-video text-lg mb-1"></i>
+                            <span class="text-[10px] font-semibold text-black">video</span>
+                        </button>
+                        <button onclick="showToast('Emailing ${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosBlue border border-iosSeparator/30 shadow-xs ios-spring-touch">
+                            <i class="fa-solid fa-envelope text-lg mb-1"></i>
+                            <span class="text-[10px] font-semibold text-black">mail</span>
+                        </button>
+                    </div>
+
+                    <!-- Phone Number & Details -->
+                    <div class="bg-white rounded-2xl border border-iosSeparator/30 overflow-hidden divide-y divide-iosSeparator/20 px-4 py-1">
+                        <div class="py-2.5 flex justify-between items-center">
+                            <div>
+                                <span class="text-[11px] font-semibold text-iosGray uppercase tracking-wider">mobile phone</span>
+                                <p class="text-[16px] text-iosBlue font-normal mt-0.5">${c.phone}</p>
+                            </div>
+                            <button onclick="initiateRealCall('${c.phone}', '${c.name}')" class="text-iosGreen text-lg px-2 ios-spring-touch">
+                                <i class="fa-solid fa-phone"></i>
+                            </button>
+                        </div>
+                        <div class="py-2.5">
+                            <span class="text-[11px] font-semibold text-iosGray uppercase tracking-wider">email</span>
+                            <p class="text-[16px] text-iosBlue font-normal mt-0.5">${c.email || 'None'}</p>
+                        </div>
+                        <div class="py-2.5">
+                            <span class="text-[11px] font-semibold text-iosGray uppercase tracking-wider">address</span>
+                            <p class="text-[16px] text-black font-normal mt-0.5">${c.address || 'None'}</p>
+                        </div>
+                    </div>
+
+                    <!-- Favorite & Delete -->
+                    <div class="space-y-3">
+                        <button onclick="toggleFavorite('${c.id}')" class="w-full bg-white py-3.5 rounded-2xl border border-iosSeparator/30 font-semibold text-[15px] text-iosBlue shadow-xs flex items-center justify-center ios-spring-touch">
+                            <i class="fa-solid fa-star mr-2 ${c.favorite ? 'text-amber-400' : 'text-iosGray'}"></i> ${c.favorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                        </button>
+                        <button onclick="deleteContact('${c.id}')" class="w-full bg-white py-3.5 rounded-2xl border border-iosSeparator/30 font-semibold text-[15px] text-iosRed shadow-xs ios-spring-touch">
+                            Delete Contact
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modalOverlay.classList.remove('hidden');
+            modalOverlay.classList.add('flex');
+            modalCard.classList.remove('animate-ios-sheet-down');
+            modalCard.classList.add('animate-ios-sheet-up');
+        }
+
+        function openMyCard() {
+            openContactDetail('1');
+        }
+
+        function closeModal() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalCard = document.getElementById('modalCard');
+            modalCard.classList.remove('animate-ios-sheet-up');
+            modalCard.classList.add('animate-ios-sheet-down');
+            setTimeout(() => {
+                modalOverlay.classList.remove('flex');
+                modalOverlay.classList.add('hidden');
+            }, 300);
+        }
+
+        // ADD / EDIT CONTACT MODAL FORM
+        function openAddContactModal() {
+            renderContactFormModal(null);
+        }
+
+        function openEditContactModal(id) {
+            const c = contacts.find(item => item.id === id);
+            if (c) renderContactFormModal(c);
+        }
+
+        function renderContactFormModal(c) {
+            const isEdit = c !== null;
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalCard = document.getElementById('modalCard');
+
+            modalCard.innerHTML = `
+                <div class="ios-glass-header border-b border-iosSeparator px-4 py-3 flex items-center justify-between">
+                    <button onclick="closeModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch">Cancel</button>
+                    <h3 class="font-semibold text-black text-[17px] tracking-tight">${isEdit ? 'Edit Contact' : 'New Contact'}</h3>
+                    <button onclick="saveContactForm(${isEdit ? `'${c.id}'` : 'null'})" class="text-iosBlue text-[17px] font-semibold ios-spring-touch">Done</button>
+                </div>
+
+                <form id="contactForm" onsubmit="event.preventDefault(); saveContactForm(${isEdit ? `'${c.id}'` : 'null'});" class="flex-1 overflow-y-auto px-4 py-6 bg-iosBg space-y-4 no-scrollbar">
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="w-20 h-20 rounded-full bg-iosGroupedBg border border-iosSeparator/40 flex items-center justify-center text-iosBlue text-2xl mb-2 shadow-xs">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                        <span class="text-xs text-iosBlue font-semibold">Add Photo</span>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-iosSeparator/30 overflow-hidden divide-y divide-iosSeparator/20 px-4">
+                        <div class="py-3 flex items-center">
+                            <span class="w-20 text-xs font-semibold text-iosGray">Name</span>
+                            <input type="text" id="formName" required value="${isEdit ? c.name : ''}" placeholder="Full Name" class="flex-1 text-sm focus:outline-none">
+                        </div>
+                        <div class="py-3 flex items-center">
+                            <span class="w-20 text-xs font-semibold text-iosGray">Phone</span>
+                            <input type="tel" id="formPhone" required value="${isEdit ? c.phone : ''}" placeholder="Phone Number" class="flex-1 text-sm focus:outline-none">
+                        </div>
+                        <div class="py-3 flex items-center">
+                            <span class="w-20 text-xs font-semibold text-iosGray">Email</span>
+                            <input type="email" id="formEmail" value="${isEdit && c.email ? c.email : ''}" placeholder="Email Address" class="flex-1 text-sm focus:outline-none">
+                        </div>
+                        <div class="py-3 flex items-center">
+                            <span class="w-20 text-xs font-semibold text-iosGray">Address</span>
+                            <input type="text" id="formAddress" value="${isEdit && c.address ? c.address : ''}" placeholder="Address" class="flex-1 text-sm focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-iosSeparator/30 px-4 py-3 flex items-center justify-between">
+                        <span class="text-sm font-medium text-black">Favorite Contact</span>
+                        <input type="checkbox" id="formFavorite" ${isEdit && c.favorite ? 'checked' : ''} class="w-5 h-5 accent-iosBlue rounded cursor-pointer">
+                    </div>
+                </form>
+            `;
+
+            modalOverlay.classList.remove('hidden');
+            modalOverlay.classList.add('flex');
+            modalCard.classList.remove('animate-ios-sheet-down');
+            modalCard.classList.add('animate-ios-sheet-up');
+        }
+
+        function saveContactForm(id) {
+            const name = document.getElementById('formName').value.trim();
+            const phone = document.getElementById('formPhone').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const address = document.getElementById('formAddress').value.trim();
+            const favorite = document.getElementById('formFavorite').checked;
+
+            if (!name || !phone) {
+                showToast('Name and Phone are required');
+                return;
+            }
+
+            if (id) {
+                const index = contacts.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    contacts[index] = { ...contacts[index], name, phone, email, address, favorite };
+                    showToast('Contact updated');
+                }
+            } else {
+                const newContact = {
+                    id: Date.now().toString(),
+                    name,
+                    phone,
+                    email,
+                    address,
+                    avatarType: 'gradient',
+                    avatarValue: '#007AFF,#5856D6',
+                    favorite
+                };
+                contacts.push(newContact);
+                showToast('Contact added');
+            }
+
+            saveContacts();
+            closeModal();
+            renderBody();
+        }
+
+        function toggleFavorite(id) {
+            const c = contacts.find(item => item.id === id);
+            if (c) {
+                c.favorite = !c.favorite;
+                saveContacts();
+                openContactDetail(c.id);
+                showToast(c.favorite ? 'Added to favorites' : 'Removed from favorites');
+            }
+        }
+
+        function deleteContact(id) {
+            contacts = contacts.filter(item => item.id !== id);
+            saveContacts();
+            closeModal();
+            renderBody();
+            showToast('Contact deleted');
+        }
+
+        // Toast Feedback
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.innerText = message;
+                toast.classList.remove('opacity-0', 'pointer-events-none');
+                toast.classList.add('opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100');
+                    toast.classList.add('opacity-0', 'pointer-events-none');
+                }, 2800);
+            }
         }
     </script>
 </body>
