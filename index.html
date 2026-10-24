@@ -1,856 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>iOS 18 Contacts & Phone</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        iosBg: '#F2F2F7',
-                        iosCard: '#FFFFFF',
-                        iosBlue: '#007AFF',
-                        iosGreen: '#34C759',
-                        iosRed: '#FF3B30',
-                        iosGray: '#8E8E93',
-                        iosLightGray: '#E5E5EA',
-                        iosSeparator: 'rgba(60, 60, 67, 0.18)',
-                        iosGroupedBg: '#EFEFF4'
-                    },
-                    fontFamily: {
-                        sf: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* iOS Authentic Typography Stack */
-        body, input, button {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            touch-action: manipulation;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#075e54">
+<title>LinkChat — Private peer chat</title>
+<style>
+:root{--green:#075e54;--green2:#128c7e;--accent:#25d366;--paper:#efeae2;--ink:#17212b;--muted:#667781;--white:#fff;--line:#e6e9eb;--out:#d9fdd3;--in:#fff;--shadow:0 8px 30px #142b3512}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#e9edef}button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #25a895;outline-offset:2px}.app{min-height:100vh;display:grid;place-items:center;padding:20px}.shell{width:min(1120px,100%);height:min(780px,calc(100vh - 40px));min-height:590px;background:#fff;border-radius:18px;overflow:hidden;display:grid;grid-template-columns:340px 1fr;box-shadow:0 18px 65px #1d343d24}.sidebar{display:flex;flex-direction:column;border-right:1px solid var(--line);min-width:0}.topbar{height:72px;background:#f0f2f5;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px}.brand{display:flex;align-items:center;gap:11px;font-size:20px;font-weight:800;letter-spacing:-.5px}.brandmark{width:39px;height:39px;border-radius:50%;background:var(--green2);display:grid;place-items:center;color:white}.brandmark svg{width:23px;height:23px}.top-actions{display:flex;gap:8px}.iconbtn{border:0;background:transparent;color:#54656f;width:38px;height:38px;border-radius:50%;display:grid;place-items:center}.iconbtn:hover{background:#e3e8eb}.iconbtn svg{width:20px;height:20px}.connect-panel{padding:20px;border-bottom:1px solid var(--line)}.section-label{font-size:11px;text-transform:uppercase;letter-spacing:1.3px;font-weight:800;color:#7b8a92;margin-bottom:12px}.myid{display:flex;align-items:center;gap:10px;background:#f5f7f8;border:1px solid #e5eaed;border-radius:12px;padding:12px}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#cfe9e4;color:#075e54;font-weight:800;flex-shrink:0}.myid-copy{min-width:0;flex:1}.myid-copy strong{display:block;font-size:13px;margin-bottom:4px}.peerid{font-size:12px;color:#52636c;overflow-wrap:anywhere}.copybtn{border:0;background:white;border:1px solid #e1e6e8;border-radius:8px;padding:7px 9px;font-size:12px;color:#36534f}.connect-form{display:flex;gap:8px;margin-top:12px}.connect-form input{width:100%;min-width:0;border:1px solid #dce2e5;border-radius:10px;padding:11px 12px;font-size:13px}.primary{border:0;background:var(--green2);color:white;border-radius:10px;padding:0 15px;font-size:13px;font-weight:700;white-space:nowrap}.primary:hover{background:var(--green)}.hint{font-size:11px;line-height:1.5;color:#7b898f;margin:10px 1px 0}.connection-state{display:flex;align-items:center;gap:7px;font-size:12px;color:#64747b;margin-top:13px}.dot{width:8px;height:8px;border-radius:50%;background:#a7b2b7}.dot.online{background:#25b878;box-shadow:0 0 0 3px #25b87820}.searchbox{margin:14px 16px 10px;background:#f0f2f5;border-radius:10px;display:flex;align-items:center;gap:9px;padding:0 13px;height:39px;color:#7d8b92}.searchbox svg{width:17px;height:17px}.searchbox input{border:0;outline:0;background:transparent;width:100%;font-size:13px}.chat-list{padding:0 8px;overflow:auto}.chat-item{display:flex;align-items:center;gap:12px;padding:13px 10px;border-radius:11px}.chat-item.active{background:#f0f2f5}.chat-item .avatar{width:48px;height:48px;background:#d5eee8}.chat-preview{min-width:0;flex:1}.chat-preview strong{display:block;font-size:14px;margin-bottom:5px}.chat-preview span{font-size:12px;color:#718087;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.empty-note{padding:22px 16px;text-align:center;font-size:12px;color:#87939a;line-height:1.6}.sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding:13px 17px;color:#87939a;font-size:11px;line-height:1.5}.main{display:flex;flex-direction:column;min-width:0;background:var(--paper);position:relative}.chat-head{height:72px;display:flex;align-items:center;gap:12px;padding:0 20px;background:#f0f2f5;border-bottom:1px solid #e5e8ea}.chat-head .avatar{width:43px;height:43px;background:#d4e8e4}.head-copy{min-width:0;flex:1}.head-copy strong{font-size:15px;display:block;margin-bottom:4px}.head-copy span{font-size:12px;color:#667781}.head-tools{display:flex;gap:5px}.messages{flex:1;overflow:auto;padding:25px clamp(14px,4vw,48px);display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth;background-color:var(--paper);background-image:radial-gradient(#b7afa31c .8px,transparent .8px);background-size:18px 18px}.welcome{margin:auto;max-width:420px;text-align:center;background:#ffffffd9;border:1px solid #ffffffa8;border-radius:18px;padding:28px 24px;box-shadow:var(--shadow)}.welcome-logo{width:64px;height:64px;margin:0 auto 16px;border-radius:20px;background:#d7f4e5;display:grid;place-items:center;color:#087f5b}.welcome-logo svg{width:33px;height:33px}.welcome h2{font-size:21px;margin:0 0 9px;letter-spacing:-.5px}.welcome p{font-size:13px;line-height:1.7;color:#667781;margin:0}.welcome .small{font-size:11px;color:#8a969b;margin-top:15px}.day-label{align-self:center;background:#fff9d9;color:#7b7868;border-radius:8px;padding:7px 12px;font-size:11px;box-shadow:0 1px 2px #00000008;margin-bottom:8px}.bubble{max-width:min(76%,520px);padding:9px 11px 7px;border-radius:10px;box-shadow:0 1px 1px #0000000a;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px;line-height:1.5;position:relative}.bubble.incoming{align-self:flex-start;background:var(--in);border-top-left-radius:3px}.bubble.outgoing{align-self:flex-end;background:var(--out);border-top-right-radius:3px}.bubble .meta{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:4px;font-size:10px;color:#718079}.ticks{color:#459bcb;font-weight:800}.file-card{display:flex;align-items:center;gap:10px;min-width:190px;max-width:310px}.file-icon{width:40px;height:44px;border-radius:8px;background:#e4f3ed;color:#187b67;display:grid;place-items:center;flex-shrink:0}.file-icon svg{width:22px;height:22px}.file-info{min-width:0;flex:1}.file-info strong{font-size:12px;display:block;overflow-wrap:anywhere}.file-info span{font-size:10px;color:#718079}.download-link{display:inline-block;margin-top:7px;color:#087d6e;text-decoration:none;font-size:12px;font-weight:700}.image-message{display:block;max-width:100%;max-height:260px;border-radius:7px;object-fit:contain}.composer-wrap{padding:13px 18px 17px;background:#f0f2f5;border-top:1px solid #e3e7e9}.attach-preview{display:none;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;margin-bottom:10px;background:#fff;border-radius:10px;font-size:12px;color:#53636b}.attach-preview.show{display:flex}.attach-preview button{border:0;background:transparent;color:#65757c}.composer{display:flex;align-items:flex-end;gap:9px}.compose-tools{display:flex;gap:2px;padding-bottom:3px}.compose-tools .iconbtn{width:39px;height:39px}.message-input{flex:1;min-width:0;resize:none;max-height:120px;min-height:43px;border:0;border-radius:12px;padding:12px 14px;background:white;outline:0;font-size:14px;line-height:1.35}.sendbtn{height:43px;width:43px;flex-shrink:0;border:0;border-radius:50%;background:var(--green2);color:white;display:grid;place-items:center}.sendbtn:hover{background:var(--green)}.sendbtn svg{width:20px;height:20px}.composer-help{text-align:center;font-size:10px;color:#87949a;margin-top:9px}.toast{position:absolute;top:84px;left:50%;transform:translate(-50%,-8px);opacity:0;pointer-events:none;background:#172b2a;color:#fff;padding:10px 15px;border-radius:10px;font-size:12px;box-shadow:var(--shadow);transition:.22s;z-index:5;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.mobile-back{display:none}.modal-backdrop{display:none;position:fixed;inset:0;background:#10221e66;z-index:20;align-items:center;justify-content:center;padding:20px}.modal-backdrop.show{display:flex}.modal{width:min(420px,100%);background:white;border-radius:18px;padding:24px;box-shadow:0 20px 80px #0002}.modal h3{margin:0 0 8px;font-size:19px}.modal p{margin:0 0 18px;font-size:13px;color:#687880;line-height:1.6}.modal-actions{display:flex;justify-content:flex-end;gap:9px}.secondary{border:1px solid #dce3e5;background:#fff;color:#41545b;border-radius:10px;padding:10px 14px;font-size:13px}.danger{background:#c34444}.hidden{display:none!important}
+@media(max-width:720px){.app{padding:0}.shell{height:100dvh;min-height:0;width:100%;border-radius:0;grid-template-columns:1fr;position:relative}.sidebar{border:0;min-height:0}.main{display:none;min-height:0}.shell.chat-open .sidebar{display:none}.shell.chat-open .main{display:flex}.topbar,.chat-head{height:64px;padding:0 14px}.connect-panel{padding:14px 16px}.searchbox{margin:11px 14px 8px}.sidebar-foot{padding:10px 15px}.chat-head{gap:8px}.mobile-back{display:grid}.chat-head .avatar{width:40px;height:40px}.messages{padding:17px 12px}.bubble{max-width:86%;font-size:14px}.composer-wrap{padding:9px 9px calc(10px + env(safe-area-inset-bottom))}.composer{gap:5px}.compose-tools{gap:0}.compose-tools .iconbtn{width:34px;height:39px}.message-input{padding:12px 11px}.sendbtn{width:41px;height:41px}.composer-help{margin-top:6px}.welcome{padding:24px 18px;margin:auto 4px}.brand{font-size:18px}.top-actions .iconbtn{width:34px}.shell:not(.chat-open) .main{display:none}}
+@media(max-width:380px){.connect-form{gap:6px}.connect-form .primary{padding:0 10px}.connect-form input{padding:10px}.connect-panel{padding:12px}.brand{font-size:17px}.compose-tools .iconbtn{width:30px}.chat-head{padding:0 9px}}
 
-        /* 120 FPS Fluid Spring Animations & Curves */
-        .ios-spring-touch {
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, opacity 0.15s ease;
-            will-change: transform;
-        }
-        .ios-spring-touch:active {
-            transform: scale(0.94);
-            opacity: 0.82;
-        }
+/* WhatsApp Web inspired finish + Apple system typography */
+:root{--green:#075e54;--green2:#00a884;--accent:#25d366;--paper:#efeae2;--ink:#111b21;--muted:#667781;--white:#fff;--line:#dfe3e5;--out:#d9fdd3;--in:#fff;--shadow:0 8px 30px #142b3512}
+html,body,button,input,textarea{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Arial,sans-serif;letter-spacing:normal;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{background:#d1d7db;color:#111b21}
+.app{padding:18px}
+.shell{width:min(1440px,100%);height:min(900px,calc(100vh - 36px));min-height:560px;border-radius:8px;box-shadow:0 6px 28px #0b141a24;grid-template-columns:390px minmax(0,1fr)}
+.sidebar{background:#fff}
+.topbar,.chat-head{background:#f0f2f5;border-color:#e9edef}
+.topbar{height:60px;padding:0 16px}
+.brand{font-size:20px;font-weight:650;letter-spacing:-.45px;color:#111b21}
+.brandmark{width:38px;height:38px;background:#00a884}
+.iconbtn{color:#54656f;transition:background .15s ease,transform .15s ease}
+.iconbtn:hover{background:#e3e8eb}
+.iconbtn:active{transform:scale(.94)}
+.connect-panel{padding:16px;border-bottom:1px solid #e9edef}
+.section-label{font-size:10px;letter-spacing:1px;color:#667781;font-weight:700}
+.myid{background:#f7f8f8;border:1px solid #edf0f1;border-radius:8px;padding:10px}
+.avatar{background:#dfe5e7;color:#54656f;font-weight:600}
+.copybtn{border-radius:6px;color:#008f76;border-color:#e1e6e8}
+.connect-form input{border-radius:8px;border-color:#d9dfe2;padding:12px;font-size:14px}
+.primary{background:#00a884;border-radius:8px;font-size:13px;font-weight:650}
+.primary:hover,.sendbtn:hover{background:#008f76}
+.searchbox{border-radius:8px;background:#f0f2f5;height:36px;margin:10px 12px 8px}
+.chat-list{padding:0}
+.chat-item{border-radius:0;padding:12px 14px;border-bottom:1px solid #f4f5f5;gap:13px}
+.chat-item.active{background:#f0f2f5}
+.chat-item:hover{background:#f5f6f6}
+.chat-item .avatar{width:49px;height:49px;background:#dfe5e7}
+.chat-preview strong{font-size:16px;font-weight:500;color:#111b21;margin-bottom:5px}
+.chat-preview span{font-size:13px;color:#667781}
+.sidebar-foot{border-top:1px solid #e9edef;background:#f7f8f8}
+.main{background:#efeae2}
+.chat-head{height:60px;padding:0 16px;border-bottom:1px solid #e9edef}
+.chat-head .avatar{width:40px;height:40px;background:#dfe5e7}
+.head-copy strong{font-size:16px;font-weight:500;color:#111b21;margin-bottom:3px}
+.head-copy span{font-size:13px;color:#667781}
+.messages{padding:24px clamp(16px,5vw,76px);gap:7px;background-color:#efeae2;background-image:radial-gradient(#a99f8e1c .8px,transparent .8px);background-size:20px 20px}
+.welcome{border:0;border-radius:12px;background:#fff;padding:28px;box-shadow:0 1px 2px #0b141a12}
+.welcome-logo{background:#e0f5ec;color:#008f76;border-radius:18px}
+.welcome h2{font-size:22px;font-weight:600;letter-spacing:-.55px;color:#111b21}
+.welcome p{font-size:14px;line-height:1.65}
+.day-label{background:#fff;color:#54656f;border-radius:7px;padding:7px 12px;font-size:12px;box-shadow:0 1px 1px #0b141a10}
+.bubble{font-size:14.2px;line-height:1.48;padding:8px 9px 6px;border-radius:8px;box-shadow:0 1px 1px #0b141a12;color:#111b21}
+.bubble.incoming{background:#fff;border-top-left-radius:0}
+.bubble.outgoing{background:#d9fdd3;border-top-right-radius:0}
+.bubble .meta{font-size:11px;color:#667781}
+.composer-wrap{background:#f0f2f5;border-top:0;padding:10px 16px 14px}
+.message-input{border-radius:8px;min-height:42px;padding:11px 14px;background:#fff;font-size:15px;box-shadow:0 1px 1px #0b141a08}
+.sendbtn{background:#00a884;width:42px;height:42px}
+.composer-help{font-size:10px;color:#86969d}
+.toast{background:#233138;border-radius:8px}
+.modal{border-radius:12px}
+@media(max-width:900px){.shell{grid-template-columns:340px minmax(0,1fr)}}
+@media(max-width:720px){.app{padding:0}.shell{height:100dvh;min-height:0;width:100%;border-radius:0;grid-template-columns:1fr}.topbar,.chat-head{height:60px}.chat-item{padding:12px 14px}.messages{padding:16px 10px}.composer-wrap{padding:8px 9px calc(9px + env(safe-area-inset-bottom))}.message-input{font-size:16px}.bubble{font-size:14.5px}}
 
-        /* Keypad press animation */
-        .keypad-btn-press {
-            transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.15s ease;
-            will-change: transform;
-        }
-        .keypad-btn-press:active {
-            transform: scale(0.86);
-            background-color: #D1D1D6 !important;
-        }
-
-        /* Sheet & View Animations */
-        @keyframes iosSlideUp {
-            0% { transform: translateY(100%); opacity: 0.8; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes iosSlideDown {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(100%); opacity: 0; }
-        }
-        @keyframes iosFadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .animate-ios-sheet-up {
-            animation: iosSlideUp 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            will-change: transform, opacity;
-        }
-        .animate-ios-sheet-down {
-            animation: iosSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            will-change: transform, opacity;
-        }
-        .animate-ios-fade {
-            animation: iosFadeIn 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        /* iOS Glassmorphism Translucent Backdrops */
-        .ios-glass-header {
-            background: rgba(249, 249, 249, 0.88);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-        }
-        .ios-glass-nav {
-            background: rgba(249, 249, 249, 0.92);
-            backdrop-filter: blur(30px) saturate(200%);
-            -webkit-backdrop-filter: blur(30px) saturate(200%);
-        }
-
-        /* Hide Scrollbar */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Dynamic Alphabet Index Bar Hover Indicator */
-        .alphabet-letter {
-            transition: color 0.15s ease, transform 0.15s ease;
-        }
-        .alphabet-letter:active {
-            transform: scale(1.4);
-            color: #007AFF;
-        }
-    </style>
+</style>
 </head>
-<body class="bg-iosBg text-black h-screen flex flex-col justify-between overflow-hidden font-sf select-none">
-
-    <!-- TOP iOS HEADER VIEW -->
-    <header id="appHeader" class="ios-glass-header border-b border-iosSeparator sticky top-0 z-30 px-4 pt-10 pb-2 transition-all">
-        <div id="headerContent" class="flex items-center justify-between">
-            <!-- Populated dynamically via JS -->
-        </div>
-    </header>
-
-    <!-- MAIN SCROLLABLE CONTENT AREA -->
-    <main id="mainContent" class="flex-1 overflow-y-auto relative no-scrollbar pb-24 animate-ios-fade">
-        <!-- Tab views dynamically injected here -->
-    </main>
-
-    <!-- iOS 18 BOTTOM NAVIGATION BAR -->
-    <nav class="ios-glass-nav border-t border-iosSeparator fixed bottom-0 left-0 right-0 z-40 pb-safe pt-1.5 px-2 flex justify-around items-center h-16">
-        <button onclick="switchTab('favorites')" id="nav-favorites" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
-            <i class="fa-solid fa-star text-[19px] mb-0.5"></i>
-            <span class="text-[10px] font-medium tracking-tight">Favorites</span>
-        </button>
-        <button onclick="switchTab('recents')" id="nav-recents" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
-            <i class="fa-solid fa-clock-rotate-left text-[19px] mb-0.5"></i>
-            <span class="text-[10px] font-medium tracking-tight">Recents</span>
-        </button>
-        <button onclick="switchTab('contacts')" id="nav-contacts" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosBlue">
-            <i class="fa-solid fa-user-group text-[19px] mb-0.5"></i>
-            <span class="text-[10px] font-semibold tracking-tight">Contacts</span>
-        </button>
-        <button onclick="switchTab('keypad')" id="nav-keypad" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
-            <i class="fa-solid fa-calculator text-[19px] mb-0.5"></i>
-            <span class="text-[10px] font-medium tracking-tight">Keypad</span>
-        </button>
-        <button onclick="switchTab('voicemail')" id="nav-voicemail" class="ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray">
-            <i class="fa-solid fa-voicemail text-[19px] mb-0.5"></i>
-            <span class="text-[10px] font-medium tracking-tight">Voicemail</span>
-        </button>
-    </nav>
-
-    <!-- MODAL OVERLAY (Contact Detail, Add, Edit) -->
-    <div id="modalOverlay" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex-col justify-end transition-opacity duration-300">
-        <div id="modalCard" class="bg-iosBg w-full h-[94%] rounded-t-[32px] shadow-2xl flex flex-col overflow-hidden transform translate-y-full">
-            <!-- Injected via JS -->
-        </div>
-    </div>
-
-    <!-- NATIVE CALLING & FEEDBACK TOAST -->
-    <div id="toast" class="fixed top-14 left-1/2 transform -translate-x-1/2 z-50 bg-black/85 text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 max-w-xs text-center border border-white/10">
-        Opening default phone app...
-    </div>
-
-    <!-- JAVASCRIPT APPLICATION LOGIC -->
-    <script>
-        // State Management
-        let currentTab = 'contacts';
-        let contacts = [];
-        let recents = [];
-        let searchQuery = '';
-        let keypadNumber = '';
-
-        // Default iOS Contacts Dataset
-        const defaultContacts = [
-            {
-                id: '1',
-                name: 'Apple Support',
-                phone: '1-800-692-7753',
-                email: 'support@apple.com',
-                address: '1 Apple Park Way, Cupertino, CA',
-                avatarType: 'preset',
-                avatarValue: 'fa-apple',
-                favorite: true
-            },
-            {
-                id: '2',
-                name: 'Tim Cook',
-                phone: '+14089961010',
-                email: 'tcook@apple.com',
-                address: 'One Infinite Loop, Cupertino, CA',
-                avatarType: 'gradient',
-                avatarValue: '#007AFF,#5856D6',
-                favorite: true
-            },
-            {
-                id: '3',
-                name: 'Elena Rostova',
-                phone: '+15552348811',
-                email: 'elena.rostova@design.io',
-                address: '742 Evergreen Terrace, Springfield',
-                avatarType: 'preset',
-                avatarValue: 'fa-user-nurse',
-                favorite: true
-            },
-            {
-                id: '4',
-                name: 'Marcus Vance',
-                phone: '+15554920033',
-                email: 'marcus.v@devcorp.com',
-                address: '42 Wallaby Way, Sydney',
-                avatarType: 'url',
-                avatarValue: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-                favorite: false
-            },
-            {
-                id: '5',
-                name: 'Sophia Chen',
-                phone: '+15558849921',
-                email: 'sophia@venturecap.com',
-                address: '88 Market St, San Francisco, CA',
-                avatarType: 'gradient',
-                avatarValue: '#FF2D55,#FF9500',
-                favorite: false
-            }
-        ];
-
-        const defaultRecents = [
-            { id: 'r1', name: 'Tim Cook', phone: '+14089961010', type: 'outgoing', time: 'Today, 2:45 PM', count: 2 },
-            { id: 'r2', name: 'Elena Rostova', phone: '+15552348811', type: 'incoming', time: 'Yesterday, 11:20 AM', count: 1 },
-            { id: 'r3', name: '+1 (555) 321-9988', phone: '+15553219988', type: 'missed', time: 'Oct 12, 4:15 PM', count: 1 }
-        ];
-
-        // Global Native Phone Calling Trigger via tel: protocol
-        function initiateRealCall(phone, contactName = '') {
-            if (!phone) {
-                showToast('No phone number available!');
-                return;
-            }
-
-            const sanitizedNumber = phone.replace(/[^0-9+]/g, '');
-            logRecent(contactName || phone, phone, 'outgoing');
-
-            showToast(`Calling ${sanitizedNumber} via default phone app...`);
-
-            // Execute Native Cellular/Phone Dialer App directly
-            setTimeout(() => {
-                window.location.href = `tel:${sanitizedNumber}`;
-            }, 300);
-        }
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            switchTab('contacts');
-        });
-
-        function loadData() {
-            const storedContacts = localStorage.getItem('ios18_contacts_db');
-            const storedRecents = localStorage.getItem('ios18_recents_db');
-            
-            if (storedContacts) {
-                try { contacts = JSON.parse(storedContacts); } catch(e) { contacts = defaultContacts; }
-            } else {
-                contacts = defaultContacts;
-                saveContacts();
-            }
-
-            if (storedRecents) {
-                try { recents = JSON.parse(storedRecents); } catch(e) { recents = defaultRecents; }
-            } else {
-                recents = defaultRecents;
-                saveRecents();
-            }
-        }
-
-        function saveContacts() {
-            localStorage.setItem('ios18_contacts_db', JSON.stringify(contacts));
-        }
-
-        function saveRecents() {
-            localStorage.setItem('ios18_recents_db', JSON.stringify(recents));
-        }
-
-        // Tab Navigation
-        function switchTab(tab) {
-            currentTab = tab;
-            ['favorites', 'recents', 'contacts', 'keypad', 'voicemail'].forEach(t => {
-                const btn = document.getElementById(`nav-${t}`);
-                if (btn) {
-                    if (t === tab) {
-                        btn.className = 'ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosBlue';
-                        btn.querySelector('span').className = 'text-[10px] font-semibold tracking-tight';
-                    } else {
-                        btn.className = 'ios-spring-touch flex flex-col items-center justify-center flex-1 text-iosGray';
-                        btn.querySelector('span').className = 'text-[10px] font-medium tracking-tight';
-                    }
-                }
-            });
-
-            renderHeader();
-            renderBody();
-        }
-
-        // Render iOS Dynamic Header
-        function renderHeader() {
-            const headerContent = document.getElementById('headerContent');
-            if (!headerContent) return;
-
-            if (currentTab === 'contacts') {
-                headerContent.innerHTML = `
-                    <div class="flex items-center justify-between w-full">
-                        <button onclick="openAddContactModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch flex items-center">
-                            <i class="fa-solid fa-plus text-lg mr-1"></i> Add
-                        </button>
-                        <h1 class="text-[17px] font-semibold text-black tracking-tight">Contacts</h1>
-                        <button onclick="showToast('Lists feature ready')" class="text-iosBlue text-[17px] font-normal ios-spring-touch">Lists</button>
-                    </div>
-                `;
-            } else if (currentTab === 'favorites') {
-                headerContent.innerHTML = `
-                    <div class="flex items-center justify-between w-full">
-                        <button onclick="openAddContactModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch">
-                            <i class="fa-solid fa-plus text-lg"></i>
-                        </button>
-                        <h1 class="text-[17px] font-semibold text-black tracking-tight">Favorites</h1>
-                        <div class="w-6"></div>
-                    </div>
-                `;
-            } else if (currentTab === 'recents') {
-                headerContent.innerHTML = `
-                    <div class="flex items-center justify-between w-full">
-                        <div class="flex bg-iosGroupedBg rounded-lg p-0.5 border border-iosSeparator/30">
-                            <button class="px-3 py-1 text-xs font-semibold bg-white rounded-md shadow-xs">All</button>
-                            <button class="px-3 py-1 text-xs text-iosGray">Missed</button>
-                        </div>
-                        <h1 class="text-[17px] font-semibold text-black tracking-tight">Recents</h1>
-                        <button onclick="clearRecents()" class="text-iosBlue text-sm font-normal ios-spring-touch">Clear</button>
-                    </div>
-                `;
-            } else if (currentTab === 'keypad') {
-                headerContent.innerHTML = `<h1 class="text-[17px] font-semibold text-black text-center w-full tracking-tight">Keypad</h1>`;
-            } else if (currentTab === 'voicemail') {
-                headerContent.innerHTML = `<h1 class="text-[17px] font-semibold text-black text-center w-full tracking-tight">Voicemail</h1>`;
-            }
-        }
-
-        // Render Body Content
-        function renderBody() {
-            const main = document.getElementById('mainContent');
-            if (!main) return;
-            
-            if (currentTab === 'contacts') renderContactsView(main);
-            else if (currentTab === 'favorites') renderFavoritesView(main);
-            else if (currentTab === 'recents') renderRecentsView(main);
-            else if (currentTab === 'keypad') renderKeypadView(main);
-            else if (currentTab === 'voicemail') renderVoicemailView(main);
-        }
-
-        // --- 1. CONTACTS VIEW WITH ALPHABET INDEX ---
-        function renderContactsView(container) {
-            let filtered = contacts.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.phone.includes(searchQuery));
-            filtered.sort((a, b) => a.name.localeCompare(b.name));
-
-            let groups = {};
-            filtered.forEach(c => {
-                let firstLetter = c.name.charAt(0).toUpperCase();
-                if (!/[A-Z]/.test(firstLetter)) firstLetter = '#';
-                if (!groups[firstLetter]) groups[firstLetter] = [];
-                groups[firstLetter].push(c);
-            });
-
-            const sortedKeys = Object.keys(groups).sort();
-
-            container.innerHTML = `
-                <!-- iOS Search Bar -->
-                <div class="px-4 py-2">
-                    <div class="relative flex items-center">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-iosGray text-sm"></i>
-                        <input type="text" id="searchInput" oninput="handleSearch(this.value)" value="${searchQuery}" placeholder="Search" class="w-full pl-9 pr-8 py-2 bg-[#E3E3E9] rounded-xl text-[15px] text-black placeholder-iosGray focus:outline-none border border-black/5 transition-all">
-                        ${searchQuery ? `<button onclick="handleSearch('')" class="absolute right-3 text-iosGray"><i class="fa-solid fa-circle-xmark"></i></button>` : ''}
-                    </div>
-                </div>
-
-                <!-- My Profile Row -->
-                <div class="px-4 py-2">
-                    <div onclick="openMyCard()" class="bg-white rounded-2xl p-3.5 flex items-center space-x-3.5 shadow-xs border border-iosSeparator/30 cursor-pointer ios-spring-touch">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-iosBlue to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-xs">
-                            ME
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-black text-[15px]">My Card</h3>
-                            <p class="text-xs text-iosGray">Personal Profile • Tap to open</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dynamic Right Alphabet Scroll Index -->
-                <div class="fixed right-1 top-32 bottom-20 z-20 flex flex-col justify-center items-center text-[10px] font-bold text-iosBlue select-none pr-1 space-y-0.5">
-                    ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#'].map(k => 
-                        `<a href="#group-${k}" class="alphabet-letter">${k}</a>`
-                    ).join('')}
-                </div>
-
-                <!-- Grouped Contacts List -->
-                <div class="px-4 pb-12 pr-6">
-                    ${sortedKeys.length === 0 ? `
-                        <div class="text-center py-20 text-iosGray">
-                            <i class="fa-solid fa-address-book text-4xl mb-2 text-gray-300"></i>
-                            <p class="text-sm font-medium">No Contacts Found</p>
-                        </div>
-                    ` : sortedKeys.map(letter => `
-                        <div id="group-${letter}" class="mb-4 scroll-mt-20">
-                            <div class="text-xs font-semibold text-iosGray px-2 py-1 sticky top-0 bg-iosBg/90 backdrop-blur-md z-10">${letter}</div>
-                            <div class="bg-white rounded-2xl overflow-hidden border border-iosSeparator/30 divide-y divide-iosSeparator/20">
-                                ${groups[letter].map(c => `
-                                    <div class="px-4 py-3 flex items-center justify-between active:bg-iosGroupedBg transition-colors">
-                                        <div onclick="openContactDetail('${c.id}')" class="flex items-center space-x-3.5 flex-1 cursor-pointer">
-                                            ${getAvatarMarkup(c, 'w-10 h-10', 'text-sm')}
-                                            <div>
-                                                <h4 class="font-medium text-black text-[15px] tracking-tight">${highlightMatch(c.name, searchQuery)}</h4>
-                                                <p class="text-xs text-iosGray">${c.phone}</p>
-                                            </div>
-                                        </div>
-                                        <button onclick="initiateRealCall('${c.phone}', '${c.name}')" class="w-9 h-9 rounded-full bg-iosGreen/12 text-iosGreen flex items-center justify-center ios-spring-touch ml-2">
-                                            <i class="fa-solid fa-phone text-xs"></i>
-                                        </button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function handleSearch(val) {
-            searchQuery = val;
-            renderContactsView(document.getElementById('mainContent'));
-        }
-
-        // --- 2. FAVORITES VIEW ---
-        function renderFavoritesView(container) {
-            let favs = contacts.filter(c => c.favorite);
-            container.innerHTML = `
-                <div class="px-4 py-3">
-                    <h2 class="text-2xl font-bold tracking-tight mb-4">Favorites</h2>
-                    ${favs.length === 0 ? `
-                        <div class="text-center py-20 text-iosGray">
-                            <i class="fa-solid fa-star text-4xl mb-3 text-amber-300"></i>
-                            <p class="font-semibold text-black text-base">No Favorites Yet</p>
-                            <p class="text-xs mt-1 max-w-xs mx-auto">Tap the star icon inside any contact card to pin them here.</p>
-                        </div>
-                    ` : `
-                        <div class="grid grid-cols-2 gap-3">
-                            ${favs.map(c => `
-                                <div onclick="openContactDetail('${c.id}')" class="bg-white p-4 rounded-2xl border border-iosSeparator/30 shadow-xs flex flex-col items-center text-center cursor-pointer ios-spring-touch relative">
-                                    ${getAvatarMarkup(c, 'w-16 h-16', 'text-xl mb-2')}
-                                    <h4 class="font-semibold text-[15px] text-black truncate w-full tracking-tight">${c.name}</h4>
-                                    <p class="text-xs text-iosGray truncate w-full mt-0.5">${c.phone}</p>
-                                    <div class="mt-3 flex gap-2 w-full justify-center">
-                                        <button onclick="event.stopPropagation(); initiateRealCall('${c.phone}', '${c.name}')" class="w-9 h-9 rounded-full bg-iosGreen text-white flex items-center justify-center ios-spring-touch shadow-xs">
-                                            <i class="fa-solid fa-phone text-xs"></i>
-                                        </button>
-                                        <button onclick="event.stopPropagation(); showToast('Messaging ${c.name}')" class="w-9 h-9 rounded-full bg-iosGroupedBg text-iosBlue flex items-center justify-center ios-spring-touch">
-                                            <i class="fa-solid fa-message text-xs"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `}
-                </div>
-            `;
-        }
-
-        // --- 3. RECENTS VIEW ---
-        function renderRecentsView(container) {
-            container.innerHTML = `
-                <div class="px-4 py-2">
-                    <h2 class="text-2xl font-bold tracking-tight mb-3">Recents</h2>
-                    <div class="bg-white rounded-2xl overflow-hidden border border-iosSeparator/30 divide-y divide-iosSeparator/20">
-                        ${recents.length === 0 ? `<div class="p-8 text-center text-iosGray text-sm">No recent calls</div>` : recents.map(r => `
-                            <div class="px-4 py-3 flex items-center justify-between">
-                                <div class="flex items-start space-x-3">
-                                    <div class="text-iosGray mt-1">
-                                        <i class="fa-solid ${r.type === 'missed' ? 'fa-phone-slash text-iosRed' : 'fa-phone text-iosBlue'} text-xs"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium text-[15px] ${r.type === 'missed' ? 'text-iosRed font-semibold' : 'text-black'} tracking-tight">${r.name} ${r.count > 1 ? `(${r.count})` : ''}</h4>
-                                        <p class="text-xs text-iosGray">${r.phone} • ${r.time}</p>
-                                    </div>
-                                </div>
-                                <button onclick="initiateRealCall('${r.phone}', '${r.name}')" class="w-9 h-9 rounded-full bg-iosGreen/12 text-iosGreen flex items-center justify-center ios-spring-touch">
-                                    <i class="fa-solid fa-phone text-xs"></i>
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function clearRecents() {
-            recents = [];
-            saveRecents();
-            renderRecentsView(document.getElementById('mainContent'));
-            showToast('Recents cleared');
-        }
-
-        function logRecent(name, phone, type) {
-            recents.unshift({
-                id: Date.now().toString(),
-                name,
-                phone,
-                type,
-                time: 'Just now',
-                count: 1
-            });
-            saveRecents();
-        }
-
-        // --- 4. KEYPAD DIALER VIEW ---
-        function renderKeypadView(container) {
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-between h-[calc(100vh-140px)] px-6 max-w-sm mx-auto pt-2 pb-6">
-                    <!-- Dial Display -->
-                    <div class="h-20 flex items-center justify-center relative w-full mt-2">
-                        <span id="keypadDisplay" class="text-4xl font-light tracking-wide text-black text-center truncate px-8">${keypadNumber}</span>
-                        ${keypadNumber ? `<button onclick="backspaceKeypad()" class="absolute right-2 text-iosGray text-2xl ios-spring-touch"><i class="fa-solid fa-delete-left"></i></button>` : ''}
-                    </div>
-
-                    <!-- iOS Spring Touch Keypad Grid -->
-                    <div class="grid grid-cols-3 gap-5 w-full my-auto">
-                        ${[
-                            {n: '1', sub: ''}, {n: '2', sub: 'A B C'}, {n: '3', sub: 'D E F'},
-                            {n: '4', sub: 'G H I'}, {n: '5', sub: 'J K L'}, {n: '6', sub: 'M N O'},
-                            {n: '7', sub: 'P Q R S'}, {n: '8', sub: 'T U V'}, {n: '9', sub: 'W X Y Z'},
-                            {n: '*', sub: ''}, {n: '0', sub: '+'}, {n: '#', sub: ''}
-                        ].map(k => `
-                            <button onclick="pressKey('${k.n}')" class="w-20 h-20 mx-auto rounded-full bg-[#E5E5EA] flex flex-col items-center justify-center keypad-btn-press shadow-xs">
-                                <span class="text-3xl font-normal text-black leading-none">${k.n}</span>
-                                ${k.sub ? `<span class="text-[9px] font-bold text-iosGray tracking-widest mt-1">${k.sub}</span>` : ''}
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <!-- Call Button Launcher -->
-                    <div class="w-full flex justify-center pt-2">
-                        <button id="keypadCallBtn" onclick="handleKeypadCall()" class="w-20 h-20 rounded-full bg-iosGreen text-white flex items-center justify-center text-3xl shadow-lg ios-spring-touch ${!keypadNumber ? 'opacity-35 pointer-events-none' : ''}">
-                            <i class="fa-solid fa-phone"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function pressKey(n) {
-            keypadNumber += n;
-            updateKeypadDisplay();
-        }
-
-        function backspaceKeypad() {
-            keypadNumber = keypadNumber.slice(0, -1);
-            updateKeypadDisplay();
-        }
-
-        function updateKeypadDisplay() {
-            const display = document.getElementById('keypadDisplay');
-            const callBtn = document.getElementById('keypadCallBtn');
-            if (display) display.innerText = keypadNumber;
-            if (callBtn) {
-                if (keypadNumber) {
-                    callBtn.classList.remove('opacity-35', 'pointer-events-none');
-                } else {
-                    callBtn.classList.add('opacity-35', 'pointer-events-none');
-                }
-            }
-        }
-
-        function handleKeypadCall() {
-            if (keypadNumber) {
-                initiateRealCall(keypadNumber, keypadNumber);
-            }
-        }
-
-        // --- 5. VOICEMAIL VIEW ---
-        function renderVoicemailView(container) {
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-[65vh] px-6 text-center text-iosGray">
-                    <div class="w-16 h-16 rounded-full bg-iosGroupedBg flex items-center justify-center text-iosBlue text-2xl mb-4 shadow-xs">
-                        <i class="fa-solid fa-voicemail"></i>
-                    </div>
-                    <h3 class="font-semibold text-black text-lg mb-1 tracking-tight">Visual Voicemail</h3>
-                    <p class="text-xs text-iosGray max-w-xs mb-6">No recorded voicemail messages from carrier service.</p>
-                    <button onclick="initiateRealCall('*86', 'Voicemail Carrier')" class="bg-iosBlue text-white px-6 py-2.5 rounded-full text-sm font-medium shadow-xs ios-spring-touch">Call Voicemail Carrier</button>
-                </div>
-            `;
-        }
-
-        // Avatar Helper
-        function getAvatarMarkup(contact, sizeClass = 'w-10 h-10', textClass = 'text-sm') {
-            if (contact.avatarType === 'url' && contact.avatarValue) {
-                return `<img src="${contact.avatarValue}" alt="${contact.name}" class="${sizeClass} rounded-full object-cover border border-iosSeparator/30 shadow-xs" onerror="this.onerror=null;this.src='https://placehold.co/150x150/EFEFF4/007AFF?text=User';">`;
-            } else if (contact.avatarType === 'gradient' && contact.avatarValue) {
-                const colors = contact.avatarValue.split(',');
-                const initials = contact.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                return `<div class="${sizeClass} rounded-full flex items-center justify-center font-bold text-white shadow-xs border border-iosSeparator/30" style="background: linear-gradient(135deg, ${colors[0] || '#007AFF'}, ${colors[1] || '#5856D6'});"><span class="${textClass}">${initials}</span></div>`;
-            } else {
-                const icon = contact.avatarValue || 'fa-user';
-                return `<div class="${sizeClass} rounded-full bg-iosGroupedBg text-iosBlue flex items-center justify-center ${textClass} border border-iosSeparator/30 shadow-xs"><i class="fa-solid ${icon}"></i></div>`;
-            }
-        }
-
-        function highlightMatch(text, query) {
-            if (!query) return text;
-            const regex = new RegExp(`(${query})`, 'gi');
-            return text.replace(regex, `<span class="bg-amber-200 font-semibold">$1</span>`);
-        }
-
-        // CONTACT DETAIL SHEET
-        function openContactDetail(id) {
-            const c = contacts.find(item => item.id === id);
-            if (!c) return;
-
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modalCard = document.getElementById('modalCard');
-
-            modalCard.innerHTML = `
-                <!-- Modal Bar -->
-                <div class="ios-glass-header border-b border-iosSeparator px-4 py-3 flex items-center justify-between">
-                    <button onclick="closeModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch flex items-center">
-                        <i class="fa-solid fa-chevron-left mr-1.5 text-sm"></i> Back
-                    </button>
-                    <button onclick="openEditContactModal('${c.id}')" class="text-iosBlue text-[17px] font-semibold ios-spring-touch">Edit</button>
-                </div>
-
-                <!-- Detail Body -->
-                <div class="flex-1 overflow-y-auto px-4 py-6 bg-iosBg no-scrollbar space-y-6">
-                    <div class="flex flex-col items-center text-center">
-                        ${getAvatarMarkup(c, 'w-24 h-24', 'text-3xl mb-2')}
-                        <h2 class="text-2xl font-bold text-black mt-2 tracking-tight">${c.name}</h2>
-                    </div>
-
-                    <!-- Quick Call & Actions -->
-                    <div class="grid grid-cols-4 gap-2 px-2">
-                        <button onclick="initiateRealCall('${c.phone}', '${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosGreen border border-iosSeparator/30 shadow-xs ios-spring-touch">
-                            <i class="fa-solid fa-phone text-lg mb-1"></i>
-                            <span class="text-[10px] font-semibold text-black">call</span>
-                        </button>
-                        <button onclick="showToast('Messaging ${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosBlue border border-iosSeparator/30 shadow-xs ios-spring-touch">
-                            <i class="fa-solid fa-message text-lg mb-1"></i>
-                            <span class="text-[10px] font-semibold text-black">message</span>
-                        </button>
-                        <button onclick="showToast('FaceTime with ${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosBlue border border-iosSeparator/30 shadow-xs ios-spring-touch">
-                            <i class="fa-solid fa-video text-lg mb-1"></i>
-                            <span class="text-[10px] font-semibold text-black">video</span>
-                        </button>
-                        <button onclick="showToast('Emailing ${c.name}')" class="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-iosBlue border border-iosSeparator/30 shadow-xs ios-spring-touch">
-                            <i class="fa-solid fa-envelope text-lg mb-1"></i>
-                            <span class="text-[10px] font-semibold text-black">mail</span>
-                        </button>
-                    </div>
-
-                    <!-- Phone Number & Details -->
-                    <div class="bg-white rounded-2xl border border-iosSeparator/30 overflow-hidden divide-y divide-iosSeparator/20 px-4 py-1">
-                        <div class="py-2.5 flex justify-between items-center">
-                            <div>
-                                <span class="text-[11px] font-semibold text-iosGray uppercase tracking-wider">mobile phone</span>
-                                <p class="text-[16px] text-iosBlue font-normal mt-0.5">${c.phone}</p>
-                            </div>
-                            <button onclick="initiateRealCall('${c.phone}', '${c.name}')" class="text-iosGreen text-lg px-2 ios-spring-touch">
-                                <i class="fa-solid fa-phone"></i>
-                            </button>
-                        </div>
-                        <div class="py-2.5">
-                            <span class="text-[11px] font-semibold text-iosGray uppercase tracking-wider">email</span>
-                            <p class="text-[16px] text-iosBlue font-normal mt-0.5">${c.email || 'None'}</p>
-                        </div>
-                        <div class="py-2.5">
-                            <span class="text-[11px] font-semibold text-iosGray uppercase tracking-wider">address</span>
-                            <p class="text-[16px] text-black font-normal mt-0.5">${c.address || 'None'}</p>
-                        </div>
-                    </div>
-
-                    <!-- Favorite & Delete -->
-                    <div class="space-y-3">
-                        <button onclick="toggleFavorite('${c.id}')" class="w-full bg-white py-3.5 rounded-2xl border border-iosSeparator/30 font-semibold text-[15px] text-iosBlue shadow-xs flex items-center justify-center ios-spring-touch">
-                            <i class="fa-solid fa-star mr-2 ${c.favorite ? 'text-amber-400' : 'text-iosGray'}"></i> ${c.favorite ? 'Remove from Favorites' : 'Add to Favorites'}
-                        </button>
-                        <button onclick="deleteContact('${c.id}')" class="w-full bg-white py-3.5 rounded-2xl border border-iosSeparator/30 font-semibold text-[15px] text-iosRed shadow-xs ios-spring-touch">
-                            Delete Contact
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            modalOverlay.classList.remove('hidden');
-            modalOverlay.classList.add('flex');
-            modalCard.classList.remove('animate-ios-sheet-down');
-            modalCard.classList.add('animate-ios-sheet-up');
-        }
-
-        function openMyCard() {
-            openContactDetail('1');
-        }
-
-        function closeModal() {
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modalCard = document.getElementById('modalCard');
-            modalCard.classList.remove('animate-ios-sheet-up');
-            modalCard.classList.add('animate-ios-sheet-down');
-            setTimeout(() => {
-                modalOverlay.classList.remove('flex');
-                modalOverlay.classList.add('hidden');
-            }, 300);
-        }
-
-        // ADD / EDIT CONTACT MODAL FORM
-        function openAddContactModal() {
-            renderContactFormModal(null);
-        }
-
-        function openEditContactModal(id) {
-            const c = contacts.find(item => item.id === id);
-            if (c) renderContactFormModal(c);
-        }
-
-        function renderContactFormModal(c) {
-            const isEdit = c !== null;
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modalCard = document.getElementById('modalCard');
-
-            modalCard.innerHTML = `
-                <div class="ios-glass-header border-b border-iosSeparator px-4 py-3 flex items-center justify-between">
-                    <button onclick="closeModal()" class="text-iosBlue text-[17px] font-normal ios-spring-touch">Cancel</button>
-                    <h3 class="font-semibold text-black text-[17px] tracking-tight">${isEdit ? 'Edit Contact' : 'New Contact'}</h3>
-                    <button onclick="saveContactForm(${isEdit ? `'${c.id}'` : 'null'})" class="text-iosBlue text-[17px] font-semibold ios-spring-touch">Done</button>
-                </div>
-
-                <form id="contactForm" onsubmit="event.preventDefault(); saveContactForm(${isEdit ? `'${c.id}'` : 'null'});" class="flex-1 overflow-y-auto px-4 py-6 bg-iosBg space-y-4 no-scrollbar">
-                    <div class="flex flex-col items-center mb-4">
-                        <div class="w-20 h-20 rounded-full bg-iosGroupedBg border border-iosSeparator/40 flex items-center justify-center text-iosBlue text-2xl mb-2 shadow-xs">
-                            <i class="fa-solid fa-camera"></i>
-                        </div>
-                        <span class="text-xs text-iosBlue font-semibold">Add Photo</span>
-                    </div>
-
-                    <div class="bg-white rounded-2xl border border-iosSeparator/30 overflow-hidden divide-y divide-iosSeparator/20 px-4">
-                        <div class="py-3 flex items-center">
-                            <span class="w-20 text-xs font-semibold text-iosGray">Name</span>
-                            <input type="text" id="formName" required value="${isEdit ? c.name : ''}" placeholder="Full Name" class="flex-1 text-sm focus:outline-none">
-                        </div>
-                        <div class="py-3 flex items-center">
-                            <span class="w-20 text-xs font-semibold text-iosGray">Phone</span>
-                            <input type="tel" id="formPhone" required value="${isEdit ? c.phone : ''}" placeholder="Phone Number" class="flex-1 text-sm focus:outline-none">
-                        </div>
-                        <div class="py-3 flex items-center">
-                            <span class="w-20 text-xs font-semibold text-iosGray">Email</span>
-                            <input type="email" id="formEmail" value="${isEdit && c.email ? c.email : ''}" placeholder="Email Address" class="flex-1 text-sm focus:outline-none">
-                        </div>
-                        <div class="py-3 flex items-center">
-                            <span class="w-20 text-xs font-semibold text-iosGray">Address</span>
-                            <input type="text" id="formAddress" value="${isEdit && c.address ? c.address : ''}" placeholder="Address" class="flex-1 text-sm focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl border border-iosSeparator/30 px-4 py-3 flex items-center justify-between">
-                        <span class="text-sm font-medium text-black">Favorite Contact</span>
-                        <input type="checkbox" id="formFavorite" ${isEdit && c.favorite ? 'checked' : ''} class="w-5 h-5 accent-iosBlue rounded cursor-pointer">
-                    </div>
-                </form>
-            `;
-
-            modalOverlay.classList.remove('hidden');
-            modalOverlay.classList.add('flex');
-            modalCard.classList.remove('animate-ios-sheet-down');
-            modalCard.classList.add('animate-ios-sheet-up');
-        }
-
-        function saveContactForm(id) {
-            const name = document.getElementById('formName').value.trim();
-            const phone = document.getElementById('formPhone').value.trim();
-            const email = document.getElementById('formEmail').value.trim();
-            const address = document.getElementById('formAddress').value.trim();
-            const favorite = document.getElementById('formFavorite').checked;
-
-            if (!name || !phone) {
-                showToast('Name and Phone are required');
-                return;
-            }
-
-            if (id) {
-                const index = contacts.findIndex(item => item.id === id);
-                if (index !== -1) {
-                    contacts[index] = { ...contacts[index], name, phone, email, address, favorite };
-                    showToast('Contact updated');
-                }
-            } else {
-                const newContact = {
-                    id: Date.now().toString(),
-                    name,
-                    phone,
-                    email,
-                    address,
-                    avatarType: 'gradient',
-                    avatarValue: '#007AFF,#5856D6',
-                    favorite
-                };
-                contacts.push(newContact);
-                showToast('Contact added');
-            }
-
-            saveContacts();
-            closeModal();
-            renderBody();
-        }
-
-        function toggleFavorite(id) {
-            const c = contacts.find(item => item.id === id);
-            if (c) {
-                c.favorite = !c.favorite;
-                saveContacts();
-                openContactDetail(c.id);
-                showToast(c.favorite ? 'Added to favorites' : 'Removed from favorites');
-            }
-        }
-
-        function deleteContact(id) {
-            contacts = contacts.filter(item => item.id !== id);
-            saveContacts();
-            closeModal();
-            renderBody();
-            showToast('Contact deleted');
-        }
-
-        // Toast Feedback
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            if (toast) {
-                toast.innerText = message;
-                toast.classList.remove('opacity-0', 'pointer-events-none');
-                toast.classList.add('opacity-100');
-                setTimeout(() => {
-                    toast.classList.remove('opacity-100');
-                    toast.classList.add('opacity-0', 'pointer-events-none');
-                }, 2800);
-            }
-        }
-    </script>
+<body>
+<div class="app"><div class="shell" id="shell">
+<aside class="sidebar">
+  <header class="topbar"><div class="brand"><div class="brandmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></div>LinkChat</div><div class="top-actions"><button class="iconbtn" id="newChatBtn" title="New connection" aria-label="New connection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button><button class="iconbtn" id="infoBtn" title="About LinkChat" aria-label="About LinkChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></div></header>
+  <section class="connect-panel" id="connectPanel"><div class="section-label">Your device</div><div class="myid"><div class="avatar" id="myAvatar">Y</div><div class="myid-copy"><strong id="myName">Your device</strong><div class="peerid" id="myPeerId">Starting connection ID…</div></div><button class="copybtn" id="copyIdBtn">Copy</button></div><form class="connect-form" id="connectForm"><input id="peerInput" placeholder="Enter friend's connection ID" autocomplete="off" required><button class="primary" type="submit">Connect</button></form><div class="hint">Open LinkChat on both phones. Share your connection ID, then enter the other person's ID to start a private chat.</div><div class="connection-state"><span class="dot" id="stateDot"></span><span id="stateText">Connecting to network…</span></div></section>
+  <div class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="searchInput" placeholder="Search chats" aria-label="Search chats"></div>
+  <div class="chat-list" id="chatList"><div class="empty-note" id="emptyChats">No chats yet.<br>Connect another device to begin.</div></div>
+  <footer class="sidebar-foot">Peer-to-peer messaging powered by WebRTC.<br>Keep this page open while chatting.</footer>
+</aside>
+<main class="main" id="mainChat">
+  <header class="chat-head"><button class="iconbtn mobile-back" id="backBtn" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><div class="avatar" id="activeAvatar">?</div><div class="head-copy"><strong id="activeName">Connect a device</strong><span id="activeStatus">Your conversations appear here</span></div><div class="head-tools"><button class="iconbtn" id="shareIdBtn" title="Share your ID" aria-label="Share your ID"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg></button><button class="iconbtn" id="disconnectBtn" title="Disconnect" aria-label="Disconnect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.6 13.4a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M13.4 10.6a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"/><path d="m4 4 16 16"/></svg></button></div></header>
+  <section class="messages" id="messages"><div class="welcome" id="welcome"><div class="welcome-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></div><h2>Your chats, directly connected</h2><p>Connect to another phone using its connection ID. Send messages, photos and files directly between devices.</p><div class="small">No account required. Both devices need an internet connection.</div></div></section>
+  <div class="composer-wrap"><div class="attach-preview" id="attachPreview"><span id="attachName">File selected</span><button id="removeAttach" aria-label="Remove attachment">Remove</button></div><div class="composer"><div class="compose-tools"><button class="iconbtn" id="attachBtn" title="Attach file" aria-label="Attach file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m21.4 11.1-8.5 8.5a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg></button><input type="file" id="fileInput" class="hidden" multiple></div><textarea id="messageInput" class="message-input" rows="1" placeholder="Type a message" disabled aria-label="Type a message"></textarea><button class="sendbtn" id="sendBtn" aria-label="Send message" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div><div class="composer-help">Messages and files are sent directly to the connected device</div></div>
+  <div class="toast" id="toast" role="status"></div>
+</main>
+</div></div>
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal"><h3 id="modalTitle">About LinkChat</h3><p id="modalText">LinkChat uses peer-to-peer WebRTC connections. Your messages are not stored on a LinkChat server, but connection setup uses a public signaling service.</p><div class="modal-actions"><button class="secondary" id="modalCancel">Close</button><button class="primary hidden" id="modalConfirm">Disconnect</button></div></div></div>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const shell=$('shell'), myPeerIdEl=$('myPeerId'), stateDot=$('stateDot'),stateText=$('stateText'),peerInput=$('peerInput'),connectForm=$('connectForm'),chatList=$('chatList'),messages=$('messages'),welcome=$('welcome'),messageInput=$('messageInput'),sendBtn=$('sendBtn'),fileInput=$('fileInput'),attachPreview=$('attachPreview'),attachName=$('attachName'),toastEl=$('toast');
+let peer=null,myPeerId='',activePeerId='',pendingFiles=[],toastTimer=null,chatRecords=new Map(),connections=new Map(),incomingTransfers=new Map();
+const MAX_FILE_SIZE=20*1024*1024, CHUNK_SIZE=48*1024;
+function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2600)}
+function setState(text,online=false){stateText.textContent=text;stateDot.classList.toggle('online',online)}
+function shortId(id){return id? (id.length>24?id.slice(0,24)+'…':id):'Waiting for ID'}
+function makeAvatar(text){return (text||'D').trim().slice(0,1).toUpperCase()}
+function timeNow(){return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+function formatSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return (bytes/1024).toFixed(1)+' KB';return (bytes/1048576).toFixed(1)+' MB'}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function recordFor(id){if(!chatRecords.has(id))chatRecords.set(id,{id,name:'Device '+shortId(id),messages:[],conn:null,online:false,last:'Connected device',lastTime:''});return chatRecords.get(id)}
+function renderChatList(){const filter=$('searchInput').value.toLowerCase().trim();chatList.innerHTML='';let records=[...chatRecords.values()].filter(r=>(r.name+' '+r.id+' '+r.last).toLowerCase().includes(filter));if(!records.length){chatList.innerHTML='<div class="empty-note">'+(chatRecords.size?'No matching chats.':'No chats yet.<br>Connect another device to begin.')+'</div>';return}records.sort((a,b)=>(b.lastTime||'').localeCompare(a.lastTime||''));for(const r of records){const item=document.createElement('button');item.type='button';item.className='chat-item'+(r.id===activePeerId?' active':'');item.style.width='100%';item.style.textAlign='left';item.style.border='0';item.style.background=r.id===activePeerId?'#f0f2f5':'transparent';item.innerHTML='<div class="avatar">'+escapeHTML(makeAvatar(r.name))+'</div><div class="chat-preview"><strong>'+escapeHTML(r.name)+'</strong><span>'+escapeHTML(r.last||'No messages yet')+'</span></div>';item.addEventListener('click',()=>selectChat(r.id));chatList.appendChild(item)}}
+function selectChat(id){activePeerId=id;const r=recordFor(id);$('activeAvatar').textContent=makeAvatar(r.name);$('activeName').textContent=r.name;$('activeStatus').textContent=r.online?'connected':'not connected';messageInput.disabled=!r.online;sendBtn.disabled=!r.online;welcome.classList.add('hidden');messages.querySelectorAll('.bubble,.day-label').forEach(n=>n.remove());for(const m of r.messages)renderMessage(m,false);if(!r.messages.length){const note=document.createElement('div');note.className='day-label';note.textContent=r.online?'Connected. Say hello.':'This device is currently disconnected';messages.appendChild(note)}shell.classList.add('chat-open');renderChatList();scrollBottom()}
+function scrollBottom(){messages.scrollTop=messages.scrollHeight}
+function renderMessage(m,scroll=true){welcome.classList.add('hidden');const b=document.createElement('div');b.className='bubble '+(m.mine?'outgoing':'incoming');if(m.kind==='file'){const card=document.createElement('div');card.className='file-card';card.innerHTML='<div class="file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></div><div class="file-info"><strong>'+escapeHTML(m.name)+'</strong><span>'+escapeHTML(formatSize(m.size||0))+'</span></div>';b.appendChild(card);if(m.url&&!m.mine){const a=document.createElement('a');a.href=m.url;a.download=m.name;a.className='download-link';a.textContent='Download file';b.appendChild(a)}else if(m.mine){const small=document.createElement('div');small.style.cssText='font-size:11px;color:#718079;margin-top:7px';small.textContent='File sent';b.appendChild(small)}}else if(m.kind==='image'&&m.url){const img=document.createElement('img');img.className='image-message';img.src=m.url;img.alt=m.name||'Shared image';b.appendChild(img);if(m.caption){const cap=document.createElement('div');cap.textContent=m.caption;cap.style.marginTop='6px';b.appendChild(cap)}if(!m.mine){const a=document.createElement('a');a.href=m.url;a.download=m.name||'image';a.className='download-link';a.textContent='Download image';b.appendChild(a)}}else{const body=document.createElement('div');body.textContent=m.text||'';b.appendChild(body)}const meta=document.createElement('div');meta.className='meta';meta.textContent=m.time||timeNow();if(m.mine){const tick=document.createElement('span');tick.className='ticks';tick.textContent=m.delivered?'✓✓':'✓';meta.appendChild(tick)}b.appendChild(meta);messages.appendChild(b);if(scroll)scrollBottom()}
+function addMessage(id,m){const r=recordFor(id);r.messages.push(m);r.last=m.kind==='file'||m.kind==='image'?'Attachment: '+(m.name||'file'):(m.text||'Message');r.lastTime=new Date().toISOString();if(activePeerId===id)renderMessage(m);renderChatList()}
+function sendPacket(id,packet){const conn=connections.get(id);if(!conn||!conn.open){toast('This device is not connected');return false}try{conn.send(packet);return true}catch(e){toast('Could not send data');return false}}
+function connectTo(id){id=id.trim();if(!id)return;if(!peer){toast('Connection service is still starting');return}if(id===myPeerId){toast('You cannot connect to your own ID');return}if(connections.has(id)&&connections.get(id).open){selectChat(id);toast('Already connected');return}const r=recordFor(id);r.name='Device '+shortId(id);setState('Connecting to device…');let conn;try{conn=peer.connect(id,{reliable:true,serialization:'binary'});setupConnection(conn,true)}catch(e){toast('Could not start connection');setState('Ready to connect',true)}}
+function setupConnection(conn,outgoing){const id=conn.peer;connections.set(id,conn);const r=recordFor(id);r.conn=conn;conn.on('open',()=>{r.online=true;r.last='Connected';r.lastTime=new Date().toISOString();setState('Connected to a device',true);selectChat(id);sendPacket(id,{type:'hello',name:'Device '+shortId(myPeerId),version:1});toast('Device connected');renderChatList()});conn.on('data',data=>handlePacket(id,data));conn.on('close',()=>{r.online=false;r.conn=null;if(connections.get(id)===conn)connections.delete(id);if(activePeerId===id){$('activeStatus').textContent='disconnected';messageInput.disabled=true;sendBtn.disabled=true}setState(connections.size?'Connected to a device':'Ready to connect',connections.size>0);renderChatList();toast('Device disconnected')});conn.on('error',err=>{console.warn(err);if(outgoing)toast('Connection failed. Check the ID and try again.');r.online=false;renderChatList()})}
+function handlePacket(id,data){if(data&&typeof data==='object'&&data.type){if(data.type==='hello'){const r=recordFor(id);if(data.name&&String(data.name).length<60)r.name=String(data.name);r.online=true;r.last='Connected';if(activePeerId===id){$('activeName').textContent=r.name;$('activeAvatar').textContent=makeAvatar(r.name)}renderChatList();return}if(data.type==='message'){if(typeof data.text!=='string')return;addMessage(id,{mine:false,kind:'text',text:data.text.slice(0,10000),time:timeNow()});return}if(data.type==='file-start'){if(!data.transferId||!data.name||!Number.isFinite(data.size)||data.size<0||data.size>MAX_FILE_SIZE){toast('Incoming file rejected: invalid or too large');return}incomingTransfers.set(data.transferId,{id,name:String(data.name).slice(0,180),size:data.size,mime:String(data.mime||'application/octet-stream'),chunks:[],received:0});toast('Receiving '+String(data.name).slice(0,45));return}if(data.type==='file-chunk'){const t=incomingTransfers.get(data.transferId);if(!t||!(data.chunk instanceof ArrayBuffer||ArrayBuffer.isView(data.chunk)))return;const chunk=data.chunk instanceof ArrayBuffer?data.chunk:data.chunk.buffer.slice(data.chunk.byteOffset,data.chunk.byteOffset+data.chunk.byteLength);t.chunks.push(chunk);t.received+=chunk.byteLength;if(t.received>t.size||t.received>MAX_FILE_SIZE){incomingTransfers.delete(data.transferId);toast('File transfer stopped: size limit exceeded');return}return}if(data.type==='file-end'){const t=incomingTransfers.get(data.transferId);if(!t)return;incomingTransfers.delete(data.transferId);if(t.received!==t.size){toast('File transfer incomplete');return}const blob=new Blob(t.chunks,{type:t.mime}),url=URL.createObjectURL(blob),kind=t.mime.startsWith('image/')?'image':'file';addMessage(id,{mine:false,kind,name:t.name,size:t.size,mime:t.mime,url,time:timeNow()});toast('File received');return}if(data.type==='file-error'){toast(data.message||'File transfer failed');return}}}
+async function sendText(){const text=messageInput.value.trim();if(!text||!activePeerId)return;if(!sendPacket(activePeerId,{type:'message',text})){return}addMessage(activePeerId,{mine:true,kind:'text',text,time:timeNow(),delivered:true});messageInput.value='';resizeInput()}
+function resizeInput(){messageInput.style.height='auto';messageInput.style.height=Math.min(messageInput.scrollHeight,120)+'px'}
+async function sendFile(file){if(!activePeerId||!recordFor(activePeerId).online){toast('Connect a device first');return}if(file.size>MAX_FILE_SIZE){toast('File is too large. Maximum size is 20 MB.');return}if(file.size===0){toast('This file is empty');return}const id=activePeerId,transferId='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);const started=sendPacket(id,{type:'file-start',transferId,name:file.name,size:file.size,mime:file.type||'application/octet-stream'});if(!started)return;toast('Sending '+file.name);try{for(let offset=0;offset<file.size;offset+=CHUNK_SIZE){if(!connections.get(id)?.open)throw new Error('Connection lost');const buf=await file.slice(offset,Math.min(offset+CHUNK_SIZE,file.size)).arrayBuffer();if(!sendPacket(id,{type:'file-chunk',transferId,chunk:buf}))throw new Error('Send failed');await new Promise(resolve=>setTimeout(resolve,4))}sendPacket(id,{type:'file-end',transferId});const url=URL.createObjectURL(file);const kind=file.type.startsWith('image/')?'image':'file';addMessage(id,{mine:true,kind,name:file.name,size:file.size,mime:file.type,url,time:timeNow(),delivered:true});toast('File sent')}catch(e){sendPacket(id,{type:'file-error',message:'File transfer was interrupted'});toast('File transfer interrupted')}}
+function openModal(title,text,confirmText,onConfirm){$('modalTitle').textContent=title;$('modalText').textContent=text;$('modalConfirm').classList.toggle('hidden',!confirmText);$('modalConfirm').textContent=confirmText||'';$('modalBackdrop').classList.add('show');$('modalConfirm').onclick=()=>{closeModal();if(onConfirm)onConfirm()}}
+function closeModal(){$('modalBackdrop').classList.remove('show')}
+function initPeer(){if(typeof Peer==='undefined'){setState('Could not load connection library');myPeerIdEl.textContent='Library unavailable';toast('Check your internet connection and reload');return}try{peer=new Peer(undefined,{debug:0});peer.on('open',id=>{myPeerId=id;myPeerIdEl.textContent=id;setState('Ready to connect',true)});peer.on('connection',conn=>setupConnection(conn,false));peer.on('disconnected',()=>{setState('Reconnecting…');if(peer&&!peer.destroyed)peer.reconnect()});peer.on('error',err=>{console.warn(err);if(err.type==='unavailable-id')toast('ID unavailable; refresh the page');else if(err.type==='peer-unavailable')toast('That device ID was not found. Check it and try again.');else if(err.type==='network')setState('Network issue — reconnecting');else setState('Connection service error')});peer.on('close',()=>setState('Connection closed'))}catch(e){setState('Unable to start connection service')}}
+$('copyIdBtn').addEventListener('click',async()=>{if(!myPeerId){toast('Your ID is still loading');return}try{await navigator.clipboard.writeText(myPeerId);toast('Connection ID copied')}catch(e){peerInput.value=myPeerId;peerInput.select();toast('ID selected — copy it manually')}});
+connectForm.addEventListener('submit',e=>{e.preventDefault();connectTo(peerInput.value);peerInput.value=''});
+$('sendBtn').addEventListener('click',sendText);messageInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendText()}});messageInput.addEventListener('input',resizeInput);
+$('attachBtn').addEventListener('click',()=>{if(!activePeerId||!recordFor(activePeerId).online){toast('Connect a device before sending files');return}fileInput.click()});fileInput.addEventListener('change',()=>{pendingFiles=[...fileInput.files];if(pendingFiles.length){attachName.textContent=pendingFiles.map(f=>f.name).join(', ');attachPreview.classList.add('show');if(pendingFiles.length===1){sendFile(pendingFiles[0])}else{pendingFiles.forEach((f,i)=>setTimeout(()=>sendFile(f),i*100));}}fileInput.value=''});$('removeAttach').addEventListener('click',()=>{pendingFiles=[];attachPreview.classList.remove('show')});
+$('searchInput').addEventListener('input',renderChatList);$('backBtn').addEventListener('click',()=>shell.classList.remove('chat-open'));$('newChatBtn').addEventListener('click',()=>{if(window.matchMedia('(max-width:720px)').matches)shell.classList.remove('chat-open');peerInput.focus();$('connectPanel').scrollIntoView({behavior:'smooth',block:'nearest'})});$('infoBtn').addEventListener('click',()=>openModal('About LinkChat','LinkChat is a browser-based peer-to-peer chat demo. WebRTC encrypts data in transit between connected browsers, while a public signaling service helps devices find each other. Messages are kept in this page memory and are lost when you reload. Only connect to people you trust.','',null));$('shareIdBtn').addEventListener('click',async()=>{if(!myPeerId){toast('Your ID is still loading');return}const text='Connect with me on LinkChat. My connection ID: '+myPeerId;try{if(navigator.share)await navigator.share({title:'LinkChat connection',text});else{await navigator.clipboard.writeText(text);toast('Connection details copied')}}catch(e){if(e.name!=='AbortError')toast('Could not share automatically')}});$('disconnectBtn').addEventListener('click',()=>{if(!activePeerId){toast('No active chat selected');return}const id=activePeerId;openModal('Disconnect device?','This will close the peer-to-peer connection with '+recordFor(id).name+'. Your current chat history will remain until you reload.','Disconnect',()=>{connections.get(id)?.close();connections.delete(id);const r=recordFor(id);r.online=false;r.conn=null;messageInput.disabled=true;sendBtn.disabled=true;$('activeStatus').textContent='disconnected';setState(connections.size?'Connected to a device':'Ready to connect',connections.size>0);renderChatList()})});$('modalCancel').addEventListener('click',closeModal);$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))closeModal()});
+window.addEventListener('beforeunload',()=>{for(const url of [])URL.revokeObjectURL(url);if(peer)peer.destroy()});initPeer();
+})();
+</script>
 </body>
 </html>
