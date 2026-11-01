@@ -1,220 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#075e54">
-<title>LinkChat — Private peer chat</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeoCraft</title>
 <style>
-:root{--green:#075e54;--green2:#128c7e;--accent:#25d366;--paper:#efeae2;--ink:#17212b;--muted:#667781;--white:#fff;--line:#e6e9eb;--out:#d9fdd3;--in:#fff;--shadow:0 8px 30px #142b3512}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;color:var(--ink);background:#e9edef}button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #25a895;outline-offset:2px}.app{min-height:100vh;display:grid;place-items:center;padding:20px}.shell{width:min(1120px,100%);height:min(780px,calc(100vh - 40px));min-height:590px;background:#fff;border-radius:18px;overflow:hidden;display:grid;grid-template-columns:340px 1fr;box-shadow:0 18px 65px #1d343d24}.sidebar{display:flex;flex-direction:column;border-right:1px solid var(--line);min-width:0}.topbar{height:72px;background:#f0f2f5;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px}.brand{display:flex;align-items:center;gap:11px;font-size:20px;font-weight:800;letter-spacing:-.5px}.brandmark{width:39px;height:39px;border-radius:50%;background:var(--green2);display:grid;place-items:center;color:white}.brandmark svg{width:23px;height:23px}.top-actions{display:flex;gap:8px}.iconbtn{border:0;background:transparent;color:#54656f;width:38px;height:38px;border-radius:50%;display:grid;place-items:center}.iconbtn:hover{background:#e3e8eb}.iconbtn svg{width:20px;height:20px}.connect-panel{padding:20px;border-bottom:1px solid var(--line)}.section-label{font-size:11px;text-transform:uppercase;letter-spacing:1.3px;font-weight:800;color:#7b8a92;margin-bottom:12px}.myid{display:flex;align-items:center;gap:10px;background:#f5f7f8;border:1px solid #e5eaed;border-radius:12px;padding:12px}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#cfe9e4;color:#075e54;font-weight:800;flex-shrink:0}.myid-copy{min-width:0;flex:1}.myid-copy strong{display:block;font-size:13px;margin-bottom:4px}.peerid{font-size:12px;color:#52636c;overflow-wrap:anywhere}.copybtn{border:0;background:white;border:1px solid #e1e6e8;border-radius:8px;padding:7px 9px;font-size:12px;color:#36534f}.connect-form{display:flex;gap:8px;margin-top:12px}.connect-form input{width:100%;min-width:0;border:1px solid #dce2e5;border-radius:10px;padding:11px 12px;font-size:13px}.primary{border:0;background:var(--green2);color:white;border-radius:10px;padding:0 15px;font-size:13px;font-weight:700;white-space:nowrap}.primary:hover{background:var(--green)}.hint{font-size:11px;line-height:1.5;color:#7b898f;margin:10px 1px 0}.connection-state{display:flex;align-items:center;gap:7px;font-size:12px;color:#64747b;margin-top:13px}.dot{width:8px;height:8px;border-radius:50%;background:#a7b2b7}.dot.online{background:#25b878;box-shadow:0 0 0 3px #25b87820}.searchbox{margin:14px 16px 10px;background:#f0f2f5;border-radius:10px;display:flex;align-items:center;gap:9px;padding:0 13px;height:39px;color:#7d8b92}.searchbox svg{width:17px;height:17px}.searchbox input{border:0;outline:0;background:transparent;width:100%;font-size:13px}.chat-list{padding:0 8px;overflow:auto}.chat-item{display:flex;align-items:center;gap:12px;padding:13px 10px;border-radius:11px}.chat-item.active{background:#f0f2f5}.chat-item .avatar{width:48px;height:48px;background:#d5eee8}.chat-preview{min-width:0;flex:1}.chat-preview strong{display:block;font-size:14px;margin-bottom:5px}.chat-preview span{font-size:12px;color:#718087;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.empty-note{padding:22px 16px;text-align:center;font-size:12px;color:#87939a;line-height:1.6}.sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding:13px 17px;color:#87939a;font-size:11px;line-height:1.5}.main{display:flex;flex-direction:column;min-width:0;background:var(--paper);position:relative}.chat-head{height:72px;display:flex;align-items:center;gap:12px;padding:0 20px;background:#f0f2f5;border-bottom:1px solid #e5e8ea}.chat-head .avatar{width:43px;height:43px;background:#d4e8e4}.head-copy{min-width:0;flex:1}.head-copy strong{font-size:15px;display:block;margin-bottom:4px}.head-copy span{font-size:12px;color:#667781}.head-tools{display:flex;gap:5px}.messages{flex:1;overflow:auto;padding:25px clamp(14px,4vw,48px);display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth;background-color:var(--paper);background-image:radial-gradient(#b7afa31c .8px,transparent .8px);background-size:18px 18px}.welcome{margin:auto;max-width:420px;text-align:center;background:#ffffffd9;border:1px solid #ffffffa8;border-radius:18px;padding:28px 24px;box-shadow:var(--shadow)}.welcome-logo{width:64px;height:64px;margin:0 auto 16px;border-radius:20px;background:#d7f4e5;display:grid;place-items:center;color:#087f5b}.welcome-logo svg{width:33px;height:33px}.welcome h2{font-size:21px;margin:0 0 9px;letter-spacing:-.5px}.welcome p{font-size:13px;line-height:1.7;color:#667781;margin:0}.welcome .small{font-size:11px;color:#8a969b;margin-top:15px}.day-label{align-self:center;background:#fff9d9;color:#7b7868;border-radius:8px;padding:7px 12px;font-size:11px;box-shadow:0 1px 2px #00000008;margin-bottom:8px}.bubble{max-width:min(76%,520px);padding:9px 11px 7px;border-radius:10px;box-shadow:0 1px 1px #0000000a;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px;line-height:1.5;position:relative}.bubble.incoming{align-self:flex-start;background:var(--in);border-top-left-radius:3px}.bubble.outgoing{align-self:flex-end;background:var(--out);border-top-right-radius:3px}.bubble .meta{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:4px;font-size:10px;color:#718079}.ticks{color:#459bcb;font-weight:800}.file-card{display:flex;align-items:center;gap:10px;min-width:190px;max-width:310px}.file-icon{width:40px;height:44px;border-radius:8px;background:#e4f3ed;color:#187b67;display:grid;place-items:center;flex-shrink:0}.file-icon svg{width:22px;height:22px}.file-info{min-width:0;flex:1}.file-info strong{font-size:12px;display:block;overflow-wrap:anywhere}.file-info span{font-size:10px;color:#718079}.download-link{display:inline-block;margin-top:7px;color:#087d6e;text-decoration:none;font-size:12px;font-weight:700}.image-message{display:block;max-width:100%;max-height:260px;border-radius:7px;object-fit:contain}.composer-wrap{padding:13px 18px 17px;background:#f0f2f5;border-top:1px solid #e3e7e9}.attach-preview{display:none;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;margin-bottom:10px;background:#fff;border-radius:10px;font-size:12px;color:#53636b}.attach-preview.show{display:flex}.attach-preview button{border:0;background:transparent;color:#65757c}.composer{display:flex;align-items:flex-end;gap:9px}.compose-tools{display:flex;gap:2px;padding-bottom:3px}.compose-tools .iconbtn{width:39px;height:39px}.message-input{flex:1;min-width:0;resize:none;max-height:120px;min-height:43px;border:0;border-radius:12px;padding:12px 14px;background:white;outline:0;font-size:14px;line-height:1.35}.sendbtn{height:43px;width:43px;flex-shrink:0;border:0;border-radius:50%;background:var(--green2);color:white;display:grid;place-items:center}.sendbtn:hover{background:var(--green)}.sendbtn svg{width:20px;height:20px}.composer-help{text-align:center;font-size:10px;color:#87949a;margin-top:9px}.toast{position:absolute;top:84px;left:50%;transform:translate(-50%,-8px);opacity:0;pointer-events:none;background:#172b2a;color:#fff;padding:10px 15px;border-radius:10px;font-size:12px;box-shadow:var(--shadow);transition:.22s;z-index:5;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.mobile-back{display:none}.modal-backdrop{display:none;position:fixed;inset:0;background:#10221e66;z-index:20;align-items:center;justify-content:center;padding:20px}.modal-backdrop.show{display:flex}.modal{width:min(420px,100%);background:white;border-radius:18px;padding:24px;box-shadow:0 20px 80px #0002}.modal h3{margin:0 0 8px;font-size:19px}.modal p{margin:0 0 18px;font-size:13px;color:#687880;line-height:1.6}.modal-actions{display:flex;justify-content:flex-end;gap:9px}.secondary{border:1px solid #dce3e5;background:#fff;color:#41545b;border-radius:10px;padding:10px 14px;font-size:13px}.danger{background:#c34444}.hidden{display:none!important}
-@media(max-width:720px){.app{padding:0}.shell{height:100dvh;min-height:0;width:100%;border-radius:0;grid-template-columns:1fr;position:relative}.sidebar{border:0;min-height:0}.main{display:none;min-height:0}.shell.chat-open .sidebar{display:none}.shell.chat-open .main{display:flex}.topbar,.chat-head{height:64px;padding:0 14px}.connect-panel{padding:14px 16px}.searchbox{margin:11px 14px 8px}.sidebar-foot{padding:10px 15px}.chat-head{gap:8px}.mobile-back{display:grid}.chat-head .avatar{width:40px;height:40px}.messages{padding:17px 12px}.bubble{max-width:86%;font-size:14px}.composer-wrap{padding:9px 9px calc(10px + env(safe-area-inset-bottom))}.composer{gap:5px}.compose-tools{gap:0}.compose-tools .iconbtn{width:34px;height:39px}.message-input{padding:12px 11px}.sendbtn{width:41px;height:41px}.composer-help{margin-top:6px}.welcome{padding:24px 18px;margin:auto 4px}.brand{font-size:18px}.top-actions .iconbtn{width:34px}.shell:not(.chat-open) .main{display:none}}
-@media(max-width:380px){.connect-form{gap:6px}.connect-form .primary{padding:0 10px}.connect-form input{padding:10px}.connect-panel{padding:12px}.brand{font-size:17px}.compose-tools .iconbtn{width:30px}.chat-head{padding:0 9px}}
-
-/* WhatsApp Web inspired finish + Apple system typography */
-:root{--green:#075e54;--green2:#00a884;--accent:#25d366;--paper:#efeae2;--ink:#111b21;--muted:#667781;--white:#fff;--line:#dfe3e5;--out:#d9fdd3;--in:#fff;--shadow:0 8px 30px #142b3512}
-html,body,button,input,textarea{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Arial,sans-serif;letter-spacing:normal;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-body{background:#d1d7db;color:#111b21}
-.app{padding:18px}
-.shell{width:min(1440px,100%);height:min(900px,calc(100vh - 36px));min-height:560px;border-radius:8px;box-shadow:0 6px 28px #0b141a24;grid-template-columns:390px minmax(0,1fr)}
-.sidebar{background:#fff}
-.topbar,.chat-head{background:#f0f2f5;border-color:#e9edef}
-.topbar{height:60px;padding:0 16px}
-.brand{font-size:20px;font-weight:650;letter-spacing:-.45px;color:#111b21}
-.brandmark{width:38px;height:38px;background:#00a884}
-.iconbtn{color:#54656f;transition:background .15s ease,transform .15s ease}
-.iconbtn:hover{background:#e3e8eb}
-.iconbtn:active{transform:scale(.94)}
-.connect-panel{padding:16px;border-bottom:1px solid #e9edef}
-.section-label{font-size:10px;letter-spacing:1px;color:#667781;font-weight:700}
-.myid{background:#f7f8f8;border:1px solid #edf0f1;border-radius:8px;padding:10px}
-.avatar{background:#dfe5e7;color:#54656f;font-weight:600}
-.copybtn{border-radius:6px;color:#008f76;border-color:#e1e6e8}
-.connect-form input{border-radius:8px;border-color:#d9dfe2;padding:12px;font-size:14px}
-.primary{background:#00a884;border-radius:8px;font-size:13px;font-weight:650}
-.primary:hover,.sendbtn:hover{background:#008f76}
-.searchbox{border-radius:8px;background:#f0f2f5;height:36px;margin:10px 12px 8px}
-.chat-list{padding:0}
-.chat-item{border-radius:0;padding:12px 14px;border-bottom:1px solid #f4f5f5;gap:13px}
-.chat-item.active{background:#f0f2f5}
-.chat-item:hover{background:#f5f6f6}
-.chat-item .avatar{width:49px;height:49px;background:#dfe5e7}
-.chat-preview strong{font-size:16px;font-weight:500;color:#111b21;margin-bottom:5px}
-.chat-preview span{font-size:13px;color:#667781}
-.sidebar-foot{border-top:1px solid #e9edef;background:#f7f8f8}
-.main{background:#efeae2}
-.chat-head{height:60px;padding:0 16px;border-bottom:1px solid #e9edef}
-.chat-head .avatar{width:40px;height:40px;background:#dfe5e7}
-.head-copy strong{font-size:16px;font-weight:500;color:#111b21;margin-bottom:3px}
-.head-copy span{font-size:13px;color:#667781}
-.messages{padding:24px clamp(16px,5vw,76px);gap:7px;background-color:#efeae2;background-image:radial-gradient(#a99f8e1c .8px,transparent .8px);background-size:20px 20px}
-.welcome{border:0;border-radius:12px;background:#fff;padding:28px;box-shadow:0 1px 2px #0b141a12}
-.welcome-logo{background:#e0f5ec;color:#008f76;border-radius:18px}
-.welcome h2{font-size:22px;font-weight:600;letter-spacing:-.55px;color:#111b21}
-.welcome p{font-size:14px;line-height:1.65}
-.day-label{background:#fff;color:#54656f;border-radius:7px;padding:7px 12px;font-size:12px;box-shadow:0 1px 1px #0b141a10}
-.bubble{font-size:14.2px;line-height:1.48;padding:8px 9px 6px;border-radius:8px;box-shadow:0 1px 1px #0b141a12;color:#111b21}
-.bubble.incoming{background:#fff;border-top-left-radius:0}
-.bubble.outgoing{background:#d9fdd3;border-top-right-radius:0}
-.bubble .meta{font-size:11px;color:#667781}
-.composer-wrap{background:#f0f2f5;border-top:0;padding:10px 16px 14px}
-.message-input{border-radius:8px;min-height:42px;padding:11px 14px;background:#fff;font-size:15px;box-shadow:0 1px 1px #0b141a08}
-.sendbtn{background:#00a884;width:42px;height:42px}
-.composer-help{font-size:10px;color:#86969d}
-.toast{background:#233138;border-radius:8px}
-.modal{border-radius:12px}
-@media(max-width:900px){.shell{grid-template-columns:340px minmax(0,1fr)}}
-@media(max-width:720px){.app{padding:0}.shell{height:100dvh;min-height:0;width:100%;border-radius:0;grid-template-columns:1fr}.topbar,.chat-head{height:60px}.chat-item{padding:12px 14px}.messages{padding:16px 10px}.composer-wrap{padding:8px 9px calc(9px + env(safe-area-inset-bottom))}.message-input{font-size:16px}.bubble{font-size:14.5px}}
-
-
-/* Real-time connection states and refined Apple-style finish */
-:root{font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.shell{box-shadow:0 28px 90px rgba(16,35,42,.18);border:1px solid rgba(255,255,255,.72)}
-.brandmark{box-shadow:0 4px 12px #00a88430}
-.connect-panel{background:linear-gradient(180deg,#fff 0%,#fbfcfc 100%)}
-.myid{transition:border-color .2s,box-shadow .2s}.myid:focus-within{border-color:#9ad8c8;box-shadow:0 0 0 3px #00a88412}
-.connect-form input{transition:border-color .2s,box-shadow .2s}.connect-form input:focus{border-color:#00a884;box-shadow:0 0 0 3px #00a88416;outline:0}
-.connect-submit{min-width:96px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;transition:background .2s,transform .2s}.connect-submit:active{transform:scale(.97)}
-.connect-submit[disabled]{opacity:.78;cursor:wait}.connect-spinner{display:none;width:13px;height:13px;border:2px solid #ffffff70;border-top-color:#fff;border-radius:50%;animation:linkSpin .7s linear infinite}.connect-submit.is-loading .connect-spinner{display:inline-block}.connect-submit.is-loading .connect-btn-label{font-size:0}.connect-submit.is-loading .connect-btn-label:after{content:'Connecting';font-size:12px}
-@keyframes linkSpin{to{transform:rotate(360deg)}}
-.connection-state{min-height:18px}.connection-state .dot{transition:background .2s,box-shadow .2s}.connection-state .dot.online{background:#16a765;box-shadow:0 0 0 4px #16a76518}
-.chat-head{box-shadow:0 1px 0 #ffffff70}.head-copy span{display:flex;align-items:center;gap:6px}.head-copy span.is-online:before{content:'';width:7px;height:7px;border-radius:50%;background:#20b46a;display:inline-block}.head-copy span.is-connecting:before{content:'';width:7px;height:7px;border-radius:50%;background:#e4a11b;display:inline-block;animation:linkPulse 1.1s infinite}
-@keyframes linkPulse{50%{opacity:.35}}
-.bubble{animation:bubbleIn .18s ease-out both}.bubble.outgoing{box-shadow:0 1px 1px #064e3b0d}.bubble.incoming{box-shadow:0 1px 1px #0000000a}
-@keyframes bubbleIn{from{opacity:0;transform:translateY(4px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
-.sendbtn:disabled{background:#a7c9c1;cursor:not-allowed}.message-input:disabled{background:#f8f9f9;color:#89959a;cursor:not-allowed}.chat-item{transition:background .15s}.chat-item:hover{background:#f5f7f8!important}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-
-
-
-/* Premium motion pass: subtle app entrance, tactile controls, and a real connection handshake cue */
-.app{animation:appArrive .62s cubic-bezier(.2,.8,.2,1) both}
-.shell{transform-origin:center;animation:shellArrive .72s cubic-bezier(.16,1,.3,1) both}
-@keyframes appArrive{from{opacity:0}to{opacity:1}}
-@keyframes shellArrive{from{opacity:0;transform:translateY(13px) scale(.988)}to{opacity:1;transform:translateY(0) scale(1)}}
-.brandmark{position:relative;isolation:isolate;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
-.brandmark:after{content:"";position:absolute;inset:-4px;border:1px solid #00a88455;border-radius:50%;z-index:-1;opacity:0;transform:scale(.75)}
-.shell.connection-success .brandmark{transform:scale(1.06)}
-.shell.connection-success .brandmark:after{animation:connectionRipple .8s ease-out}
-@keyframes connectionRipple{0%{opacity:.8;transform:scale(.72)}100%{opacity:0;transform:scale(1.8)}}
-.shell.connection-success .connect-panel{animation:panelSuccess .65s ease-out}
-@keyframes panelSuccess{0%{background:#e3fff4}100%{background:linear-gradient(180deg,#fff 0%,#fbfcfc 100%)}}
-.myid{transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
-.copybtn:active,.primary:active,.sendbtn:active{transform:scale(.96)}
-.chat-item{animation:chatItemEnter .28s ease both}
-@keyframes chatItemEnter{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
-.bubble{transform-origin:bottom left}
-.bubble.outgoing{transform-origin:bottom right}
-.bubble.incoming{animation:bubbleArrive .24s cubic-bezier(.2,.8,.2,1) both}
-.bubble.outgoing{animation:bubbleArrive .24s cubic-bezier(.2,.8,.2,1) both}
-@keyframes bubbleArrive{from{opacity:0;transform:translateY(7px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
-.sendbtn{transition:transform .16s ease,background .18s ease,box-shadow .18s ease}
-.sendbtn:not(:disabled):hover{box-shadow:0 4px 12px #00a88445;transform:translateY(-1px)}
-.message-input:focus{box-shadow:0 0 0 2px #00a88419}
-.connect-form input:not(:disabled){transition:background .2s,border-color .2s,box-shadow .2s}
-.connect-submit.is-loading{min-width:118px}
-.connection-state .dot:not(.online){animation:waitingDot 1.4s ease-in-out infinite}
-.connect-failed{animation:connectNudge .34s ease-in-out!important}@keyframes connectNudge{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-@keyframes waitingDot{0%,100%{opacity:.45;transform:scale(.88)}50%{opacity:1;transform:scale(1.08)}}
-.messages{background-position:0 0;animation:wallpaperDrift 35s linear infinite alternate}
-@keyframes wallpaperDrift{from{background-position:0 0}to{background-position:28px 18px}}
-@media(max-width:720px){.shell{animation:mobileArrive .48s cubic-bezier(.2,.8,.2,1) both}@keyframes mobileArrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
-@media(prefers-reduced-motion:reduce){.app,.shell,.messages{animation:none!important}}
-
-
-/* Full-screen Apple-style finish and editable appearance settings */
-html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.012em}
-.app{min-height:100dvh;height:100dvh;padding:0;display:block}.shell{width:100%;height:100dvh;min-height:0;border-radius:0;box-shadow:none;grid-template-columns:minmax(290px,340px) minmax(0,1fr)}
-.topbar,.chat-head,.composer-wrap{backdrop-filter:saturate(1.12);-webkit-backdrop-filter:saturate(1.12)}
-.iconbtn,.primary,.secondary,.sendbtn,.copybtn{transition:transform .22s cubic-bezier(.2,.8,.2,1),background .2s ease,box-shadow .22s ease,color .2s ease}
-.iconbtn:hover{transform:translateY(-1px)}.iconbtn:active,.secondary:active,.copybtn:active{transform:scale(.92)}
-.chat-head .avatar,.myid .avatar{transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .3s}.chat-head .avatar:hover,.myid .avatar:hover{transform:scale(1.06);box-shadow:0 0 0 5px #00a88418}
-.messages{transition:background-color .35s ease,background-image .35s ease}.bubble{font-size:var(--message-size,14px);transition:box-shadow .22s ease,transform .22s ease}.bubble:hover{box-shadow:0 4px 14px #102a2410}
-.custom-backdrop{position:fixed;inset:0;z-index:40;background:#172b2b52;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s ease;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.custom-backdrop.show{opacity:1;visibility:visible}.custom-modal{width:min(440px,100%);max-height:min(88dvh,720px);overflow:auto;background:#fbfcfd;border:1px solid #ffffffc9;border-radius:24px;padding:24px;box-shadow:0 28px 100px #061e1b35;transform:translateY(14px) scale(.97);transition:transform .34s cubic-bezier(.16,1,.3,1)}.custom-backdrop.show .custom-modal{transform:translateY(0) scale(1)}.custom-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}.custom-kicker{font-size:10px;letter-spacing:1.5px;font-weight:750;color:var(--green2);margin-bottom:7px}.custom-head h2{font-size:25px;letter-spacing:-.8px;margin:0;font-weight:750}.custom-head #customClose{font-size:25px}.setting-label{display:block;font-size:12px;font-weight:700;color:#34464d;margin:16px 0 8px}.setting-input{width:100%;border:1px solid #dce4e6;border-radius:12px;background:white;padding:12px 13px;color:#17212b;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}.setting-input:focus{border-color:var(--green2);box-shadow:0 0 0 4px #00a88416}.setting-help{font-size:11px;color:#78868c;margin-top:7px;line-height:1.5}.setting-row{display:flex;align-items:center;justify-content:space-between}.setting-row .setting-label{margin-bottom:4px}.setting-row output{font-size:12px;color:#087d6e;font-weight:700}.setting-range{width:100%;accent-color:var(--green2)}.motion-toggle{display:flex;align-items:center;gap:11px;margin-top:21px;padding:13px;border-radius:13px;background:#f0f5f4;cursor:pointer}.motion-toggle input{width:17px;height:17px;accent-color:var(--green2)}.motion-toggle strong,.motion-toggle small{display:block}.motion-toggle strong{font-size:13px}.motion-toggle small{font-size:11px;color:#738187;margin-top:4px;line-height:1.4}.custom-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:23px}.custom-actions .primary{padding:11px 17px}.custom-actions .secondary{padding:10px 15px}
-body.wallpaper-plain .messages{background:#fff;background-image:none}body.wallpaper-soft .messages{background:#eaf8f3;background-image:radial-gradient(#8fcdb81a .8px,transparent .8px);background-size:20px 20px}body.wallpaper-night .messages{background:#e6edf5;background-image:radial-gradient(#8095b51e .8px,transparent .8px);background-size:19px 19px}
-body.accent-blue{--green:#1d4ed8;--green2:#2563eb;--accent:#60a5fa}body.accent-purple{--green:#5b21b6;--green2:#7c3aed;--accent:#a78bfa}body.accent-orange{--green:#9a3412;--green2:#ea580c;--accent:#fb923c}body.accent-whatsapp{--green:#075e54;--green2:#00a884;--accent:#25d366}
-body.motion-off *,body.motion-off *:before,body.motion-off *:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}
-@media(max-width:720px){.shell{height:100dvh;min-height:0;width:100%;border-radius:0}.custom-backdrop{padding:12px}.custom-modal{border-radius:21px;padding:21px}.custom-head h2{font-size:23px}}
-@media(prefers-reduced-motion:reduce){.custom-backdrop,.custom-modal{transition:none!important}}
-
-
-/* Keep the message composer anchored while only the conversation scrolls */
-.shell{min-height:0}
-.main{min-height:0;height:100%;overflow:hidden}
-.messages{min-height:0;flex:1 1 0%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable}
-.composer-wrap{position:relative;z-index:2;flex:0 0 auto;flex-shrink:0}
-.chat-head{flex:0 0 auto}
-@media(max-width:720px){.shell{height:100dvh;max-height:100dvh;min-height:0}.main{height:100%;min-height:0}.messages{min-height:0;flex:1 1 0%;overflow-y:auto}.composer-wrap{flex-shrink:0;padding-bottom:calc(9px + env(safe-area-inset-bottom))}}
-</style>
-</head>
-<body>
-<div class="app"><div class="shell" id="shell">
-<aside class="sidebar">
-  <header class="topbar"><div class="brand"><div class="brandmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></div>LinkChat</div><div class="top-actions"><button class="iconbtn" id="newChatBtn" title="New connection" aria-label="New connection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button><button class="iconbtn" id="customizeBtn" title="Customize LinkChat" aria-label="Customize LinkChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42"/><circle cx="12" cy="12" r="5"/></svg></button><button class="iconbtn" id="infoBtn" title="About LinkChat" aria-label="About LinkChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></div></header>
-  <section class="connect-panel" id="connectPanel"><div class="section-label">Your device</div><div class="myid"><div class="avatar" id="myAvatar">Y</div><div class="myid-copy"><strong id="myName">Your device</strong><div class="peerid" id="myPeerId">Starting connection ID…</div></div><button class="copybtn" id="copyIdBtn">Copy</button></div><form class="connect-form" id="connectForm"><input id="peerInput" placeholder="Enter friend's connection ID" autocomplete="off" required><button class="primary connect-submit" id="connectBtn" type="submit"><span class="connect-btn-label">Connect</span><span class="connect-spinner" aria-hidden="true"></span></button></form><div class="hint">Open LinkChat on both phones. Share your connection ID, then enter the other person's ID to start a private chat.</div><div class="connection-state"><span class="dot" id="stateDot"></span><span id="stateText">Connecting to network…</span></div></section>
-  <div class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="searchInput" placeholder="Search chats" aria-label="Search chats"></div>
-  <div class="chat-list" id="chatList"><div class="empty-note" id="emptyChats">No chats yet.<br>Connect another device to begin.</div></div>
-  <footer class="sidebar-foot">Peer-to-peer messaging powered by WebRTC.<br>Keep this page open while chatting.</footer>
-</aside>
-<main class="main" id="mainChat">
-  <header class="chat-head"><button class="iconbtn mobile-back" id="backBtn" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><div class="avatar" id="activeAvatar">?</div><div class="head-copy"><strong id="activeName">Connect a device</strong><span id="activeStatus">Your conversations appear here</span></div><div class="head-tools"><button class="iconbtn" id="shareIdBtn" title="Share your ID" aria-label="Share your ID"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg></button><button class="iconbtn" id="disconnectBtn" title="Disconnect" aria-label="Disconnect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.6 13.4a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M13.4 10.6a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1"/><path d="m4 4 16 16"/></svg></button></div></header>
-  <section class="messages" id="messages"><div class="welcome" id="welcome"><div class="welcome-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></div><h2>Your chats, directly connected</h2><p>Connect to another phone using its connection ID. Send messages, photos and files directly between devices.</p><div class="small">No account required. Both devices need an internet connection.</div></div></section>
-  <div class="composer-wrap"><div class="attach-preview" id="attachPreview"><span id="attachName">File selected</span><button id="removeAttach" aria-label="Remove attachment">Remove</button></div><div class="composer"><div class="compose-tools"><button class="iconbtn" id="attachBtn" title="Attach file" aria-label="Attach file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m21.4 11.1-8.5 8.5a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg></button><input type="file" id="fileInput" class="hidden" multiple></div><textarea id="messageInput" class="message-input" rows="1" placeholder="Type a message" disabled aria-label="Type a message"></textarea><button class="sendbtn" id="sendBtn" aria-label="Send message" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div><div class="composer-help">Messages and files are sent directly to the connected device</div></div>
-  <div class="toast" id="toast" role="status"></div>
-</main>
-</div></div>
-<div class="modal-backdrop" id="modalBackdrop"><div class="modal"><h3 id="modalTitle">About LinkChat</h3><p id="modalText">LinkChat uses peer-to-peer WebRTC connections. Your messages are not stored on a LinkChat server, but connection setup uses a public signaling service.</p><div class="modal-actions"><button class="secondary" id="modalCancel">Close</button><button class="primary hidden" id="modalConfirm">Disconnect</button></div></div></div>
-<div class="custom-backdrop" id="customBackdrop" aria-hidden="true"><section class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="customTitle"><div class="custom-head"><div><div class="custom-kicker">PERSONALIZE YOUR SPACE</div><h2 id="customTitle">Chat appearance</h2></div><button class="iconbtn" id="customClose" aria-label="Close customization">×</button></div><label class="setting-label" for="profileNameInput">Your display name</label><input class="setting-input" id="profileNameInput" maxlength="32" placeholder="Enter your name"><div class="setting-help">Your name is shared with connected LinkChat devices.</div><label class="setting-label" for="accentSelect">Accent color</label><select class="setting-input" id="accentSelect"><option value="mint">Apple Mint</option><option value="whatsapp">WhatsApp Green</option><option value="blue">Ocean Blue</option><option value="purple">Soft Violet</option><option value="orange">Warm Orange</option></select><label class="setting-label" for="wallpaperSelect">Chat wallpaper</label><select class="setting-input" id="wallpaperSelect"><option value="classic">Classic paper</option><option value="plain">Clean white</option><option value="soft">Soft mint</option><option value="night">Midnight blue</option></select><div class="setting-row"><label class="setting-label" for="fontSizeInput">Message text size</label><output id="fontSizeValue">14 px</output></div><input id="fontSizeInput" class="setting-range" type="range" min="12" max="19" value="14"><label class="motion-toggle"><input id="motionToggle" type="checkbox" checked><span><strong>Motion effects</strong><small>Animated chat entry, bubbles and button feedback</small></span></label><div class="custom-actions"><button class="secondary" id="customReset">Reset</button><button class="primary" id="customSave">Save changes</button></div></section></div>
-<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#10151c;--fg:#e8eef5;--pn:rgba(16,21,28,.8);--ac:#5ad17a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font:13px system-ui,sans-serif;overflow:hidden;touch-action:none;user-select:none}
+canvas#g{position:fixed;inset:0;width:100%;height:100%;display:block}
+.pn{position:fixed;background:var(--pn);border-radius:10px;padding:8px 10px}
+#info{top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;line-height:1.5;max-width:60vw}
+#mm{top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;padding:4px}
+#mm canvas{width:140px;height:140px;display:block;border-radius:6px;image-rendering:pixelated}
+#nav{top:calc(env(safe-area-inset-top,0px) + 110px);left:8px;display:flex;gap:10px;align-items:center}
+#arrow{width:34px;height:34px;transition:transform .1s}
+#cross{position:fixed;left:50%;top:50%;width:18px;height:18px;margin:-9px;pointer-events:none;opacity:.85}
+#cross:before,#cross:after{content:"";position:absolute;background:#fff;mix-blend-mode:difference}
+#cross:before{left:8px;top:0;width:2px;height:18px}#cross:after{top:8px;left:0;height:2px;width:18px}
+#bar{bottom:calc(env(safe-area-inset-bottom,0px) + 8px);left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.sl{width:38px;height:38px;border:2px solid #556;border-radius:6px;display:grid;place-items:center;font-size:11px;color:#fff;text-shadow:0 0 3px #000}
+.sl.on{border-color:#fff}
+#go{bottom:calc(env(safe-area-inset-bottom,0px) + 70px);left:8px;display:flex;gap:6px;flex-wrap:wrap;max-width:min(92vw,420px)}
+input,button{font:inherit;border-radius:6px;border:1px solid #445;background:#1b2430;color:var(--fg);padding:6px 8px}
+input{width:170px}button{cursor:pointer}button:active{background:#2a3748}
+#tb{bottom:calc(env(safe-area-inset-bottom,0px) + 70px);right:8px;display:none;flex-direction:column;gap:6px;background:none;padding:0}
+#tb button{width:64px;height:44px}
+#ov{position:fixed;inset:0;background:rgba(8,12,18,.88);display:grid;place-items:center;text-align:center;z-index:9}
+#ov div{max-width:420px;padding:20px;line-height:1.55}
+h1{margin:0 0 6px}#ov button{background:var(--ac);color:#06210f;border:0;padding:10px 22px;font-weight:700;font-size:15px;margin-top:10px}
+</style></head><body>
+<canvas id="g"></canvas><div id="cross"></div>
+<div id="info" class="pn"></div>
+<div id="mm" class="pn"><canvas id="mapc" width="128" height="128"></canvas></div>
+<div id="nav" class="pn"><svg id="arrow" viewBox="0 0 34 34"><path d="M17 3 27 29 17 23 7 29Z" fill="#ff5a4d"/></svg><div id="ntxt">No destination set</div></div>
+<div id="go" class="pn"><input id="ll" placeholder="Destination lat, lon"><button id="gob">Navigate</button><button id="gps">Use my GPS</button><button id="clr">Clear</button></div>
+<div id="bar" class="pn"></div>
+<div id="tb" class="pn"><button id="bj">Jump</button><button id="bm">Mine</button><button id="bp">Place</button></div>
+<div id="ov"><div><h1>GeoCraft</h1>
+Your Minecraft-style world is pinned to real latitude and longitude. One block equals 5 metres. Tap “Use my GPS” to anchor it to where you really are, then enter a destination (or click the minimap) to get live distance, bearing and a walking ETA.<br><br>
+<b>Desktop:</b> WASD move, Space jump, mouse look, left click mine, right click place, 1–5 pick block.<br>
+<b>Touch:</b> drag left side to move, right side to look, use the buttons.<br><br>
+<button id="play">Play</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-(()=>{'use strict';
-const $=id=>document.getElementById(id);
-const shell=$('shell'), myPeerIdEl=$('myPeerId'), stateDot=$('stateDot'),stateText=$('stateText'),peerInput=$('peerInput'),connectForm=$('connectForm'),chatList=$('chatList'),messages=$('messages'),welcome=$('welcome'),messageInput=$('messageInput'),sendBtn=$('sendBtn'),fileInput=$('fileInput'),attachPreview=$('attachPreview'),attachName=$('attachName'),toastEl=$('toast');
-let peer=null,myPeerId='',activePeerId='',pendingFiles=[],toastTimer=null,chatRecords=new Map(),connections=new Map(),incomingTransfers=new Map(),connectTimers=new Map();
-let localDisplayName=localStorage.getItem('linkchat-display-name')||'Your device';
-const connectBtn=$('connectBtn');
-const MAX_FILE_SIZE=20*1024*1024, CHUNK_SIZE=48*1024;
-function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2600)}
-function setState(text,online=false){stateText.textContent=text;stateDot.classList.toggle('online',online)}
-function setConnectingUI(on){if(!connectBtn)return;connectBtn.classList.toggle('is-loading',on);connectBtn.disabled=on;peerInput.disabled=on;}
-function shortId(id){return id? (id.length>24?id.slice(0,24)+'…':id):'Waiting for ID'}
-function makeAvatar(text){return (text||'D').trim().slice(0,1).toUpperCase()}
-function applyProfileName(){ $('myName').textContent=localDisplayName; $('myAvatar').textContent=makeAvatar(localDisplayName); document.title=(localDisplayName==='Your device'?'LinkChat':localDisplayName+' · LinkChat'); }
-function sendProfileToPeers(){for(const [id,conn] of connections){if(conn&&conn.open)try{conn.send({type:'rename',name:localDisplayName})}catch(e){}}}
-function timeNow(){return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-function formatSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return (bytes/1024).toFixed(1)+' KB';return (bytes/1048576).toFixed(1)+' MB'}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function recordFor(id){if(!chatRecords.has(id))chatRecords.set(id,{id,name:'Device '+shortId(id),messages:[],conn:null,online:false,last:'Connected device',lastTime:''});return chatRecords.get(id)}
-function renderChatList(){const filter=$('searchInput').value.toLowerCase().trim();chatList.innerHTML='';let records=[...chatRecords.values()].filter(r=>(r.name+' '+r.id+' '+r.last).toLowerCase().includes(filter));if(!records.length){chatList.innerHTML='<div class="empty-note">'+(chatRecords.size?'No matching chats.':'No chats yet.<br>Connect another device to begin.')+'</div>';return}records.sort((a,b)=>(b.lastTime||'').localeCompare(a.lastTime||''));for(const r of records){const item=document.createElement('button');item.type='button';item.className='chat-item'+(r.id===activePeerId?' active':'');item.style.width='100%';item.style.textAlign='left';item.style.border='0';item.style.background=r.id===activePeerId?'#f0f2f5':'transparent';item.innerHTML='<div class="avatar">'+escapeHTML(makeAvatar(r.name))+'</div><div class="chat-preview"><strong>'+escapeHTML(r.name)+'</strong><span>'+escapeHTML(r.last||'No messages yet')+'</span></div>';item.addEventListener('click',()=>selectChat(r.id));chatList.appendChild(item)}}
-function selectChat(id){activePeerId=id;const r=recordFor(id);$('activeAvatar').textContent=makeAvatar(r.name);$('activeName').textContent=r.name;$('activeStatus').textContent=r.online?'online — ready to chat':'not connected';$('activeStatus').classList.toggle('is-online',r.online);$('activeStatus').classList.remove('is-connecting');messageInput.disabled=!r.online;sendBtn.disabled=!r.online;welcome.classList.add('hidden');messages.querySelectorAll('.bubble,.day-label').forEach(n=>n.remove());for(const m of r.messages)renderMessage(m,false);if(!r.messages.length){const note=document.createElement('div');note.className='day-label';note.textContent=r.online?'Connected. Say hello.':'This device is currently disconnected';messages.appendChild(note)}shell.classList.add('chat-open');renderChatList();scrollBottom()}
-function scrollBottom(){messages.scrollTop=messages.scrollHeight}
-function renderMessage(m,scroll=true){welcome.classList.add('hidden');const b=document.createElement('div');b.className='bubble '+(m.mine?'outgoing':'incoming');if(m.kind==='file'){const card=document.createElement('div');card.className='file-card';card.innerHTML='<div class="file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></div><div class="file-info"><strong>'+escapeHTML(m.name)+'</strong><span>'+escapeHTML(formatSize(m.size||0))+'</span></div>';b.appendChild(card);if(m.url&&!m.mine){const a=document.createElement('a');a.href=m.url;a.download=m.name;a.className='download-link';a.textContent='Download file';b.appendChild(a)}else if(m.mine){const small=document.createElement('div');small.style.cssText='font-size:11px;color:#718079;margin-top:7px';small.textContent='File sent';b.appendChild(small)}}else if(m.kind==='image'&&m.url){const img=document.createElement('img');img.className='image-message';img.src=m.url;img.alt=m.name||'Shared image';b.appendChild(img);if(m.caption){const cap=document.createElement('div');cap.textContent=m.caption;cap.style.marginTop='6px';b.appendChild(cap)}if(!m.mine){const a=document.createElement('a');a.href=m.url;a.download=m.name||'image';a.className='download-link';a.textContent='Download image';b.appendChild(a)}}else{const body=document.createElement('div');body.textContent=m.text||'';b.appendChild(body)}const meta=document.createElement('div');meta.className='meta';meta.textContent=m.time||timeNow();if(m.mine){const tick=document.createElement('span');tick.className='ticks';tick.textContent=m.delivered?'✓✓':'✓';meta.appendChild(tick)}b.appendChild(meta);messages.appendChild(b);if(scroll)scrollBottom()}
-function addMessage(id,m){const r=recordFor(id);r.messages.push(m);r.last=m.kind==='file'||m.kind==='image'?'Attachment: '+(m.name||'file'):(m.text||'Message');r.lastTime=new Date().toISOString();if(activePeerId===id)renderMessage(m);renderChatList()}
-function sendPacket(id,packet){const conn=connections.get(id);if(!conn||!conn.open){toast('This device is not connected');return false}try{conn.send(packet);return true}catch(e){toast('Could not send data');return false}}
-function connectTo(id){id=id.trim();if(!id)return;if(!peer){toast('Connection service is still starting');return}if(id===myPeerId){toast('You cannot connect to your own ID');return}if(connections.has(id)&&connections.get(id).open){selectChat(id);toast('Already connected');return}const r=recordFor(id);r.name='Device '+shortId(id);setState('Connecting to device…');setConnectingUI(true);if(activePeerId===id){$('activeStatus').textContent='connecting securely…';$('activeStatus').classList.add('is-connecting');messageInput.disabled=true;sendBtn.disabled=true}let conn;try{conn=peer.connect(id,{reliable:true,serialization:'binary'});setupConnection(conn,true);const timer=setTimeout(()=>{if(!conn.open){try{conn.close()}catch(e){}setConnectingUI(false);setState('Could not connect — check the ID');$('activeStatus').textContent='connection failed';$('activeStatus').classList.remove('is-connecting');$('connectPanel').classList.remove('connect-failed');void $('connectPanel').offsetWidth;$('connectPanel').classList.add('connect-failed');setTimeout(()=>$('connectPanel').classList.remove('connect-failed'),550);toast('Could not connect. Check the other phone’s ID and make sure both pages are open.')}},18000);connectTimers.set(id,timer)}catch(e){setConnectingUI(false);toast('Could not start connection');setState('Ready to connect',true)}}
-function setupConnection(conn,outgoing){const id=conn.peer;connections.set(id,conn);const r=recordFor(id);r.conn=conn;conn.on('open',()=>{if(connectTimers.has(id)){clearTimeout(connectTimers.get(id));connectTimers.delete(id)}setConnectingUI(false);r.online=true;r.last='Connected';r.lastTime=new Date().toISOString();setState('Connected to a device',true);shell.classList.add('connection-success');setTimeout(()=>shell.classList.remove('connection-success'),900);selectChat(id);sendPacket(id,{type:'hello',name:localDisplayName==='Your device'?'Device '+shortId(myPeerId):localDisplayName,version:1});toast('Device connected');renderChatList()});conn.on('data',data=>handlePacket(id,data));conn.on('close',()=>{r.online=false;r.conn=null;if(connections.get(id)===conn)connections.delete(id);if(connectTimers.has(id)){clearTimeout(connectTimers.get(id));connectTimers.delete(id)}setConnectingUI(false);if(activePeerId===id){$('activeStatus').textContent='offline';$('activeStatus').classList.remove('is-online','is-connecting');messageInput.disabled=true;sendBtn.disabled=true}setState(connections.size?'Connected to a device':'Ready to connect',connections.size>0);renderChatList();toast('Device disconnected')});conn.on('error',err=>{console.warn(err);if(connectTimers.has(id)){clearTimeout(connectTimers.get(id));connectTimers.delete(id)}setConnectingUI(false);if(outgoing)toast('Connection failed. Check the ID and try again.');r.online=false;if(activePeerId===id){$('activeStatus').textContent='connection failed';$('activeStatus').classList.remove('is-online','is-connecting')}messageInput.disabled=true;sendBtn.disabled=true;setState('Ready to connect',connections.size>0);renderChatList()})}
-function handlePacket(id,data){if(data&&typeof data==='object'&&data.type){if(data.type==='hello'){const r=recordFor(id);if(data.name&&String(data.name).length<60)r.name=String(data.name);r.online=true;r.last='Connected';if(activePeerId===id){$('activeName').textContent=r.name;$('activeAvatar').textContent=makeAvatar(r.name);$('activeStatus').textContent='online — ready to chat';$('activeStatus').classList.add('is-online');$('activeStatus').classList.remove('is-connecting')}renderChatList();return}if(data.type==='rename'){const rr=recordFor(id);if(typeof data.name==='string'&&data.name.trim()&&data.name.length<=32){rr.name=data.name.trim();if(activePeerId===id){$('activeName').textContent=rr.name;$('activeAvatar').textContent=makeAvatar(rr.name)}renderChatList()}return}if(data.type==='message'){if(typeof data.text!=='string')return;addMessage(id,{mine:false,kind:'text',text:data.text.slice(0,10000),time:timeNow()});return}if(data.type==='file-start'){if(!data.transferId||!data.name||!Number.isFinite(data.size)||data.size<0||data.size>MAX_FILE_SIZE){toast('Incoming file rejected: invalid or too large');return}incomingTransfers.set(data.transferId,{id,name:String(data.name).slice(0,180),size:data.size,mime:String(data.mime||'application/octet-stream'),chunks:[],received:0});toast('Receiving '+String(data.name).slice(0,45));return}if(data.type==='file-chunk'){const t=incomingTransfers.get(data.transferId);if(!t||!(data.chunk instanceof ArrayBuffer||ArrayBuffer.isView(data.chunk)))return;const chunk=data.chunk instanceof ArrayBuffer?data.chunk:data.chunk.buffer.slice(data.chunk.byteOffset,data.chunk.byteOffset+data.chunk.byteLength);t.chunks.push(chunk);t.received+=chunk.byteLength;if(t.received>t.size||t.received>MAX_FILE_SIZE){incomingTransfers.delete(data.transferId);toast('File transfer stopped: size limit exceeded');return}return}if(data.type==='file-end'){const t=incomingTransfers.get(data.transferId);if(!t)return;incomingTransfers.delete(data.transferId);if(t.received!==t.size){toast('File transfer incomplete');return}const blob=new Blob(t.chunks,{type:t.mime}),url=URL.createObjectURL(blob),kind=t.mime.startsWith('image/')?'image':'file';addMessage(id,{mine:false,kind,name:t.name,size:t.size,mime:t.mime,url,time:timeNow()});toast('File received');return}if(data.type==='file-error'){toast(data.message||'File transfer failed');return}}}
-async function sendText(){const text=messageInput.value.trim();if(!text||!activePeerId)return;if(!sendPacket(activePeerId,{type:'message',text})){return}addMessage(activePeerId,{mine:true,kind:'text',text,time:timeNow(),delivered:true});messageInput.value='';resizeInput()}
-function resizeInput(){messageInput.style.height='auto';messageInput.style.height=Math.min(messageInput.scrollHeight,120)+'px'}
-async function sendFile(file){if(!activePeerId||!recordFor(activePeerId).online){toast('Connect a device first');return}if(file.size>MAX_FILE_SIZE){toast('File is too large. Maximum size is 20 MB.');return}if(file.size===0){toast('This file is empty');return}const id=activePeerId,transferId='f'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);const started=sendPacket(id,{type:'file-start',transferId,name:file.name,size:file.size,mime:file.type||'application/octet-stream'});if(!started)return;toast('Sending '+file.name);try{for(let offset=0;offset<file.size;offset+=CHUNK_SIZE){if(!connections.get(id)?.open)throw new Error('Connection lost');const buf=await file.slice(offset,Math.min(offset+CHUNK_SIZE,file.size)).arrayBuffer();if(!sendPacket(id,{type:'file-chunk',transferId,chunk:buf}))throw new Error('Send failed');await new Promise(resolve=>setTimeout(resolve,4))}sendPacket(id,{type:'file-end',transferId});const url=URL.createObjectURL(file);const kind=file.type.startsWith('image/')?'image':'file';addMessage(id,{mine:true,kind,name:file.name,size:file.size,mime:file.type,url,time:timeNow(),delivered:true});toast('File sent')}catch(e){sendPacket(id,{type:'file-error',message:'File transfer was interrupted'});toast('File transfer interrupted')}}
-function openModal(title,text,confirmText,onConfirm){$('modalTitle').textContent=title;$('modalText').textContent=text;$('modalConfirm').classList.toggle('hidden',!confirmText);$('modalConfirm').textContent=confirmText||'';$('modalBackdrop').classList.add('show');$('modalConfirm').onclick=()=>{closeModal();if(onConfirm)onConfirm()}}
-function closeModal(){$('modalBackdrop').classList.remove('show')}
-function initPeer(){if(typeof Peer==='undefined'){setState('Could not load connection library');myPeerIdEl.textContent='Library unavailable';toast('Check your internet connection and reload');return}try{peer=new Peer(undefined,{debug:0});peer.on('open',id=>{myPeerId=id;myPeerIdEl.textContent=id;setState('Ready to connect',true)});peer.on('connection',conn=>setupConnection(conn,false));peer.on('disconnected',()=>{setState('Reconnecting…');if(peer&&!peer.destroyed)peer.reconnect()});peer.on('error',err=>{console.warn(err);setConnectingUI(false);if(err.type==='unavailable-id')toast('ID unavailable; refresh the page');else if(err.type==='peer-unavailable')toast('That device ID was not found. Check it and try again.');else if(err.type==='network')setState('Network issue — reconnecting');else setState('Connection service error')});peer.on('close',()=>setState('Connection closed'))}catch(e){setState('Unable to start connection service')}}
-$('copyIdBtn').addEventListener('click',async()=>{if(!myPeerId){toast('Your ID is still loading');return}try{await navigator.clipboard.writeText(myPeerId);toast('Connection ID copied')}catch(e){peerInput.value=myPeerId;peerInput.select();toast('ID selected — copy it manually')}});
-connectForm.addEventListener('submit',e=>{e.preventDefault();connectTo(peerInput.value);peerInput.value=''});
-$('sendBtn').addEventListener('click',sendText);messageInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendText()}});messageInput.addEventListener('input',resizeInput);
-$('attachBtn').addEventListener('click',()=>{if(!activePeerId||!recordFor(activePeerId).online){toast('Connect a device before sending files');return}fileInput.click()});fileInput.addEventListener('change',()=>{pendingFiles=[...fileInput.files];if(pendingFiles.length){attachName.textContent=pendingFiles.map(f=>f.name).join(', ');attachPreview.classList.add('show');if(pendingFiles.length===1){sendFile(pendingFiles[0])}else{pendingFiles.forEach((f,i)=>setTimeout(()=>sendFile(f),i*100));}}fileInput.value=''});$('removeAttach').addEventListener('click',()=>{pendingFiles=[];attachPreview.classList.remove('show')});
-$('searchInput').addEventListener('input',renderChatList);$('backBtn').addEventListener('click',()=>shell.classList.remove('chat-open'));$('newChatBtn').addEventListener('click',()=>{if(window.matchMedia('(max-width:720px)').matches)shell.classList.remove('chat-open');peerInput.focus();$('connectPanel').scrollIntoView({behavior:'smooth',block:'nearest'})});$('infoBtn').addEventListener('click',()=>openModal('About LinkChat','LinkChat is a browser-based peer-to-peer chat demo. WebRTC encrypts data in transit between connected browsers, while a public signaling service helps devices find each other. Messages are kept in this page memory and are lost when you reload. Only connect to people you trust.','',null));$('shareIdBtn').addEventListener('click',async()=>{if(!myPeerId){toast('Your ID is still loading');return}const text='Connect with me on LinkChat. My connection ID: '+myPeerId;try{if(navigator.share)await navigator.share({title:'LinkChat connection',text});else{await navigator.clipboard.writeText(text);toast('Connection details copied')}}catch(e){if(e.name!=='AbortError')toast('Could not share automatically')}});$('disconnectBtn').addEventListener('click',()=>{if(!activePeerId){toast('No active chat selected');return}const id=activePeerId;openModal('Disconnect device?','This will close the peer-to-peer connection with '+recordFor(id).name+'. Your current chat history will remain until you reload.','Disconnect',()=>{connections.get(id)?.close();connections.delete(id);const r=recordFor(id);r.online=false;r.conn=null;messageInput.disabled=true;sendBtn.disabled=true;$('activeStatus').textContent='offline';$('activeStatus').classList.remove('is-online','is-connecting');setState(connections.size?'Connected to a device':'Ready to connect',connections.size>0);renderChatList()})});$('modalCancel').addEventListener('click',closeModal);$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))closeModal()});
-const customBackdrop=$('customBackdrop');
-function openCustomize(){ $('profileNameInput').value=localDisplayName==='Your device'?'':localDisplayName; $('accentSelect').value=localStorage.getItem('linkchat-accent')||'mint'; $('wallpaperSelect').value=localStorage.getItem('linkchat-wallpaper')||'classic'; $('fontSizeInput').value=localStorage.getItem('linkchat-font-size')||'14'; $('fontSizeValue').textContent=$('fontSizeInput').value+' px'; $('motionToggle').checked=localStorage.getItem('linkchat-motion')!=='off'; customBackdrop.classList.add('show');customBackdrop.setAttribute('aria-hidden','false');setTimeout(()=>$('profileNameInput').focus(),120); }
-function closeCustomize(){customBackdrop.classList.remove('show');customBackdrop.setAttribute('aria-hidden','true')}
-function applyCustomSettings(){const accent=localStorage.getItem('linkchat-accent')||'mint';document.body.classList.remove('accent-blue','accent-purple','accent-orange','accent-whatsapp');if(accent!=='mint')document.body.classList.add('accent-'+accent);document.body.classList.remove('wallpaper-plain','wallpaper-soft','wallpaper-night');const wall=localStorage.getItem('linkchat-wallpaper')||'classic';if(wall!=='classic')document.body.classList.add('wallpaper-'+wall);document.documentElement.style.setProperty('--message-size',(localStorage.getItem('linkchat-font-size')||'14')+'px');document.querySelectorAll('.bubble').forEach(b=>b.style.fontSize='var(--message-size)');document.body.classList.toggle('motion-off',localStorage.getItem('linkchat-motion')==='off')}
-$('customizeBtn').addEventListener('click',openCustomize);$('customClose').addEventListener('click',closeCustomize);customBackdrop.addEventListener('click',e=>{if(e.target===customBackdrop)closeCustomize()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCustomize()});$('fontSizeInput').addEventListener('input',e=>{$('fontSizeValue').textContent=e.target.value+' px'});
-$('customSave').addEventListener('click',()=>{const newName=$('profileNameInput').value.trim().slice(0,32)||'Your device';const oldName=localDisplayName;localDisplayName=newName;localStorage.setItem('linkchat-display-name',localDisplayName);localStorage.setItem('linkchat-accent',$('accentSelect').value);localStorage.setItem('linkchat-wallpaper',$('wallpaperSelect').value);localStorage.setItem('linkchat-font-size',$('fontSizeInput').value);localStorage.setItem('linkchat-motion',$('motionToggle').checked?'on':'off');applyProfileName();applyCustomSettings();if(oldName!==newName)sendProfileToPeers();closeCustomize();toast('Appearance saved');});
-$('customReset').addEventListener('click',()=>{localStorage.removeItem('linkchat-display-name');localStorage.removeItem('linkchat-accent');localStorage.removeItem('linkchat-wallpaper');localStorage.removeItem('linkchat-font-size');localStorage.removeItem('linkchat-motion');localDisplayName='Your device';applyProfileName();applyCustomSettings();openCustomize();toast('Appearance reset')});
-const originalRenderMessage=renderMessage; // apply editable text size to future bubbles
-applyProfileName();applyCustomSettings();
-window.addEventListener('beforeunload',()=>{for(const url of [])URL.revokeObjectURL(url);if(peer)peer.destroy()});initPeer();
-})();
-</script>
-</body>
-</html>
+const W=128,H=32,S=5,R=6371000,WL=8;
+let lat0=28.6139,lon0=77.2090,seed=1,wp=null;
+const data=new Uint8Array(W*H*W),ix=(x,y,z)=>(y*W+z)*W+x;
+const COL={1:[.36,.67,.25],2:[.5,.35,.22],3:[.5,.5,.52],4:[.88,.82,.55],5:[.2,.4,.85],6:[.4,.28,.15],7:[.18,.5,.18],8:[.76,.6,.35],9:[.7,.3,.25]};
+const hash=(x,y)=>{let h=(x*374761393+y*668265263+seed*1013)|0;h=(h^(h>>>13))*1274126177|0;return((h^(h>>>16))>>>0)/4294967295};
+const sm=t=>t*t*(3-2*t);
+function vn(x,y){const x0=Math.floor(x),y0=Math.floor(y),fx=sm(x-x0),fy=sm(y-y0);
+const a=hash(x0,y0),b=hash(x0+1,y0),c=hash(x0,y0+1),d=hash(x0+1,y0+1);return a+(b-a)*fx+(c-a)*fy+(a-b-c+d)*fx*fy}
+function gen(){data.fill(0);
+for(let x=0;x<W;x++)for(let z=0;z<W;z++){const h=Math.max(3,Math.min(24,Math.floor(9+vn(x/28,z/28)*12+vn(x/9,z/9)*3)));
+for(let y=0;y<=h;y++)data[ix(x,y,z)]=y===h?(h<=WL+1?4:1):(y>h-3?2:3);
+for(let y=h+1;y<=WL;y++)data[ix(x,y,z)]=5;
+if(h>WL+1&&h<20&&hash(x*7,z*13)>.985&&x>3&&z>3&&x<W-4&&z<W-4){const t=4+Math.floor(hash(z,x)*2);
+for(let i=1;i<=t;i++)data[ix(x,h+i,z)]=6;
+for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++)for(let dy=t-1;dy<=t+1;dy++)if(!data[ix(x+dx,h+dy,z+dz)]&&Math.abs(dx)+Math.abs(dz)<4)data[ix(x+dx,h+dy,z+dz)]=7}}}
+const get=(x,y,z)=>x<0||z<0||x>=W||z>=W||y>=H?0:y<0?3:data[ix(x,y,z)];
+const solid=(x,y,z)=>{const b=get(Math.floor(x),Math.floor(y),Math.floor(z));return b&&b!==5};
+const toLL=(x,z)=>({lat:lat0-(z-W/2)*S/111320,lon:lon0+(x-W/2)*S/(111320*Math.cos(lat0*Math.PI/180))});
+const toXZ=(la,lo)=>({x:W/2+(lo-lon0)*111320*Math.cos(lat0*Math.PI/180)/S,z:W/2-(la-lat0)*111320/S});
+const rad=d=>d*Math.PI/180;
+function hav(a,b,c,d){const p=rad(c-a),q=rad(d-b),h=Math.sin(p/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(q/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function brg(a,b,c,d){const y=Math.sin(rad(d-b))*Math.cos(rad(c)),x=Math.cos(rad(a))*Math.sin(rad(c))-Math.sin(rad(a))*Math.cos(rad(c))*Math.cos(rad(d-b));return(Math.atan2(y,x)*180/Math.PI+360)%360}
+
+const cv=document.getElementById('g'),ren=new THREE.WebGLRenderer({canvas:cv,antialias:false});
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x87ceeb);scene.fog=new THREE.Fog(0x87ceeb,40,110);
+const cam=new THREE.PerspectiveCamera(75,1,.1,200);cam.rotation.order='YXZ';
+const mat=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
+let mesh=null;
+const F=[[[1,0,0],[1,1,0],[1,1,1],[1,0,1],.8,1,0,0],[[0,0,0],[0,0,1],[0,1,1],[0,1,0],.8,-1,0,0],[[0,1,0],[0,1,1],[1,1,1],[1,1,0],1,0,1,0],[[0,0,0],[1,0,0],[1,0,1],[0,0,1],.5,0,-1,0],[[0,0,1],[1,0,1],[1,1,1],[0,1,1],.65,0,0,1],[[0,0,0],[0,1,0],[1,1,0],[1,0,0],.65,0,0,-1]];
+function build(){const P=[],C=[],I=[];let n=0;
+for(let y=0;y<26;y++)for(let z=0;z<W;z++)for(let x=0;x<W;x++){const b=data[ix(x,y,z)];if(!b)continue;const c=COL[b],v=.92+hash(x+y*3,z)*.08;
+for(const f of F){const nb=get(x+f[5],y+f[6],z+f[7]);if(nb&&!(b!==5&&nb===5))continue;if(b===5&&nb)continue;if(f[6]<0&&y===0)continue;
+for(let i=0;i<4;i++){P.push(x+f[i][0],y+f[i][1],z+f[i][2]);const s=f[4]*v;C.push(c[0]*s,c[1]*s,c[2]*s)}
+I.push(n,n+1,n+2,n,n+2,n+3);n+=4}}
+const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('color',new THREE.Float32BufferAttribute(C,3));g.setIndex(I);
+if(mesh){scene.remove(mesh);mesh.geometry.dispose()}mesh=new THREE.Mesh(g,mat);scene.add(mesh)}
+const hl=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.01,1.01,1.01)),new THREE.LineBasicMaterial({color:0}));hl.visible=false;scene.add(hl);
+const beacon=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,70,8),new THREE.MeshBasicMaterial({color:0xff4040,transparent:true,opacity:.55}));beacon.visible=false;scene.add(beacon);
+
+// minimap
+const mc=document.getElementById('mapc'),mx=mc.getContext('2d'),base=document.createElement('canvas');base.width=base.height=W;
+function drawBase(){const b=base.getContext('2d'),im=b.createImageData(W,W);
+for(let z=0;z<W;z++)for(let x=0;x<W;x++){let y=H-1;while(y>0&&!data[ix(x,y,z)])y--;const c=COL[data[ix(x,y,z)]]||[0,0,0],k=.6+y/40,o=(z*W+x)*4;
+im.data[o]=c[0]*255*k;im.data[o+1]=c[1]*255*k;im.data[o+2]=c[2]*255*k;im.data[o+3]=255}b.putImageData(im,0,0)}
+
+// player
+const pl={x:W/2,y:30,z:W/2,vx:0,vy:0,vz:0,yaw:0,pitch:0,g:false};
+function spawn(){pl.x=W/2+.5;pl.z=W/2+.5;let y=H-1;while(y>0&&!solid(pl.x,y-1,pl.z))y--;pl.y=y+.1;pl.vy=0}
+const hit=(px,py,pz)=>{for(const dx of[-.3,.3])for(const dz of[-.3,.3])for(const dy of[0,.9,1.79])if(solid(px+dx,py+dy,pz+dz))return true;return false};
+const keys={},mv={x:0,z:0};
+function step(dt){let fx=0,fz=0;
+if(keys.KeyW)fz-=1;if(keys.KeyS)fz+=1;if(keys.KeyA)fx-=1;if(keys.KeyD)fx+=1;fx+=mv.x;fz+=mv.z;
+const l=Math.hypot(fx,fz)||1,sp=4.5,s=Math.sin(pl.yaw),c=Math.cos(pl.yaw);
+pl.vx=((fx*c+fz*s)/Math.max(l,1))*sp;pl.vz=((-fx*s+fz*c)/Math.max(l,1))*sp;
+const wet=get(Math.floor(pl.x),Math.floor(pl.y+.5),Math.floor(pl.z))===5;
+pl.vy-=(wet?6:26)*dt;if(wet)pl.vy=Math.max(pl.vy,-3);if(keys.Space&&(pl.g||wet))pl.vy=wet?4:8.5;
+let nx=pl.x+pl.vx*dt;if(!hit(nx,pl.y,pl.z))pl.x=nx;
+let nz=pl.z+pl.vz*dt;if(!hit(pl.x,pl.y,nz))pl.z=nz;
+let ny=pl.y+pl.vy*dt;pl.g=false;if(hit(pl.x,ny,pl.z)){if(pl.vy<0)pl.g=true;pl.vy=0}else pl.y=ny;
+pl.x=Math.max(.5,Math.min(W-.5,pl.x));pl.z=Math.max(.5,Math.min(W-.5,pl.z));if(pl.y<-20)spawn()}
+function ray(){const d=new THREE.Vector3(0,0,-1).applyEuler(cam.rotation),o=cam.position;let pv=null;
+for(let t=0;t<6;t+=.04){const x=Math.floor(o.x+d.x*t),y=Math.floor(o.y+d.y*t),z=Math.floor(o.z+d.z*t),b=get(x,y,z);
+if(b&&b!==5)return{x,y,z,pv};pv={x,y,z}}return null}
+const hot=[2,3,6,8,9];let sel=0;
+const bar=document.getElementById('bar');
+hot.forEach((b,i)=>{const e=document.createElement('div');e.className='sl';e.textContent=i+1;e.style.background='rgb('+COL[b].map(v=>v*255|0)+')';e.onclick=()=>pick(i);bar.appendChild(e)});
+function pick(i){sel=i;[...bar.children].forEach((e,j)=>e.classList.toggle('on',j===i))}pick(0);
+function edit(a){const h=ray();if(!h)return;
+if(a==='mine'){if(h.y>0){data[ix(h.x,h.y,h.z)]=0;build();drawBase()}}
+else if(h.pv){const p=h.pv;if(p.x<0||p.z<0||p.x>=W||p.z>=W||p.y>=H)return;data[ix(p.x,p.y,p.z)]=hot[sel];
+if(hit(pl.x,pl.y,pl.z)){data[ix(p.x,p.y,p.z)]=0;return}build();drawBase()}}
+
+// navigation
+function setWp(la,lo){wp={lat:la,lon:lo};const q=toXZ(la,lo);const ok=q.x>=0&&q.z>=0&&q.x<W&&q.z<W;beacon.visible=ok;if(ok)beacon.position.set(q.x,35,q.z)}
+document.getElementById('gob').onclick=()=>{const m=document.getElementById('ll').value.match(/(-?\d+(\.\d+)?)\s*[, ]\s*(-?\d+(\.\d+)?)/);if(m)setWp(+m[1],+m[3])};
+document.getElementById('clr').onclick=()=>{wp=null;beacon.visible=false};
+document.getElementById('gps').onclick=()=>{const t=document.getElementById('gps');try{navigator.geolocation.getCurrentPosition(p=>{lat0=p.coords.latitude;lon0=p.coords.longitude;seed=Math.floor(Math.abs(lat0*1e3)*7919+Math.abs(lon0*1e3))%99991+1;gen();build();drawBase();spawn();wp=null;beacon.visible=false;t.textContent='GPS anchored ✓'},()=>{t.textContent='GPS unavailable'},{enableHighAccuracy:true,timeout:10000})}catch(e){t.textContent='GPS unavailable'}};
+mc.onclick=e=>{const r=mc.getBoundingClientRect(),q=toLL((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*W);setWp(q.lat,q.lon)};
+const dirs=['N','NE','E','SE','S','SW','W','NW'],cd=d=>dirs[Math.round(d/45)%8];
+
+// input
+const ov=document.getElementById('ov');let locked=false;
+document.getElementById('play').onclick=()=>{ov.style.display='none';if(!('ontouchstart'in window)){cv.requestPointerLock&&cv.requestPointerLock()}else document.getElementById('tb').style.display='flex'};
+document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===cv;if(!locked&&!('ontouchstart'in window))ov.style.display='grid'});
+document.addEventListener('mousemove',e=>{if(!locked)return;pl.yaw-=e.movementX*.0025;pl.pitch=Math.max(-1.5,Math.min(1.5,pl.pitch-e.movementY*.0025))});
+document.addEventListener('keydown',e=>{keys[e.code]=true;const n=+e.key;if(n>=1&&n<=5)pick(n-1)});
+document.addEventListener('keyup',e=>keys[e.code]=false);
+cv.addEventListener('mousedown',e=>{if(!locked)return;edit(e.button===0?'mine':'place')});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+let tm=null,tl=null;
+cv.addEventListener('touchstart',e=>{for(const t of e.changedTouches){if(t.clientX<innerWidth/2&&!tm)tm={id:t.identifier,x:t.clientX,y:t.clientY};else if(!tl)tl={id:t.identifier,x:t.clientX,y:t.clientY}}},{passive:true});
+cv.addEventListener('touchmove',e=>{for(const t of e.changedTouches){if(tm&&t.identifier===tm.id){mv.x=Math.max(-1,Math.min(1,(t.clientX-tm.x)/50));mv.z=Math.max(-1,Math.min(1,(t.clientY-tm.y)/50))}
+else if(tl&&t.identifier===tl.id){pl.yaw-=(t.clientX-tl.x)*.006;pl.pitch=Math.max(-1.5,Math.min(1.5,pl.pitch-(t.clientY-tl.y)*.006));tl.x=t.clientX;tl.y=t.clientY}}},{passive:true});
+const te=e=>{for(const t of e.changedTouches){if(tm&&t.identifier===tm.id){tm=null;mv.x=mv.z=0}if(tl&&t.identifier===tl.id)tl=null}};
+cv.addEventListener('touchend',te);cv.addEventListener('touchcancel',te);
+const bj=document.getElementById('bj');bj.ontouchstart=()=>keys.Space=true;bj.ontouchend=()=>keys.Space=false;
+document.getElementById('bm').ontouchstart=()=>edit('mine');document.getElementById('bp').ontouchstart=()=>edit('place');
+
+function resize(){ren.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();
+const info=document.getElementById('info'),nt=document.getElementById('ntxt'),ar=document.getElementById('arrow');
+let last=performance.now(),hudT=0;
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last)/1000);last=now;step(dt);
+cam.position.set(pl.x,pl.y+1.62,pl.z);cam.rotation.set(pl.pitch,pl.yaw,0);
+const h=ray();if(h){hl.visible=true;hl.position.set(h.x+.5,h.y+.5,h.z+.5)}else hl.visible=false;
+ren.render(scene,cam);
+hudT+=dt;if(hudT<.1)return;hudT=0;
+const p=toLL(pl.x,pl.z),hd=((-pl.yaw*180/Math.PI)%360+360)%360;
+info.innerHTML='<b>'+p.lat.toFixed(5)+'°, '+p.lon.toFixed(5)+'°</b><br>Heading '+hd.toFixed(0)+'° '+cd(hd)+' · Alt '+(pl.y|0)+' blocks<br>1 block = '+S+' m';
+if(wp){const d=hav(p.lat,p.lon,wp.lat,wp.lon),b=brg(p.lat,p.lon,wp.lat,wp.lon),eta=d/1.4;
+nt.innerHTML=(d>=1000?(d/1000).toFixed(2)+' km':d.toFixed(0)+' m')+' · '+b.toFixed(0)+'° '+cd(b)+'<br>Walk ETA '+(eta>=3600?(eta/3600).toFixed(1)+' h':Math.max(1,Math.round(eta/60))+' min')+(d<8?' · Arrived!':'');
+ar.style.transform='rotate('+(b-hd)+'deg)'}else{nt.textContent='No destination set';ar.style.transform='none'}
+mx.clearRect(0,0,W,W);mx.drawImage(base,0,0);
+if(wp){const q=toXZ(wp.lat,wp.lon),qx=Math.max(3,Math.min(W-3,q.x)),qz=Math.max(3,Math.min(W-3,q.z));mx.fillStyle='#f33';mx.fillRect(qx-3,qz-3,6,6)}
+mx.strokeStyle='#fff';mx.lineWidth=2;mx.beginPath();mx.moveTo(pl.x,pl.z);mx.lineTo(pl.x-Math.sin(pl.yaw)*8,pl.z-Math.cos(pl.yaw)*8);mx.stroke();
+mx.fillStyle='#fff';mx.beginPath();mx.arc(pl.x,pl.z,2.5,0,7);mx.fill()}
+gen();build();drawBase();spawn();requestAnimationFrame(frame);
+</script></body></html>
