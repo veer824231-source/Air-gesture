@@ -2,16 +2,13 @@
 <html lang="zh-Hans" class="light">
 <head>
   <meta charset="UTF-8">
-<meta name="theme-color" content="#DC2626">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="HanziHero Pro: interactive Mandarin Chinese learning with tones, flashcards, stroke practice, phrasebook and quizzes.">
-    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Learn Chinese">
+<link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>HanziHero Pro — Master Mandarin Chinese</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -108,12 +105,13 @@
     button, [onclick], label, nav, header { -webkit-user-select: none; user-select: none; }
     input[type=text], input:not([type]) { cursor: text !important; -webkit-user-select: text; user-select: text; }
     button:focus:not(:focus-visible), [onclick]:focus:not(:focus-visible) { outline: none; }
+    .no-pinyin .py, .no-pinyin #fcPinyin, .no-pinyin #canvasPinyinDisplay { visibility: hidden; }
     #strokeCanvas { cursor: crosshair !important; }
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-crimson-600 selection:text-white">
 
-  <svg width=0 height=0 style="position:absolute" aria-hidden=true><symbol id=i-fire viewBox="0 0 24 24"><path d="M12 2c1 4 5 6 5 11a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/></symbol><symbol id=i-bolt viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol><symbol id=i-target viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><circle cx=12 cy=12 r=4 /></symbol><symbol id=i-music viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx=6 cy=18 r=3 /><circle cx=18 cy=16 r=3 /></symbol><symbol id=i-cards viewBox="0 0 24 24"><rect x=3 y=7 width=13 height=13 rx=2 /><path d="M8 7V4h13v13h-3"/></symbol><symbol id=i-pen viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol><symbol id=i-chat viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.5 7.2L3 21l1.8-5.5A8 8 0 1121 12z"/></symbol><symbol id=i-pin viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21z"/></symbol><symbol id=i-speaker viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/></symbol><symbol id=i-refresh viewBox="0 0 24 24"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5"/></symbol><symbol id=i-x viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol><symbol id=i-check viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol><symbol id=i-sparkle viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol><symbol id=i-trophy viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3"/></symbol><symbol id=i-star viewBox="0 0 24 24"><path d="M12 2l3 7 7 .8-5.3 4.8 1.6 7.4L12 18l-6.3 4 1.6-7.4L2 9.8 9 9z"/></symbol><symbol id=i-trash viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol><symbol id=i-search viewBox="0 0 24 24"><circle cx=11 cy=11 r=7 /><path d="M21 21l-5-5"/></symbol><symbol id=i-shuffle viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></symbol><symbol id=i-smile viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol><symbol id=i-repeat viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></symbol><symbol id=i-ban viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M5.6 5.6l12.8 12.8"/></symbol><symbol id=i-hash viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></symbol><symbol id=i-one viewBox="0 0 24 24"><path d="M8 7l4-3v16"/></symbol><symbol id=i-users viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/><circle cx=9 cy=7 r=4 /></symbol><symbol id=i-palette viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.5 0 2-1 1.5-2s0-2 1.5-2h2a4 4 0 004-4 9 9 0 00-9-10zM7.5 11h.01M10 7h.01M15 7h.01"/></symbol><symbol id=i-calendar viewBox="0 0 24 24"><rect x=3 y=4 width=18 height=18 rx=2 /><path d="M16 2v4M8 2v4M3 10h18"/></symbol><symbol id=i-compass viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M16 8l-2 6-6 2 2-6z"/></symbol><symbol id=i-headphones viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1v-6h3zM3 19a2 2 0 002 2h1v-6H3z"/></symbol><symbol id=i-award viewBox="0 0 24 24"><circle cx=12 cy=8 r=6 /><path d="M8.2 13.9L7 23l5-3 5 3-1.2-9.1"/></symbol><symbol id=i-chart viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol><symbol id=i-download viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id=i-plane viewBox="0 0 24 24"><path d="M2 16l20-8-8 14-2-6z"/></symbol><symbol id=i-bag viewBox="0 0 24 24"><path d="M6 2L4 6v14h16V6l-2-4zM4 6h16M16 10a4 4 0 01-8 0"/></symbol><symbol id=i-utensils viewBox="0 0 24 24"><path d="M4 3v7a2 2 0 004 0V3M6 3v18M18 3c-2 2-3 5-3 8h3v10"/></symbol><symbol id=i-home viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></symbol><symbol id=i-arrow viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol></svg>
+  <svg width=0 height=0 style="position:absolute" aria-hidden=true><symbol id=i-fire viewBox="0 0 24 24"><path d="M12 2c1 4 5 6 5 11a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/></symbol><symbol id=i-bolt viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol><symbol id=i-target viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><circle cx=12 cy=12 r=4 /></symbol><symbol id=i-music viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx=6 cy=18 r=3 /><circle cx=18 cy=16 r=3 /></symbol><symbol id=i-cards viewBox="0 0 24 24"><rect x=3 y=7 width=13 height=13 rx=2 /><path d="M8 7V4h13v13h-3"/></symbol><symbol id=i-pen viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol><symbol id=i-chat viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.5 7.2L3 21l1.8-5.5A8 8 0 1121 12z"/></symbol><symbol id=i-pin viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21z"/></symbol><symbol id=i-speaker viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/></symbol><symbol id=i-refresh viewBox="0 0 24 24"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5"/></symbol><symbol id=i-x viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol><symbol id=i-check viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol><symbol id=i-sparkle viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol><symbol id=i-trophy viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3"/></symbol><symbol id=i-star viewBox="0 0 24 24"><path d="M12 2l3 7 7 .8-5.3 4.8 1.6 7.4L12 18l-6.3 4 1.6-7.4L2 9.8 9 9z"/></symbol><symbol id=i-trash viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol><symbol id=i-search viewBox="0 0 24 24"><circle cx=11 cy=11 r=7 /><path d="M21 21l-5-5"/></symbol><symbol id=i-shuffle viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></symbol><symbol id=i-smile viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol><symbol id=i-repeat viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></symbol><symbol id=i-ban viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M5.6 5.6l12.8 12.8"/></symbol><symbol id=i-hash viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></symbol><symbol id=i-one viewBox="0 0 24 24"><path d="M8 7l4-3v16"/></symbol><symbol id=i-users viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/><circle cx=9 cy=7 r=4 /></symbol><symbol id=i-palette viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.5 0 2-1 1.5-2s0-2 1.5-2h2a4 4 0 004-4 9 9 0 00-9-10zM7.5 11h.01M10 7h.01M15 7h.01"/></symbol><symbol id=i-calendar viewBox="0 0 24 24"><rect x=3 y=4 width=18 height=18 rx=2 /><path d="M16 2v4M8 2v4M3 10h18"/></symbol><symbol id=i-compass viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M16 8l-2 6-6 2 2-6z"/></symbol><symbol id=i-headphones viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1v-6h3zM3 19a2 2 0 002 2h1v-6H3z"/></symbol><symbol id=i-award viewBox="0 0 24 24"><circle cx=12 cy=8 r=6 /><path d="M8.2 13.9L7 23l5-3 5 3-1.2-9.1"/></symbol><symbol id=i-chart viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol><symbol id=i-download viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id=i-plane viewBox="0 0 24 24"><path d="M2 16l20-8-8 14-2-6z"/></symbol><symbol id=i-bag viewBox="0 0 24 24"><path d="M6 2L4 6v14h16V6l-2-4zM4 6h16M16 10a4 4 0 01-8 0"/></symbol><symbol id=i-utensils viewBox="0 0 24 24"><path d="M4 3v7a2 2 0 004 0V3M6 3v18M18 3c-2 2-3 5-3 8h3v10"/></symbol><symbol id=i-home viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></symbol><symbol id=i-arrow viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id=i-book viewBox="0 0 24 24"><path d="M4 4h7a3 3 0 013 3v13a2 2 0 00-2-2H4zM20 4h-7a3 3 0 00-3 3v13a2 2 0 012-2h8z"/></symbol><symbol id=i-lock viewBox="0 0 24 24"><path d="M6 11h12v10H6zM8 11V7a4 4 0 018 0v4"/></symbol><symbol id=i-gear viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6zM19 12l2-1-2-4-2 1a7 7 0 00-2-1l-1-2h-4l-1 2a7 7 0 00-2 1L5 7l-2 4 2 1a7 7 0 000 2l-2 1 2 4 2-1a7 7 0 002 1l1 2h4l1-2a7 7 0 002-1l2 1 2-4-2-1a7 7 0 000-2z"/></symbol><symbol id=i-share viewBox="0 0 24 24"><path d="M4 12v8h16v-8M16 6l-4-4-4 4M12 2v14"/></symbol></svg>
   <!-- HEADER NAVBAR -->
   <header class="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -180,6 +178,9 @@
         <button onclick="switchTab('home')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 bg-crimson-600 text-white shadow-sm" data-tab="home">
           <span><svg class=ic><use href=#i-home></use></svg> Home</span>
         </button>
+        <button onclick="switchTab('lessons')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="lessons">
+          <span><svg class=ic><use href=#i-book></use></svg> Lessons</span>
+        </button>
         <button onclick="switchTab('pinyin')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 bg-crimson-600 text-white shadow-sm" data-tab="pinyin">
           <span><svg class=ic><use href=#i-music></use></svg> Pinyin & 4 Tones</span>
         </button>
@@ -206,6 +207,9 @@
         </button>
         <button onclick="switchTab('progress')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="progress">
           <span><svg class=ic><use href=#i-award></use></svg> Progress</span>
+        </button>
+        <button onclick="switchTab('settings')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="settings">
+          <span><svg class=ic><use href=#i-gear></use></svg> Settings</span>
         </button>
         <button onclick="switchTab('saved')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="saved">
           <span><svg class=ic><use href=#i-pin></use></svg> Saved Notebook</span>
@@ -613,7 +617,7 @@
         <span class="float-char absolute top-1/2 left-1/2 text-8xl font-black opacity-10" style="animation-delay:2s">水</span>
         <span class="float-char absolute bottom-10 left-6 text-5xl font-black opacity-10" style="animation-delay:3s">山</span>
         <div class="relative max-w-2xl">
-          <span class="inline-block px-3 py-1 rounded-full bg-white/15 border border-white/25 text-[11px] font-black tracking-widest uppercase">Interactive Mandarin Mastery</span>
+          <span id="homeHello" class="inline-block px-3 py-1 rounded-full bg-white/15 border border-white/25 text-[11px] font-black tracking-widest uppercase">Interactive Mandarin Mastery</span>
           <h1 class="mt-4 text-4xl sm:text-6xl font-black tracking-tight leading-tight">Learn Chinese<br>the fun way</h1>
           <p class="mt-4 text-sm sm:text-base text-white/85">HanziHero Pro teaches you Mandarin through tones you can hear, flashcards that adapt to you, characters you write yourself, real phrases, quizzes and daily goals. Free to use, right in your browser.</p>
           <div class="mt-7 flex flex-wrap gap-3">
@@ -647,6 +651,7 @@
           <button onclick="setPractice('listen')" class="prac-btn" data-m="listen">Listening</button>
           <button onclick="setPractice('type')" class="prac-btn" data-m="type">Pinyin Typing</button>
           <button onclick="setPractice('build')" class="prac-btn" data-m="build">Sentence Builder</button>
+          <button onclick="setPractice('timed')" class="prac-btn" data-m="timed">Timed 60s</button>
           <button onclick="toggleSlow()" id="slowBtn" class="ml-auto px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"><svg class=ic><use href=#i-speaker></use></svg> Normal speed</button>
         </div>
         <div class="text-xs text-slate-400 mt-3">Session score: <span id="pracScore" class="font-extrabold text-emerald-600">0</span> (+10 XP each)</div>
@@ -665,11 +670,32 @@
     <!-- MODULE: PROGRESS -->
     <section id="tab-progress" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="text-xs font-extrabold uppercase tracking-widest text-crimson-600">Level</div><div id="lvlName" class="text-2xl font-black text-slate-900 dark:text-white"></div><div class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden my-3"><div id="lvlBar" class="progress-fill h-full bg-crimson-600" style="width:0%"></div></div><div id="lvlText" class="text-xs text-slate-500"></div></div>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="text-xs font-extrabold uppercase tracking-widest text-crimson-600">Level</div><div id="lvlName" class="text-2xl font-black text-slate-900 dark:text-white"></div><div class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden my-3"><div id="lvlBar" class="progress-fill h-full bg-crimson-600" style="width:0%"></div></div><div id="lvlText" class="text-xs text-slate-500"></div><button onclick="shareProgress()" class="mt-3 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"><svg class=ic><use href=#i-share></use></svg> Share progress</button></div>
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-5"><svg viewBox="0 0 80 80" class="w-24 h-24 -rotate-90"><circle cx=40 cy=40 r=34 fill=none stroke="currentColor" class="text-slate-200 dark:text-slate-800" stroke-width=8 /><circle id="goalRing" cx=40 cy=40 r=34 fill=none stroke="#10b981" stroke-width=8 stroke-linecap=round stroke-dasharray="213.6" stroke-dashoffset="213.6" /></svg><div><div class="text-xs font-extrabold uppercase tracking-widest text-emerald-600">Daily Goal</div><div id="goalText" class="text-2xl font-black text-slate-900 dark:text-white"></div><div class="text-xs text-slate-500">Target: 50 XP per day</div></div></div>
       </div>
       <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3"><svg class=ic><use href=#i-chart></use></svg> Weekly XP</h3><div id="weekChart" class="text-slate-500"></div></div>
       <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3"><svg class=ic><use href=#i-award></use></svg> Badges</h3><div id="badgeGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="flex items-center justify-between mb-3"><h3 class="text-lg font-bold text-slate-900 dark:text-white"><svg class=ic><use href=#i-repeat></use></svg> Review Mistakes</h3><button onclick="clearMistakes()" class="text-xs text-rose-600 font-bold hover:underline">Clear all</button></div><div id="mistakeGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div></div>
+    </section>
+
+    <!-- MODULE: LESSONS -->
+    <section id="tab-lessons" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Learning Path</span><h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Mini Lessons</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Finish each unit with 4 of 5 correct to unlock the next one (+50 XP).</p></div>
+      <div id="lessonArea" class="space-y-3"></div>
+    </section>
+
+    <!-- MODULE: SETTINGS -->
+    <section id="tab-settings" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Settings</h2>
+        <div><label class="block text-xs font-bold mb-1">Your name</label><input id="setName" maxlength="20" oninput="saveSet('name',this.value.trim())" placeholder="Shown on the Home page" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-crimson-600"></div>
+        <div><label class="block text-xs font-bold mb-2">Theme color</label><div class="flex gap-2"><button onclick="saveSet('accent',0)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Red</button><button onclick="saveSet('accent',130)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Jade</button><button onclick="saveSet('accent',35)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Gold</button></div></div>
+        <div><label class="block text-xs font-bold mb-2">Text size</label><div class="flex gap-2"><button onclick="saveSet('size','s')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">A-</button><button onclick="saveSet('size','m')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">A</button><button onclick="saveSet('size','l')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">A+</button></div></div>
+        <div><label class="block text-xs font-bold mb-2">Pinyin (hard mode hides it)</label><div class="flex gap-2"><button onclick="saveSet('pinyin',true)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Show</button><button onclick="saveSet('pinyin',false)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Hide</button></div></div>
+        <div class="text-xs text-slate-600 dark:text-slate-300"><svg class=ic><use href=#i-fire></use></svg> Streak freezes left: <span id="freezeCount" class="font-extrabold">1</span> (saves your streak if you miss one day; earn one every 7 days)</div>
+        <div class="flex flex-wrap gap-2"><button id="installBtn" onclick="installApp()" class="hidden px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Install app</button><button onclick="exportAll()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"><svg class=ic><use href=#i-download></use></svg> Backup</button><label class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Restore<input type="file" accept=".json" class="hidden" onchange="importAll(this.files[0])"></label><button onclick="resetAll()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300">Reset progress</button></div>
+        <p class="text-[11px] text-slate-400">To add this app to your phone: open your browser menu and choose Add to Home screen.</p>
+      </div>
     </section>
 
     <!-- MODULE 7: SAVED NOTEBOOK -->
@@ -916,6 +942,8 @@
       renderHome();
       renderDailyWord();
       initHistory();
+      applySettings();
+      initExtras();
       setPractice('tone', true);
       buildQuiz();
       renderQuizQuestion();
@@ -964,6 +992,7 @@
 
     function recordAttempt(isCorrect) {
       attemptCount++;
+      if (navigator.vibrate) navigator.vibrate(isCorrect ? 15 : [40, 40, 40]);
       if (isCorrect) correctCount++;
       updateStatsUI();
     }
@@ -974,8 +1003,13 @@
       const last = localStorage.getItem('hh_last_visit');
       if (last === today) return;
       if (last) {
-        const yesterday = new Date(Date.now() - 86400000).toDateString();
-        streakCount = (last === yesterday) ? streakCount + 1 : 1;
+        const dAgo = n => new Date(Date.now() - n * 86400000).toDateString();
+        let fz = parseInt(localStorage.getItem('hh_freeze') ?? '1');
+        if (last === dAgo(1)) streakCount++;
+        else if (last === dAgo(2) && fz > 0) { fz--; streakCount++; }
+        else streakCount = 1;
+        if (streakCount % 7 === 0) fz = Math.min(fz + 1, 2);
+        localStorage.setItem('hh_freeze', fz);
       }
       localStorage.setItem('hh_last_visit', today);
     }
@@ -1010,6 +1044,8 @@
       });
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
       if (tabId === 'progress') renderProgress();
+      if (tabId === 'lessons') renderLessons();
+      if (tabId === 'settings') applySettings();
       if (tabId === 'strokes') {
         setTimeout(resizeCanvas, 50);
       }
@@ -1125,6 +1161,7 @@
 
     function handleFlashcardResult(gotIt) {
       recordAttempt(gotIt);
+      if (!gotIt) addMistake(flashcardsData[currentFcIndex].hanzi, flashcardsData[currentFcIndex].pinyin, flashcardsData[currentFcIndex].english);
       if (gotIt) addXP(15);
       markSrs(gotIt);
       currentFcIndex = nextSrsIndex();
@@ -1242,14 +1279,23 @@
     function evaluateStrokeAccuracy() {
       const banner = document.getElementById('evalResultBanner');
       banner.classList.remove('hidden');
-      banner.innerHTML = "<svg class=ic><use href=#i-bolt></use></svg> AI Stroke Evaluator: Analyzing stroke proportions...";
-      
-      setTimeout(() => {
-        const accuracy = Math.floor(Math.random() * 15) + 85; // 85% - 99%
-        banner.innerHTML = `<svg class=ic><use href=#i-target></use></svg> Accuracy Evaluation: ${accuracy}% Match! +20 XP Earned!`;
-        addXP(20);
-        speakText(activeStrokeChar.char);
-      }, 600);
+      const W = canvas.width, H = canvas.height, ch = activeStrokeChar.char;
+      const g = document.createElement('canvas'); g.width = W; g.height = H;
+      const gx = g.getContext('2d');
+      gx.font = `bold ${W * 0.62}px 'Noto Sans SC', sans-serif`; gx.textAlign = 'center'; gx.textBaseline = 'middle';
+      gx.fillText(ch, W / 2, H * 0.52);
+      const guide = gx.getImageData(0, 0, W, H).data;
+      gx.lineWidth = W * 0.07; gx.lineJoin = 'round'; gx.strokeText(ch, W / 2, H * 0.52);
+      const wide = gx.getImageData(0, 0, W, H).data, dr = ctx.getImageData(0, 0, W, H).data;
+      let G = 0, D = 0, ov = 0, ow = 0;
+      for (let i = 3; i < dr.length; i += 4) {
+        const a = guide[i] > 100, w = wide[i] > 100, d = dr[i] > 100;
+        if (a) G++; if (d) { D++; if (w) ow++; } if (a && d) ov++;
+      }
+      if (D < 150) { banner.textContent = 'Draw the character first, then press Evaluate.'; return; }
+      const score = Math.round(100 * (0.5 * Math.min(1, ov / G / 0.5) + 0.5 * ow / D));
+      banner.innerHTML = `${ic('target')} Match: ${score}% ${score >= 50 ? '· +20 XP' : '· trace the grey guide more closely'}`;
+      if (score >= 50) { addXP(20); speakText(ch); }
     }
 
     // PHRASEBOOK LOGIC
@@ -1286,7 +1332,7 @@
           <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
             <div class="space-y-1">
               <div class="text-xl font-extrabold text-slate-900 dark:text-white">${p.hanzi}</div>
-              <div class="text-xs font-bold text-crimson-600 dark:text-crimson-400">${p.pinyin}</div>
+              <div class="py text-xs font-bold text-crimson-600 dark:text-crimson-400">${p.pinyin}</div>
               <div class="text-xs text-slate-500 dark:text-slate-400">${p.english}</div>
             </div>
             <div class="flex items-center space-x-2">
@@ -1406,7 +1452,7 @@
                     <svg class="w-3.5 h-3.5 ${isSaved ? 'text-crimson-600 fill-current' : 'text-slate-400 fill-current'}" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
                   </button>
                   <div class="text-2xl font-black text-slate-900 dark:text-white">${hanzi}</div>
-                  <div class="text-xs font-bold text-crimson-600 dark:text-crimson-400 mt-1">${pinyin}</div>
+                  <div class="py text-xs font-bold text-crimson-600 dark:text-crimson-400 mt-1">${pinyin}</div>
                   <div class="text-[11px] text-slate-500 dark:text-slate-400">${english}</div>
                 </div>`;
             }).join('')}
@@ -1485,7 +1531,7 @@
     }
 
     // ===== HOME PAGE =====
-    const homeFeatures = [['pinyin', 'music', 'Pinyin & 4 Tones', 'Hear every tone and syllable with live audio.'], ['flashcards', 'cards', 'Flashcard Arena', 'Smart flashcards that repeat what you miss.'], ['strokes', 'pen', 'Stroke Canvas', 'Write characters on a Tianzige grid.'], ['phrasebook', 'chat', 'Essential Phrasebook', 'Real phrases for dining, travel and shopping.'], ['practice', 'headphones', 'Practice Lab', 'Tone drills, listening and sentence building.'], ['quiz', 'bolt', 'Arcade Quiz', 'Fresh mixed questions every round.'], ['vocab', 'hash', 'Numbers & Basics', 'Numbers, family, colors, food and more.'], ['explore', 'compass', 'Explore', 'Radicals, HSK 1 list and culture notes.'], ['progress', 'award', 'Progress', 'Levels, daily goal, chart and badges.']];
+    const homeFeatures = [['pinyin', 'music', 'Pinyin & 4 Tones', 'Hear every tone and syllable with live audio.'], ['flashcards', 'cards', 'Flashcard Arena', 'Smart flashcards that repeat what you miss.'], ['strokes', 'pen', 'Stroke Canvas', 'Write characters on a Tianzige grid.'], ['phrasebook', 'chat', 'Essential Phrasebook', 'Real phrases for dining, travel and shopping.'], ['practice', 'headphones', 'Practice Lab', 'Tone drills, listening and sentence building.'], ['quiz', 'bolt', 'Arcade Quiz', 'Fresh mixed questions every round.'], ['vocab', 'hash', 'Numbers & Basics', 'Numbers, family, colors, food and more.'], ['explore', 'compass', 'Explore', 'Radicals, HSK 1 list and culture notes.'], ['progress', 'award', 'Progress', 'Levels, daily goal, chart and badges.'], ['lessons', 'book', 'Mini Lessons', 'A guided path of units that unlock as you learn.'], ['settings', 'gear', 'Settings', 'Name, text size, pinyin mode, backup and more.']];
     function renderHome() {
       const words = flashcardsData.length + phraseData.length + hsk.length + vocabGroups.reduce((n, g) => n + g.items.length, 0);
       const st = [['music', '4', 'Mandarin tones'], ['cards', words + '+', 'Words & phrases'], ['pen', strokeCharData.length, 'Characters to write'], ['award', '8', 'Badges to earn']];
@@ -1530,10 +1576,12 @@
     }
     function setPractice(m, silent) {
       pracMode = m;
+      if (tTimer) { clearInterval(tTimer); tTimer = null; }
       document.querySelectorAll('.prac-btn').forEach(b => b.className = 'prac-btn px-3 py-1.5 rounded-lg text-xs font-bold ' + (b.dataset.m === m ? 'bg-crimson-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'));
+      if (m === 'timed') { startTimed(); return; }
       nextPractice(silent);
     }
-    const choices = (opts) => `<div class="grid grid-cols-1 gap-3">${opts.map((o, i) => `<button onclick="answerPrac(${i})" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-crimson-500 ${card.split(' ').slice(0, 2).join(' ')} text-sm font-bold">${o}</button>`).join('')}</div>`;
+    const choices = (opts, fn = 'answerPrac') => `<div class="grid grid-cols-1 gap-3">${opts.map((o, i) => `<button onclick="${fn}(${i})" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-crimson-500 ${card.split(' ').slice(0, 2).join(' ')} text-sm font-bold">${o}</button>`).join('')}</div>`;
     const replay = (js) => `<button onclick="${js}" class="px-4 py-2 bg-crimson-50 dark:bg-slate-800 text-crimson-600 dark:text-crimson-400 rounded-xl text-xs font-bold">${ic('speaker')} Play again</button>`;
     function nextPractice(silent) {
       const a = document.getElementById('pracArea'); built = [];
@@ -1542,7 +1590,7 @@
         a.innerHTML = `<p class="text-sm font-bold">Which tone did you hear?</p>${replay(`playTone(${t[0]},'${t[1]}','${t[2]}')`)}${choices(toneNames)}`;
       } else if (pracMode === 'listen') {
         const c = rnd(flashcardsData), o = shuf([c, ...shuf(flashcardsData.filter(x => x !== c)).slice(0, 3)]);
-        pracAns = o.indexOf(c); if (!silent) speakText(c.hanzi);
+        pracAns = o.indexOf(c); pracItem = c; if (!silent) speakText(c.hanzi);
         a.innerHTML = `<p class="text-sm font-bold">Listen and choose the matching word.</p>${replay(`speakText('${c.hanzi}')`)}${choices(o.map(x => x.hanzi))}`;
       } else if (pracMode === 'type') {
         pracItem = rnd(flashcardsData);
@@ -1557,6 +1605,7 @@
     }
     function pracResult(ok) {
       recordAttempt(ok);
+      if (!ok && (pracMode === 'listen' || pracMode === 'type')) addMistake(pracItem.hanzi, pracItem.pinyin, pracItem.english);
       if (ok) { pracScore++; document.getElementById('pracScore').textContent = pracScore; addXP(10); }
       else showToast(`${ic('x')} Not quite, try the next one`);
       setTimeout(() => nextPractice(), 700);
@@ -1573,7 +1622,7 @@
     const culture = [['star', 'Red Envelopes (红包)', 'Money given in red envelopes at Lunar New Year, weddings and birthdays brings luck and good wishes.'], ['pin', 'Tea Culture (茶)', 'Tea is offered to guests as a sign of respect. Tap the table twice with two fingers to say thank you when someone pours.'], ['users', 'Respecting Elders', 'Greet elders first and use polite forms such as 您 (nín). Age is honored in family and work life.'], ['sparkle', 'Chopstick Etiquette', 'Never stick chopsticks upright in rice, as it resembles incense offerings for the dead.'], ['calendar', 'Lunar New Year (春节)', 'The biggest holiday of the year: family reunions, dumplings, fireworks and lanterns across two weeks.']];
     function renderExplore() {
       document.getElementById('radicalGrid').innerHTML = radicals.map(r => `<div class="p-4 ${card} text-center"><div class="text-4xl font-black text-crimson-600 dark:text-crimson-400">${r[0]}</div><div class="text-xs font-bold mb-2">${r[1]}</div><div class="flex justify-center gap-2">${r[2].split(' ').map(c => `<button onclick="speakText('${c}')" class="text-xl font-bold hover:text-crimson-600">${c}</button>`).join('')}</div></div>`).join('');
-      document.getElementById('hskGrid').innerHTML = hsk.map((w, i) => `<label class="flex items-center gap-3 p-3 ${card} cursor-pointer"><input type="checkbox" ${hskDone.includes(i) ? 'checked' : ''} onchange="toggleHsk(${i})" class="accent-emerald-600"><span class="text-lg font-black">${w[0]}</span><span class="text-xs"><span class="font-bold text-crimson-600 dark:text-crimson-400">${w[1]}</span><br><span class="text-slate-500">${w[2]}</span></span><button type="button" onclick="event.preventDefault();speakText('${w[0]}')" class="ml-auto text-slate-400 hover:text-crimson-600">${ic('speaker')}</button></label>`).join('');
+      document.getElementById('hskGrid').innerHTML = hsk.map((w, i) => `<label class="flex items-center gap-3 p-3 ${card} cursor-pointer"><input type="checkbox" ${hskDone.includes(i) ? 'checked' : ''} onchange="toggleHsk(${i})" class="accent-emerald-600"><span class="text-lg font-black">${w[0]}</span><span class="text-xs"><span class="py font-bold text-crimson-600 dark:text-crimson-400">${w[1]}</span><br><span class="text-slate-500">${w[2]}</span></span><button type="button" onclick="event.preventDefault();speakText('${w[0]}')" class="ml-auto text-slate-400 hover:text-crimson-600">${ic('speaker')}</button></label>`).join('');
       document.getElementById('cultureGrid').innerHTML = culture.map(c => `<div class="p-4 ${card}"><div class="text-sm font-extrabold mb-1 text-crimson-600 dark:text-crimson-400">${ic(c[0])} ${c[1]}</div><p class="text-xs text-slate-600 dark:text-slate-300">${c[2]}</p></div>`).join('');
       document.getElementById('hskCount').textContent = `${hskDone.length} / ${hsk.length} learned`;
       document.getElementById('hskBar').style.width = (hskDone.length / hsk.length * 100) + '%';
@@ -1599,6 +1648,7 @@
       const days = Array.from({ length: 7 }, (_, i) => { const t = new Date(Date.now() - (6 - i) * 86400000); return [t.toLocaleDateString('en', { weekday: 'short' }), d[t.toDateString()] || 0]; });
       const mx = Math.max(50, ...days.map(x => x[1]));
       document.getElementById('weekChart').innerHTML = `<svg viewBox="0 0 280 110" class="w-full max-w-md">${days.map((x, i) => { const h = x[1] / mx * 70; return `<rect x="${i * 40 + 8}" y="${80 - h}" width="24" height="${h}" rx="4" fill="#dc2626" opacity="${x[1] ? 1 : 0.2}"/><text x="${i * 40 + 20}" y="98" text-anchor="middle" font-size="10" fill="currentColor">${x[0]}</text><text x="${i * 40 + 20}" y="${76 - h}" text-anchor="middle" font-size="9" fill="currentColor">${x[1] || ''}</text>`; }).join('')}</svg>`;
+      renderMistakes();
       const badges = [['bolt', 'First Steps', 'Earn your first XP', xpPoints >= 1], ['star', 'Century', 'Reach 100 XP', xpPoints >= 100], ['fire', '3-Day Streak', 'Study 3 days in a row', streakCount >= 3], ['fire', '7-Day Streak', 'Study 7 days in a row', streakCount >= 7], ['pin', 'Collector', 'Save 5 words', savedBookmarks.length >= 5], ['trophy', 'Perfect Quiz', 'Score 100% in a quiz', localStorage.getItem('hh_perfect') === '1'], ['target', 'Sharp Mind', '90% accuracy (20+ answers)', attemptCount >= 20 && correctCount / attemptCount >= 0.9], ['check', 'HSK Starter', 'Learn 15 HSK 1 words', hskDone.length >= 15]];
       document.getElementById('badgeGrid').innerHTML = badges.map(b => `<div class="p-4 ${card} text-center ${b[3] ? '' : 'opacity-40 grayscale'}"><div class="text-3xl ${b[3] ? 'text-imperial-500' : ''}">${ic(b[0])}</div><div class="text-xs font-extrabold mt-1">${b[1]}</div><div class="text-[10px] text-slate-500">${b[2]}</div></div>`).join('');
     }
@@ -1607,6 +1657,115 @@
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv' }));
       a.download = 'hanzihero_notebook.csv'; a.click();
+    }
+
+    // ===== SETTINGS =====
+    let settings = JSON.parse(localStorage.getItem('hh_settings') || '{}'), deferredInstall = null;
+    function saveSet(k, v) { settings[k] = v; localStorage.setItem('hh_settings', JSON.stringify(settings)); applySettings(); }
+    function applySettings() {
+      const r = document.documentElement;
+      r.style.fontSize = { s: '15px', m: '16px', l: '19px' }[settings.size || 'm'];
+      r.classList.toggle('no-pinyin', settings.pinyin === false);
+      r.style.filter = settings.accent ? `hue-rotate(${settings.accent}deg)` : '';
+      document.getElementById('homeHello').textContent = settings.name ? `Welcome back, ${settings.name}` : 'Interactive Mandarin Mastery';
+      const n = document.getElementById('setName'); if (n && document.activeElement !== n) n.value = settings.name || '';
+      document.getElementById('freezeCount').textContent = localStorage.getItem('hh_freeze') ?? '1';
+    }
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstall = e; document.getElementById('installBtn').classList.remove('hidden'); });
+    function installApp() { if (deferredInstall) { deferredInstall.prompt(); deferredInstall = null; } }
+    function exportAll() {
+      const o = {}; Object.keys(localStorage).filter(k => k.startsWith('hh_')).forEach(k => o[k] = localStorage.getItem(k));
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(o)], { type: 'application/json' }));
+      a.download = 'hanzihero_backup.json'; a.click();
+    }
+    function importAll(f) {
+      if (!f) return;
+      f.text().then(t => { const o = JSON.parse(t); Object.keys(o).filter(k => k.startsWith('hh_')).forEach(k => localStorage.setItem(k, o[k])); location.reload(); }).catch(() => showToast('Invalid backup file'));
+    }
+    function resetAll() {
+      if (!confirm('Reset all progress, saved words and settings? This cannot be undone.')) return;
+      Object.keys(localStorage).filter(k => k.startsWith('hh_')).forEach(k => localStorage.removeItem(k)); location.reload();
+    }
+    function shareProgress() {
+      let li = 0; levels.forEach((l, i) => { if (xpPoints >= l[0]) li = i; });
+      const t = `I'm Lv ${li + 1} ${levels[li][1]} on HanziHero Pro with ${xpPoints} XP and a ${streakCount}-day streak!`;
+      if (navigator.share) navigator.share({ text: t }).catch(() => {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => showToast('Copied to clipboard'));
+    }
+    function initExtras() {
+      let x0 = null; const b = document.getElementById('flashcardBox');
+      b.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+      b.addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 70) handleFlashcardResult(dx > 0); });
+    }
+
+    // ===== MISTAKES REVIEW =====
+    let mistakes = JSON.parse(localStorage.getItem('hh_mistakes') || '{}');
+    function addMistake(h, p, e) { mistakes[h] = { hanzi: h, pinyin: p, english: e }; localStorage.setItem('hh_mistakes', JSON.stringify(mistakes)); }
+    function dropMistake(h) { delete mistakes[h]; localStorage.setItem('hh_mistakes', JSON.stringify(mistakes)); renderMistakes(); }
+    function clearMistakes() { mistakes = {}; localStorage.setItem('hh_mistakes', '{}'); renderMistakes(); }
+    function renderMistakes() {
+      const l = Object.values(mistakes);
+      document.getElementById('mistakeGrid').innerHTML = l.length ? l.map(m => `<div class="p-3 ${card} flex items-center justify-between"><div><div class="text-xl font-black">${m.hanzi}</div><div class="py text-xs font-bold text-crimson-600 dark:text-crimson-400">${m.pinyin}</div><div class="text-xs text-slate-500">${m.english}</div></div><div class="flex gap-2"><button onclick="speakText('${m.hanzi}')" class="p-2 bg-white dark:bg-slate-700 rounded-xl">${ic('speaker')}</button><button onclick="dropMistake('${m.hanzi}')" class="p-2 text-emerald-600" title="Mark as learned">${ic('check')}</button></div></div>`).join('') : '<p class="text-xs text-slate-400">No mistakes to review. Words you miss will appear here.</p>';
+    }
+
+    // ===== TIMED 60s MODE =====
+    let tTimer = null, tLeft = 60, tScore = 0;
+    function startTimed() {
+      tLeft = 60; tScore = 0; tTimer = setInterval(() => {
+        tLeft--; if (tLeft <= 0) renderTimed(); else { const e = document.getElementById('tLeftEl'); if (e) e.textContent = tLeft + 's'; }
+      }, 1000); renderTimed();
+    }
+    function renderTimed() {
+      const a = document.getElementById('pracArea');
+      if (tLeft <= 0) {
+        clearInterval(tTimer); tTimer = null;
+        const hi = Math.max(tScore, parseInt(localStorage.getItem('hh_hi') || '0')); localStorage.setItem('hh_hi', hi);
+        if (tScore) addXP(tScore * 2);
+        a.innerHTML = `<div class="text-center py-6 space-y-2"><div class="text-4xl text-imperial-500">${ic('trophy')}</div><div class="text-2xl font-black">${tScore} correct</div><div class="text-xs text-slate-500">Best: ${hi} · +${tScore * 2} XP</div><button onclick="startTimed()" class="mt-2 px-5 py-2 bg-crimson-600 text-white rounded-xl text-xs font-extrabold">Play again</button></div>`;
+        return;
+      }
+      const c = rnd(flashcardsData), o = shuf([c, ...shuf(flashcardsData.filter(x => x !== c)).slice(0, 3)]);
+      pracItem = c; pracAns = o.indexOf(c);
+      a.innerHTML = `<div class="flex justify-between text-sm font-extrabold"><span>${ic('bolt')} ${tScore}</span><span id="tLeftEl">${tLeft}s</span></div><div class="text-5xl font-black text-center py-3">${c.hanzi}</div>${choices(o.map(x => x.english), 'answerTimed')}`;
+    }
+    function answerTimed(i) {
+      const ok = i === pracAns; recordAttempt(ok);
+      if (ok) tScore++; else addMistake(pracItem.hanzi, pracItem.pinyin, pracItem.english);
+      renderTimed();
+    }
+
+    // ===== MINI LESSONS =====
+    const units = [
+      ['Greetings', 'chat', [['你好', 'nǐ hǎo', 'Hello'], ['谢谢', 'xiè xie', 'Thank you'], ['再见', 'zài jiàn', 'Goodbye'], ['对不起', 'duì bu qǐ', 'Sorry'], ['请', 'qǐng', 'Please'], ['欢迎', 'huān yíng', 'Welcome']]],
+      ['Numbers', 'hash', [['一', 'yī', 'One'], ['二', 'èr', 'Two'], ['三', 'sān', 'Three'], ['四', 'sì', 'Four'], ['五', 'wǔ', 'Five'], ['十', 'shí', 'Ten']]],
+      ['Food', 'utensils', [['水', 'shuǐ', 'Water'], ['茶', 'chá', 'Tea'], ['米饭', 'mǐ fàn', 'Rice'], ['好吃', 'hǎo chī', 'Delicious'], ['面条', 'miàn tiáo', 'Noodles'], ['苹果', 'píng guǒ', 'Apple']]],
+      ['Travel', 'plane', [['地铁', 'dì tiě', 'Subway'], ['机场', 'jī chǎng', 'Airport'], ['洗手间', 'xǐ shǒu jiān', 'Restroom'], ['多少钱', 'duō shao qián', 'How much?'], ['迷路', 'mí lù', 'Get lost'], ['医生', 'yī shēng', 'Doctor']]]
+    ];
+    let unitsDone = JSON.parse(localStorage.getItem('hh_units') || '[]'), lq = null;
+    const lessonBtn = 'w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4';
+    function renderLessons() {
+      document.getElementById('lessonArea').innerHTML = units.map((u, i) => {
+        const done = unitsDone.includes(i), open = i === 0 || unitsDone.includes(i - 1);
+        return `<button ${open ? `onclick="openUnit(${i})"` : 'disabled'} class="${lessonBtn} ${open ? 'hover:border-crimson-500' : 'opacity-50'}"><span class="w-11 h-11 rounded-xl flex items-center justify-center text-xl ${done ? 'bg-emerald-100 text-emerald-600' : 'bg-crimson-100 dark:bg-crimson-950 text-crimson-600'}">${ic(done ? 'check' : open ? u[1] : 'lock')}</span><span><span class="block font-extrabold dark:text-white">Unit ${i + 1}: ${u[0]}</span><span class="block text-xs text-slate-500">${done ? 'Completed' : open ? '6 words · 5-question test' : 'Locked'}</span></span></button>`;
+      }).join('');
+    }
+    function openUnit(i) {
+      document.getElementById('lessonArea').innerHTML = `<div class="${lessonBtn} flex-col items-stretch"><div class="font-extrabold dark:text-white">Unit ${i + 1}: ${units[i][0]}</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${units[i][2].map(w => `<div onclick="speakText('${w[0]}')" class="p-3 ${card} flex items-center gap-3"><span class="text-2xl font-black">${w[0]}</span><span class="text-xs"><span class="py font-bold text-crimson-600 dark:text-crimson-400">${w[1]}</span><br>${w[2]}</span><span class="ml-auto text-slate-400">${ic('speaker')}</span></div>`).join('')}</div><div class="grid grid-cols-2 gap-3"><button onclick="renderLessons()" class="py-3 ${card} text-xs font-bold">Back</button><button onclick="startTest(${i})" class="py-3 bg-crimson-600 text-white rounded-xl text-xs font-extrabold">Start test</button></div></div>`;
+    }
+    function startTest(i) { lq = { i, n: 0, s: 0, qs: shuf(units[i][2]).slice(0, 5) }; lessonQ(); }
+    function lessonQ() {
+      const w = lq.qs[lq.n], pool = units.flatMap(u => u[2]).filter(x => x[0] !== w[0]);
+      const o = shuf([w, ...shuf(pool).slice(0, 3)]); lq.ans = o.indexOf(w); lq.w = w;
+      document.getElementById('lessonArea').innerHTML = `<div class="${lessonBtn} flex-col items-stretch"><div class="text-xs font-bold text-slate-400">Question ${lq.n + 1} of 5</div><div class="text-5xl font-black text-center py-2">${w[0]}</div>${choices(o.map(x => x[2]), 'lessonAns')}</div>`;
+    }
+    function lessonAns(k) {
+      const ok = k === lq.ans; recordAttempt(ok);
+      if (ok) lq.s++; else addMistake(lq.w[0], lq.w[1], lq.w[2]);
+      if (++lq.n < 5) return lessonQ();
+      const pass = lq.s >= 4;
+      if (pass && !unitsDone.includes(lq.i)) { unitsDone.push(lq.i); localStorage.setItem('hh_units', JSON.stringify(unitsDone)); addXP(50); }
+      if (pass) confetti();
+      document.getElementById('lessonArea').innerHTML = `<div class="${lessonBtn} flex-col items-center text-center"><div class="text-4xl ${pass ? 'text-imperial-500' : 'text-slate-400'}">${ic(pass ? 'trophy' : 'refresh')}</div><div class="text-2xl font-black dark:text-white">${lq.s} / 5</div><p class="text-xs text-slate-500">${pass ? 'Unit complete! The next unit is unlocked.' : 'You need 4 correct to pass. Try again!'}</p><button onclick="renderLessons()" class="px-6 py-3 bg-crimson-600 text-white rounded-xl text-xs font-extrabold">Continue</button></div>`;
     }
 
     // SAVED NOTEBOOK LOGIC
