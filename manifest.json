@@ -1,12 +1,12 @@
 {
-  "name": "My App",
-  "short_name": "My App",
+  "name": "Learn Chinese",
+  "short_name": "Learn Chinese",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#DC2626",
   "theme_color": "#ffffff",
-  "description": "My Progressive Web App",
+  "description": "The Best Chinese Learning App",
   "icons": [
     {
       "src": "/icon-192.png",
