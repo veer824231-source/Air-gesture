@@ -6,7 +6,7 @@
   <meta name="description" content="HanziHero Pro: interactive Mandarin Chinese learning with tones, flashcards, stroke practice, phrasebook and quizzes.">
     <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#dc2626">
+  <meta name="theme-color" content="#A93B00">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>HanziHero Pro — Master Mandarin Chinese</title>
@@ -107,6 +107,67 @@
     button:focus:not(:focus-visible), [onclick]:focus:not(:focus-visible) { outline: none; }
     .no-pinyin .py, .no-pinyin #fcPinyin, .no-pinyin #canvasPinyinDisplay { visibility: hidden; }
     #strokeCanvas { cursor: crosshair !important; }
+
+    /* iOS 26 mobile bottom navigation */
+    @media (max-width: 767px) {
+      body { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
+      body > header { position: sticky; top: 0; }
+      body > nav:not(.ios-bottom-nav) { display: none !important; }
+      .ios-bottom-nav {
+        position: fixed; z-index: 80; left: 0; right: 0;
+        bottom: 0; display: flex; justify-content: center; align-items: center;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+        pointer-events: none;
+      }
+      .ios-nav-shell {
+        pointer-events: auto; width: min(100%, 430px); min-height: 62px;
+        display: flex; align-items: center; gap: 10px; padding: 5px;
+        border-radius: 999px;
+        background: rgba(30, 27, 35, .78);
+        border: 1px solid rgba(255,255,255,.18);
+        box-shadow: 0 12px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.16);
+        -webkit-backdrop-filter: blur(28px) saturate(180%);
+        backdrop-filter: blur(28px) saturate(180%);
+      }
+      .dark .ios-nav-shell { background: rgba(18, 20, 27, .78); }
+      .ios-nav-items { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 3px; }
+      .ios-nav-item {
+        position: relative; min-width: 0; height: 52px; border: 0; border-radius: 999px;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        gap: 2px; color: rgba(255,255,255,.82); background: transparent;
+        font: 500 10px/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+        transition: background .28s cubic-bezier(.2,.8,.2,1), color .2s, transform .2s;
+      }
+      .ios-nav-item svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+      .ios-nav-item.active { background: rgba(255,255,255,.17); color: #fff; }
+      .ios-nav-item.active svg { color: #38a5ff; }
+      .ios-nav-item:active, .ios-search-button:active { transform: scale(.93); }
+      .ios-search-button {
+        flex: 0 0 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14);
+        color: white; background: rgba(255,255,255,.08); display: grid; place-items: center;
+        transition: transform .2s, background .2s;
+      }
+      .ios-search-button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+      .ios-search-button.active { background: rgba(255,255,255,.2); color: #55b4ff; }
+      .ios-more-panel {
+        position: fixed; z-index: 79; left: 14px; right: 14px;
+        bottom: calc(88px + env(safe-area-inset-bottom)); max-width: 430px; margin: 0 auto;
+        padding: 15px; border-radius: 25px; background: rgba(248,248,252,.92);
+        border: 1px solid rgba(255,255,255,.7); box-shadow: 0 16px 50px rgba(0,0,0,.2);
+        -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+        transform-origin: bottom center; animation: iosPanelIn .22s cubic-bezier(.2,.8,.2,1);
+      }
+      .dark .ios-more-panel { background: rgba(29,31,40,.94); border-color: rgba(255,255,255,.12); }
+      .ios-more-panel.hidden { display:none; }
+      .ios-more-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; max-height: min(48vh,360px); overflow:auto; }
+      .ios-more-link { min-height:66px; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:rgba(120,120,128,.09); color:#34343a; font-size:10px; font-weight:650; }
+      .dark .ios-more-link { color:#f5f5f7; background:rgba(255,255,255,.08); }
+      .ios-more-link svg { width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8; }
+      .ios-more-link.active { color:#087fe5; background:rgba(0,122,255,.12); }
+    }
+    @keyframes iosPanelIn { from {opacity:0;transform:translateY(12px) scale(.97)} to {opacity:1;transform:translateY(0) scale(1)} }
+    @media (min-width: 768px) { .ios-bottom-nav, .ios-more-panel { display:none !important; } }
+
   </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-crimson-600 selection:text-white">
@@ -217,6 +278,37 @@
       </div>
     </div>
   </nav>
+
+
+  <!-- iOS 26 mobile navigation: all original sections remain available in Search -->
+  <div class="ios-more-panel hidden" id="iosMorePanel" aria-label="All learning sections">
+    <div class="flex items-center justify-between mb-3">
+      <div class="font-extrabold text-sm dark:text-white">Explore HanziHero</div>
+      <button onclick="toggleMobileMenu(false)" class="w-8 h-8 rounded-full bg-slate-200/70 dark:bg-white/10 text-slate-600 dark:text-white text-lg">×</button>
+    </div>
+    <div class="ios-more-grid" id="iosMoreGrid"></div>
+  </div>
+  <div class="ios-bottom-nav">
+    <div class="ios-nav-shell">
+      <div class="ios-nav-items">
+        <button class="ios-nav-item active" data-mobile-tab="home" onclick="mobileNavigate('home')">
+          <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span>
+        </button>
+        <button class="ios-nav-item" data-mobile-tab="lessons" onclick="mobileNavigate('lessons')">
+          <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21zM4 5.5V21M8 7h8M8 11h8"/></svg><span>Lessons</span>
+        </button>
+        <button class="ios-nav-item" data-mobile-tab="flashcards" onclick="mobileNavigate('flashcards')">
+          <svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v13M9 10h6M9 14h6"/></svg><span>Flashcards</span>
+        </button>
+        <button class="ios-nav-item" data-mobile-tab="progress" onclick="mobileNavigate('progress')">
+          <svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17M8 16v-5M13 16V7M18 16V3"/></svg><span>Progress</span>
+        </button>
+      </div>
+      <button class="ios-search-button" id="iosSearchButton" onclick="toggleMobileMenu()" aria-label="Open all sections">
+        <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+      </button>
+    </div>
+  </div>
 
   <!-- CONTENT BODY -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
@@ -1033,6 +1125,7 @@
         history.pushState({ tab: tabId }, '');
       }
       currentTab = tabId;
+      syncMobileNavigation(tabId);
       window.scrollTo(0, 0);
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1049,6 +1142,62 @@
       if (tabId === 'strokes') {
         setTimeout(resizeCanvas, 50);
       }
+    }
+
+
+    // Mobile navigation helpers; these only call the existing tab switcher.
+    const mobileTabMeta = [
+      ['home','Home','home'],['lessons','Lessons','book'],['pinyin','Pinyin & Tones','music'],
+      ['flashcards','Flashcards','cards'],['strokes','Stroke Practice','pen'],
+      ['phrasebook','Phrasebook','chat'],['quiz','Arcade Quiz','bolt'],
+      ['vocab','Numbers & Basics','hash'],['practice','Practice Lab','headphones'],
+      ['explore','Explore','compass'],['progress','Progress','award'],
+      ['settings','Settings','gear'],['saved','Saved Notebook','pin']
+    ];
+    function mobileIcon(name) {
+      const paths = {
+        home:'<path d="m3 10 9-7 9 7v10h-6v-6H9v6H3z"/>',
+        book:'<path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',
+        music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+        cards:'<rect x="3" y="7" width="13" height="13" rx="2"/><path d="M8 7V4h13v13h-5"/>',
+        pen:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+        chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-5.5A8 8 0 1 1 21 12z"/>',
+        bolt:'<path d="m13 2-9 12h7l-1 8 9-12h-7z"/>',
+        hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',
+        headphones:'<path d="M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/>',
+        compass:'<circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/>',
+        award:'<circle cx="12" cy="8" r="6"/><path d="m8 14-1 8 5-3 5 3-1-8"/>',
+        gear:'<circle cx="12" cy="12" r="3"/><path d="m19 12 2-1-2-4-2 1-2-1-1-2h-4L9 7 7 8 5 7l-2 4 2 1v2l-2 1 2 4 2-1 2 1 1 2h4l1-2 2-1 2 1 2-4-2-1z"/>',
+        pin:'<path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21z"/>'
+      };
+      return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.book}</svg>`;
+    }
+    function buildMobileMenu() {
+      const grid = document.getElementById('iosMoreGrid');
+      if (!grid || grid.childElementCount) return;
+      grid.innerHTML = mobileTabMeta.map(([id,label,icon]) =>
+        `<button class="ios-more-link" data-mobile-menu-tab="${id}" onclick="mobileNavigate('${id}')">${mobileIcon(icon)}<span>${label}</span></button>`
+      ).join('');
+    }
+    function toggleMobileMenu(force) {
+      const panel = document.getElementById('iosMorePanel');
+      const button = document.getElementById('iosSearchButton');
+      const open = typeof force === 'boolean' ? force : panel.classList.contains('hidden');
+      panel.classList.toggle('hidden', !open);
+      button.classList.toggle('active', open);
+      if (open) buildMobileMenu();
+    }
+    function mobileNavigate(tab) {
+      toggleMobileMenu(false);
+      switchTab(tab);
+    }
+    function syncMobileNavigation(tab) {
+      document.querySelectorAll('[data-mobile-tab]').forEach(el => {
+        el.classList.toggle('active', el.dataset.mobileTab === tab);
+      });
+      document.querySelectorAll('[data-mobile-menu-tab]').forEach(el => {
+        el.classList.toggle('active', el.dataset.mobileMenuTab === tab);
+      });
     }
 
     // WEB AUDIO API + TTS PRONUNCIATION
