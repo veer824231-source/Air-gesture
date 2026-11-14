@@ -1,1968 +1,232 @@
 <!DOCTYPE html>
-<html lang="zh-Hans" class="light">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="HanziHero Pro: interactive Mandarin Chinese learning with tones, flashcards, stroke practice, phrasebook and quizzes.">
-    <link rel="icon" type="image/png" href="logo.png">
-<link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#dc2626">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>HanziHero Pro — Master Mandarin Chinese</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            crimson: {
-              50: '#fff1f2',
-              100: '#ffe4e6',
-              500: '#ef4444',
-              600: '#dc2626',
-              700: '#b91c1c',
-              800: '#991b1b',
-              900: '#7f1d1d',
-            },
-            jade: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-            },
-            imperial: {
-              50: '#fffbeb',
-              100: '#fef3c7',
-              400: '#fbbf24',
-              500: '#f59e0b',
-              600: '#d97706',
-              700: '#b45309',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
-       zoom: 0.90;
-    }
-    .tianzige-grid {
-      background-size: 100% 100%;
-      background-image: 
-        linear-gradient(to right, rgba(220, 38, 38, 0.18) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(220, 38, 38, 0.18) 1px, transparent 1px),
-        linear-gradient(to top right, transparent 49.3%, rgba(220, 38, 38, 0.15) 49.3%, rgba(220, 38, 38, 0.15) 50.7%, transparent 50.7%),
-        linear-gradient(to bottom right, transparent 49.3%, rgba(220, 38, 38, 0.15) 49.3%, rgba(220, 38, 38, 0.15) 50.7%, transparent 50.7%);
-    }
-    .perspective-1000 { perspective: 1000px; }
-    .transform-style-3d { transform-style: preserve-3d; }
-    .backface-hidden { backface-visibility: hidden; }
-    .rotate-y-180 { transform: rotateY(180deg); }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.6); }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    .pulse-glow { animation: pulseGlow 2s infinite ease-in-out; }
-
-    /* ---- Polish additions ---- */
-    html { scroll-behavior: smooth; }
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .tab-content:not(.hidden) { animation: fadeSlideIn 0.25s ease-out; }
-    button:focus-visible, input:focus-visible {
-      outline: 2px solid #dc2626;
-      outline-offset: 2px;
-    }
-    button:disabled { cursor: default; }
-    .progress-fill { transition: width 0.35s ease; }
-    #toastBox > div { animation: fadeSlideIn 0.2s ease-out; }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-    }
-    @keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(4deg)}}
-    .float-char{animation:floaty 6s ease-in-out infinite;pointer-events:none;user-select:none}
-    .ic{width:1em;height:1em;display:inline-block;vertical-align:-.125em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-    @keyframes confettiFall{to{transform:translateY(105vh) rotate(540deg)}}
-
-    /* ---- No scrollbars, default cursor, no blue tap highlight ---- */
-    * { -webkit-tap-highlight-color: transparent; scrollbar-width: none; -ms-overflow-style: none; }
-    *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-    button, a, label, [onclick], .cursor-pointer, summary, select, input[type=checkbox] { cursor: default !important; -webkit-touch-callout: none; touch-action: manipulation; }
-    button, [onclick], label, nav, header { -webkit-user-select: none; user-select: none; }
-    input[type=text], input:not([type]) { cursor: text !important; -webkit-user-select: text; user-select: text; }
-    button:focus:not(:focus-visible), [onclick]:focus:not(:focus-visible) { outline: none; }
-    .no-pinyin .py, .no-pinyin #fcPinyin, .no-pinyin #canvasPinyinDisplay { visibility: hidden; }
-    #strokeCanvas { cursor: crosshair !important; }
-
-    /* iOS 26 mobile bottom navigation */
-    @media (max-width: 767px) {
-      body { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
-      body > header { position: sticky; top: 0; }
-      body > nav:not(.ios-bottom-nav) { display: none !important; }
-      .ios-bottom-nav {
-        position: fixed; z-index: 80; left: 0; right: 0;
-        bottom: 0; display: flex; justify-content: center; align-items: center;
-        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-        pointer-events: none;
-      }
-      .ios-nav-shell {
-        pointer-events: auto; width: min(100%, 420px); min-height: 52px;
-        display: flex; align-items: center; gap: 10px; padding: 5px;
-        border-radius: 999px;
-        background: rgba(0.1, 1, 1, .4);
-        border: 1px solid rgba(255,255,255,.18);
-        box-shadow: 0 12px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.16);
-        -webkit-backdrop-filter: blur(8px) saturate(80%);
-        backdrop-filter: blur(8px) saturate(80%);
-      }
-      .dark .ios-nav-shell { background: rgba(18, 20, 27, .78); }
-      .ios-nav-items { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 3px; }
-      .ios-nav-item {
-        position: relative; min-width: 0; height: 52px; border: 0; border-radius: 999px;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        gap: 2px; color: rgba(255,255,255,.82); background: transparent;
-        font: 500 10px/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
-        transition: background .28s cubic-bezier(.2,.8,.2,1), color .2s, transform .2s;
-      }
-      .ios-nav-item svg { width: 25px; height: 25px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-      .ios-nav-item.active { background: rgba(255,255,255,.17); color: #E8E8E8; }
-      .ios-nav-item.active svg { color: #38a5ff; }
-      .ios-nav-item:active, .ios-search-button:active { transform: scale(1.9); }
-      .ios-search-button {
-        flex: 0 0 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14);
-        color: white; background: rgba(255,255,255,.08); display: grid; place-items: center;
-        transition: transform 1.9s, background .2s;
-      }
-      .ios-search-button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
-      .ios-search-button.active { background: rgba(255,255,255,.2); color: #55b4ff; }
-      .ios-more-panel {
-        position: fixed; z-index: 79; left: 14px; right: 14px;
-        bottom: calc(88px + env(safe-area-inset-bottom)); max-width: 430px; margin: 0 auto;
-        padding: 15px; border-radius: 25px; background: rgba(248,248,252,.92);
-        border: 1px solid rgba(255,255,255,.7); box-shadow: 0 16px 50px rgba(0,0,0,.2);
-        -webkit-backdrop-filter: blur(10px) saturate(10%); backdrop-filter: blur(10px) saturate(10%);
-        transform-origin: bottom center; animation: iosPanelIn .22s cubic-bezier(.2,.8,.2,1);
-      }
-      .dark .ios-more-panel { background: rgba(29,31,40,.94); border-color: rgba(255,255,255,.12); }
-      .ios-more-panel.hidden { display:none; }
-      .ios-more-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; max-height: min(48vh,360px); overflow:auto; }
-      .ios-more-link { min-height:66px; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:rgba(120,120,128,.09); color:#34343a; font-size:10px; font-weight:650; }
-      .dark .ios-more-link { color:#f5f5f7; background:rgba(255,255,255,.08); }
-      .ios-more-link svg { width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8; }
-      .ios-more-link.active { color:#087fe5; background:rgba(0,122,255,.12); }
-    }
-    @keyframes iosPanelIn { from {opacity:0;transform:translateY(12px) scale(.97)} to {opacity:1;transform:translateY(0) scale(1)} }
-    @media (min-width: 768px) { .ios-bottom-nav, .ios-more-panel { display:none !important; } }
-
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orb – Voice Assistant</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg1:#0b0b1a;--bg2:#1b1040;--text:#fff;--dim:rgba(255,255,255,.62);--glass:rgba(255,255,255,.10);--edge:rgba(255,255,255,.28)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg1:#e9ecff;--bg2:#fbe9ff;--text:#14142b;--dim:rgba(20,20,43,.6);--glass:rgba(255,255,255,.45);--edge:rgba(255,255,255,.9)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",system-ui,sans-serif;color:var(--text);
+background:radial-gradient(120% 80% at 50% 0%,var(--bg2),var(--bg1));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:18px 16px 22px;overflow:hidden}
+.glass{background:var(--glass);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);
+border:1px solid var(--edge);box-shadow:inset 0 1px 1px rgba(255,255,255,.5),0 10px 40px rgba(0,0,0,.25)}
+h1{font-size:15px;font-weight:600;margin:0;letter-spacing:.3px;padding:8px 18px;border-radius:999px}
+#stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:100%}
+#orbWrap{position:relative;width:min(62vw,260px);aspect-ratio:1;cursor:pointer;filter:url(#goo);transition:transform .4s}
+#orbWrap:active{transform:scale(.96)}
+.blob{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:float 7s ease-in-out infinite}
+.b0{inset:8%;background:radial-gradient(circle at 30% 30%,#7df9ff,#3a7bff 60%,#6a2cff)}
+.b1{width:60%;height:60%;left:-4%;top:30%;background:#ff5fd2;animation-delay:-2s}
+.b2{width:55%;height:55%;right:-2%;top:2%;background:#5affc8;animation-delay:-4s;animation-duration:9s}
+.b3{width:50%;height:50%;right:10%;bottom:-4%;background:#8a5cff;animation-delay:-1s;animation-duration:8s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12%,-10%) scale(1.12)}66%{transform:translate(-10%,8%) scale(.92)}}
+#orbWrap.listening .blob{animation-duration:2.4s}
+#orbWrap.thinking .blob{animation-duration:1.1s}
+#orbWrap.speaking .blob{animation-duration:1.6s}
+#orbWrap.listening{transform:scale(1.08)}
+#orbGlow{position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,rgba(120,140,255,.45),transparent 65%);filter:blur(30px);z-index:-1;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.15);opacity:.7}}
+#status{font-size:17px;font-weight:500;min-height:24px;text-align:center}
+#heard{font-size:14px;color:var(--dim);min-height:20px;text-align:center;max-width:90%}
+#np{width:100%;max-width:440px;border-radius:32px;padding:14px 16px;display:none;flex-direction:column;gap:10px}
+#np.on{display:flex}
+.row{display:flex;align-items:center;gap:12px}
+.art{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#ff5fd2,#3a7bff);flex:none;display:grid;place-items:center;font-size:22px}
+#title{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sub{font-size:12px;color:var(--dim)}
+.meta{min-width:0;flex:1}
+.ctrls{display:flex;justify-content:center;gap:14px}
+.btn{width:52px;height:52px;border-radius:50%;border:1px solid var(--edge);background:var(--glass);color:var(--text);font-size:20px;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:inset 0 1px 1px rgba(255,255,255,.5)}
+.btn:active{transform:scale(.92)}
+.btn.big{width:60px;height:60px;font-size:24px}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;background:var(--glass);outline:none;flex:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#bar{height:4px;border-radius:99px;background:var(--glass);overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:#fff;border-radius:99px}
+#form{width:100%;max-width:440px;display:flex;gap:8px;border-radius:999px;padding:6px 6px 6px 18px;margin-top:12px}
+#form input{flex:1;background:none;border:0;outline:0;color:var(--text);font-size:15px;min-width:0}
+#form input::placeholder{color:var(--dim)}
+#form button{border:0;border-radius:999px;padding:0 16px;height:38px;font-weight:600;background:#fff;color:#111;cursor:pointer}
+#yt{position:fixed;left:-9999px;top:0;width:200px;height:200px;border:0;opacity:0;pointer-events:none}
+</style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 selection:bg-crimson-600 selection:text-white">
+<body>
+<svg width="0" height="0" style="position:absolute"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="9"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter></defs></svg>
 
-  <svg width=0 height=0 style="position:absolute" aria-hidden=true><symbol id=i-fire viewBox="0 0 24 24"><path d="M12 2c1 4 5 6 5 11a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/></symbol><symbol id=i-bolt viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol><symbol id=i-target viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><circle cx=12 cy=12 r=4 /></symbol><symbol id=i-music viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx=6 cy=18 r=3 /><circle cx=18 cy=16 r=3 /></symbol><symbol id=i-cards viewBox="0 0 24 24"><rect x=3 y=7 width=13 height=13 rx=2 /><path d="M8 7V4h13v13h-3"/></symbol><symbol id=i-pen viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol><symbol id=i-chat viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.5 7.2L3 21l1.8-5.5A8 8 0 1121 12z"/></symbol><symbol id=i-pin viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21z"/></symbol><symbol id=i-speaker viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/></symbol><symbol id=i-refresh viewBox="0 0 24 24"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5"/></symbol><symbol id=i-x viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol><symbol id=i-check viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol><symbol id=i-sparkle viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol><symbol id=i-trophy viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3"/></symbol><symbol id=i-star viewBox="0 0 24 24"><path d="M12 2l3 7 7 .8-5.3 4.8 1.6 7.4L12 18l-6.3 4 1.6-7.4L2 9.8 9 9z"/></symbol><symbol id=i-trash viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol><symbol id=i-search viewBox="0 0 24 24"><circle cx=11 cy=11 r=7 /><path d="M21 21l-5-5"/></symbol><symbol id=i-shuffle viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></symbol><symbol id=i-smile viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol><symbol id=i-repeat viewBox="0 0 24 24"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/></symbol><symbol id=i-ban viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M5.6 5.6l12.8 12.8"/></symbol><symbol id=i-hash viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></symbol><symbol id=i-one viewBox="0 0 24 24"><path d="M8 7l4-3v16"/></symbol><symbol id=i-users viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/><circle cx=9 cy=7 r=4 /></symbol><symbol id=i-palette viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.5 0 2-1 1.5-2s0-2 1.5-2h2a4 4 0 004-4 9 9 0 00-9-10zM7.5 11h.01M10 7h.01M15 7h.01"/></symbol><symbol id=i-calendar viewBox="0 0 24 24"><rect x=3 y=4 width=18 height=18 rx=2 /><path d="M16 2v4M8 2v4M3 10h18"/></symbol><symbol id=i-compass viewBox="0 0 24 24"><circle cx=12 cy=12 r=9 /><path d="M16 8l-2 6-6 2 2-6z"/></symbol><symbol id=i-headphones viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1v-6h3zM3 19a2 2 0 002 2h1v-6H3z"/></symbol><symbol id=i-award viewBox="0 0 24 24"><circle cx=12 cy=8 r=6 /><path d="M8.2 13.9L7 23l5-3 5 3-1.2-9.1"/></symbol><symbol id=i-chart viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol><symbol id=i-download viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol><symbol id=i-plane viewBox="0 0 24 24"><path d="M2 16l20-8-8 14-2-6z"/></symbol><symbol id=i-bag viewBox="0 0 24 24"><path d="M6 2L4 6v14h16V6l-2-4zM4 6h16M16 10a4 4 0 01-8 0"/></symbol><symbol id=i-utensils viewBox="0 0 24 24"><path d="M4 3v7a2 2 0 004 0V3M6 3v18M18 3c-2 2-3 5-3 8h3v10"/></symbol><symbol id=i-home viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></symbol><symbol id=i-arrow viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id=i-book viewBox="0 0 24 24"><path d="M4 4h7a3 3 0 013 3v13a2 2 0 00-2-2H4zM20 4h-7a3 3 0 00-3 3v13a2 2 0 012-2h8z"/></symbol><symbol id=i-lock viewBox="0 0 24 24"><path d="M6 11h12v10H6zM8 11V7a4 4 0 018 0v4"/></symbol><symbol id=i-gear viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6zM19 12l2-1-2-4-2 1a7 7 0 00-2-1l-1-2h-4l-1 2a7 7 0 00-2 1L5 7l-2 4 2 1a7 7 0 000 2l-2 1 2 4 2-1a7 7 0 002 1l1 2h4l1-2a7 7 0 002-1l2 1 2-4-2-1a7 7 0 000-2z"/></symbol><symbol id=i-share viewBox="0 0 24 24"><path d="M4 12v8h16v-8M16 6l-4-4-4 4M12 2v14"/></symbol></svg>
-  <!-- HEADER NAVBAR -->
-  <header class="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      
-      <!-- Brand Logo -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
-        <div class="w-10 h-10 bg-crimson-600 text-white rounded-xl shadow-md flex items-center justify-center font-black text-xl tracking-wider pulse-glow">
-          漢
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">HanziHero</span>
-            <span class="px-2 py-0.5 text-[10px] font-black tracking-widest text-crimson-700 dark:text-crimson-400 bg-crimson-100 dark:bg-crimson-950/80 border border-crimson-200 dark:border-crimson-800 rounded-md uppercase">PRO</span>
-          </div>
-          <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 hidden sm:block">Interactive Mandarin Mastery Engine</p>
-        </div>
-      </div>
+<h1 class="glass">Orb</h1>
 
-      <!-- Stats Bar & Mode Toggle -->
-      <div class="flex items-center space-x-2 sm:space-x-4">
-        
-        <!-- Streak -->
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-imperial-50 dark:bg-slate-800 border border-imperial-400/60 rounded-xl text-slate-800 dark:text-imperial-400 text-xs font-bold shadow-sm" title="Daily Learning Streak">
-          <span><svg class=ic><use href=#i-fire></use></svg></span>
-          <span id="statStreak">1</span>
-          <span class="text-[10px] text-slate-400 font-normal hidden md:inline">Days</span>
-        </div>
-
-        <!-- XP Points -->
-        <div class="flex items-center space-x-1.5 px-3 py-1.5 bg-jade-50 dark:bg-slate-800 border border-jade-500/50 rounded-xl text-slate-800 dark:text-jade-400 text-xs font-bold shadow-sm" title="Earned XP Points">
-          <span><svg class=ic><use href=#i-bolt></use></svg></span>
-          <span id="statXP">0</span>
-          <span class="text-[10px] text-slate-400 font-normal hidden md:inline">XP</span>
-        </div>
-
-        <!-- Accuracy -->
-        <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300">
-          <span><svg class=ic><use href=#i-target></use></svg></span>
-          <span id="statAccuracy">100%</span>
-        </div>
-
-        <!-- Saved Bookmarks Count -->
-        <button onclick="switchTab('saved')" class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 transition">
-          <svg class="w-4 h-4 text-crimson-600 dark:text-crimson-400 fill-current" viewBox="0 0 24 24">
-            <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-          </svg>
-          <span id="statSaved">0</span>
-        </button>
-
-        <!-- Dark/Light Theme Toggle -->
-        <button onclick="toggleTheme()" class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 transition">
-          <svg id="sunIcon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-          <svg id="moonIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-        </button>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN NAVIGATION TABS -->
-  <nav class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex space-x-1 sm:space-x-2 overflow-x-auto py-2.5 custom-scrollbar">
-        <button onclick="switchTab('home')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 bg-crimson-600 text-white shadow-sm" data-tab="home">
-          <span><svg class=ic><use href=#i-home></use></svg> Home</span>
-        </button>
-        <button onclick="switchTab('lessons')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="lessons">
-          <span><svg class=ic><use href=#i-book></use></svg> Lessons</span>
-        </button>
-        <button onclick="switchTab('pinyin')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 bg-crimson-600 text-white shadow-sm" data-tab="pinyin">
-          <span><svg class=ic><use href=#i-music></use></svg> Pinyin & 4 Tones</span>
-        </button>
-        <button onclick="switchTab('flashcards')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="flashcards">
-          <span><svg class=ic><use href=#i-cards></use></svg> Flashcard Arena</span>
-        </button>
-        <button onclick="switchTab('strokes')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="strokes">
-          <span><svg class=ic><use href=#i-pen></use></svg> Stroke Canvas</span>
-        </button>
-        <button onclick="switchTab('phrasebook')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="phrasebook">
-          <span><svg class=ic><use href=#i-chat></use></svg> Essential Phrasebook</span>
-        </button>
-        <button onclick="switchTab('quiz')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="quiz">
-          <span><svg class=ic><use href=#i-bolt></use></svg> Arcade Quiz</span>
-        </button>
-        <button onclick="switchTab('vocab')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="vocab">
-          <span><svg class=ic><use href=#i-hash></use></svg> Numbers & Basics</span>
-        </button>
-        <button onclick="switchTab('practice')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="practice">
-          <span><svg class=ic><use href=#i-headphones></use></svg> Practice Lab</span>
-        </button>
-        <button onclick="switchTab('explore')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="explore">
-          <span><svg class=ic><use href=#i-compass></use></svg> Explore</span>
-        </button>
-        <button onclick="switchTab('progress')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="progress">
-          <span><svg class=ic><use href=#i-award></use></svg> Progress</span>
-        </button>
-        <button onclick="switchTab('settings')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="settings">
-          <span><svg class=ic><use href=#i-gear></use></svg> Settings</span>
-        </button>
-        <button onclick="switchTab('saved')" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="saved">
-          <span><svg class=ic><use href=#i-pin></use></svg> Saved Notebook</span>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-
-  <!-- iOS 26 mobile navigation: all original sections remain available in Search -->
-  <div class="ios-more-panel hidden" id="iosMorePanel" aria-label="All learning sections">
-    <div class="flex items-center justify-between mb-3">
-      <div class="font-extrabold text-sm dark:text-white">Explore HanziHero</div>
-      <button onclick="toggleMobileMenu(false)" class="w-8 h-8 rounded-full bg-slate-200/70 dark:bg-white/10 text-slate-600 dark:text-white text-lg">×</button>
-    </div>
-    <div class="ios-more-grid" id="iosMoreGrid"></div>
+<div id="stage">
+  <div id="orbWrap" aria-label="Tap to talk" role="button">
+    <div id="orbGlow"></div>
+    <div class="blob b0"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   </div>
-  <div class="ios-bottom-nav">
-    <div class="ios-nav-shell">
-      <div class="ios-nav-items">
-        <button class="ios-nav-item active" data-mobile-tab="home" onclick="mobileNavigate('home')">
-          <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span>
-        </button>
-        <button class="ios-nav-item" data-mobile-tab="lessons" onclick="mobileNavigate('lessons')">
-          <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21zM4 5.5V21M8 7h8M8 11h8"/></svg><span>Lessons</span>
-        </button>
-        <button class="ios-nav-item" data-mobile-tab="flashcards" onclick="mobileNavigate('flashcards')">
-          <svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v13M9 10h6M9 14h6"/></svg><span>Flashcards</span>
-        </button>
-        <button class="ios-nav-item" data-mobile-tab="progress" onclick="mobileNavigate('progress')">
-          <svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17M8 16v-5M13 16V7M18 16V3"/></svg><span>Progress</span>
-        </button>
-      </div>
-      <button class="ios-search-button" id="iosSearchButton" onclick="toggleMobileMenu()" aria-label="Open all sections">
-        <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
-      </button>
-    </div>
+  <div id="status">Tap the orb and say “play music Blinding Lights”</div>
+  <div id="heard"></div>
+</div>
+
+<div id="np" class="glass">
+  <div class="row"><div class="art">♪</div><div class="meta"><div id="title">—</div><div id="sub">YouTube · playing in background</div></div></div>
+  <div id="bar"><i id="prog"></i></div>
+  <div class="ctrls">
+    <button class="btn" id="bPrev" title="Restart">⏮</button>
+    <button class="btn big" id="bPlay" title="Play/Pause">⏸</button>
+    <button class="btn" id="bNext" title="Next result">⏭</button>
   </div>
-
-  <!-- CONTENT BODY -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
-
-    <!-- MODULE 1: PINYIN & 4 TONES MASTER -->
-    <section id="tab-pinyin" class="tab-content hidden space-y-6">
-      
-      <!-- Tone Overview Card -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="max-w-3xl mb-6">
-          <span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Acoustic Tone Simulator</span>
-          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Master The 4 Mandarin Tones</h2>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            Mandarin uses pitch variation to differentiate words. Click any tone card below to listen to both synthesized frequency sweeps via Web Audio API and human speech synthesis.
-          </p>
-        </div>
-
-        <!-- Tones Simulator Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <!-- Tone 1 -->
-          <div onclick="playTone(1, 'mā', '妈')" class="cursor-pointer group p-5 bg-rose-50/70 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-slate-700/80 rounded-2xl border-2 border-rose-200 dark:border-slate-700 transition active:scale-98">
-            <div class="flex items-center justify-between">
-              <span class="px-2.5 py-1 text-xs font-extrabold bg-rose-200 dark:bg-rose-900/80 text-rose-800 dark:text-rose-200 rounded-lg">1st Tone (High Flat)</span>
-              <span class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs group-hover:scale-110 transition shadow"><svg class=ic><use href=#i-speaker></use></svg></span>
-            </div>
-            <div class="mt-4">
-              <div class="text-4xl font-black text-slate-900 dark:text-white">mā</div>
-              <div class="text-xl font-bold text-rose-600 dark:text-rose-400">妈 (Mother)</div>
-            </div>
-            <div class="mt-4 pt-3 border-t border-rose-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
-              <span>Pitch Curve: 55</span>
-              <span class="font-mono text-base font-bold text-rose-600 dark:text-rose-400">¯</span>
-            </div>
-          </div>
-
-          <!-- Tone 2 -->
-          <div onclick="playTone(2, 'má', '麻')" class="cursor-pointer group p-5 bg-emerald-50/70 dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-slate-700/80 rounded-2xl border-2 border-emerald-200 dark:border-slate-700 transition active:scale-98">
-            <div class="flex items-center justify-between">
-              <span class="px-2.5 py-1 text-xs font-extrabold bg-emerald-200 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 rounded-lg">2nd Tone (Rising)</span>
-              <span class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs group-hover:scale-110 transition shadow"><svg class=ic><use href=#i-speaker></use></svg></span>
-            </div>
-            <div class="mt-4">
-              <div class="text-4xl font-black text-slate-900 dark:text-white">má</div>
-              <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">麻 (Hemp)</div>
-            </div>
-            <div class="mt-4 pt-3 border-t border-emerald-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
-              <span>Pitch Curve: 35</span>
-              <span class="font-mono text-base font-bold text-emerald-600 dark:text-emerald-400">ˊ</span>
-            </div>
-          </div>
-
-          <!-- Tone 3 -->
-          <div onclick="playTone(3, 'mǎ', '马')" class="cursor-pointer group p-5 bg-amber-50/70 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700/80 rounded-2xl border-2 border-amber-200 dark:border-slate-700 transition active:scale-98">
-            <div class="flex items-center justify-between">
-              <span class="px-2.5 py-1 text-xs font-extrabold bg-amber-200 dark:bg-amber-900/80 text-amber-800 dark:text-amber-200 rounded-lg">3rd Tone (Dipping)</span>
-              <span class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs group-hover:scale-110 transition shadow"><svg class=ic><use href=#i-speaker></use></svg></span>
-            </div>
-            <div class="mt-4">
-              <div class="text-4xl font-black text-slate-900 dark:text-white">mǎ</div>
-              <div class="text-xl font-bold text-amber-600 dark:text-amber-400">马 (Horse)</div>
-            </div>
-            <div class="mt-4 pt-3 border-t border-amber-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
-              <span>Pitch Curve: 214</span>
-              <span class="font-mono text-base font-bold text-amber-600 dark:text-amber-400">ˇ</span>
-            </div>
-          </div>
-
-          <!-- Tone 4 -->
-          <div onclick="playTone(4, 'mà', '骂')" class="cursor-pointer group p-5 bg-purple-50/70 dark:bg-slate-800 hover:bg-purple-100 dark:hover:bg-slate-700/80 rounded-2xl border-2 border-purple-200 dark:border-slate-700 transition active:scale-98">
-            <div class="flex items-center justify-between">
-              <span class="px-2.5 py-1 text-xs font-extrabold bg-purple-200 dark:bg-purple-900/80 text-purple-800 dark:text-purple-200 rounded-lg">4th Tone (Falling)</span>
-              <span class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs group-hover:scale-110 transition shadow"><svg class=ic><use href=#i-speaker></use></svg></span>
-            </div>
-            <div class="mt-4">
-              <div class="text-4xl font-black text-slate-900 dark:text-white">mà</div>
-              <div class="text-xl font-bold text-purple-600 dark:text-purple-400">骂 (Scold)</div>
-            </div>
-            <div class="mt-4 pt-3 border-t border-purple-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
-              <span>Pitch Curve: 51</span>
-              <span class="font-mono text-base font-bold text-purple-600 dark:text-purple-400">ˋ</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Pinyin Soundboard Chart -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Pinyin Phonetic Explorer</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Click any syllable below to play standard voice speech synthesis.</p>
-          </div>
-          <div class="flex space-x-2">
-            <button onclick="filterPinyin('all')" class="pinyin-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-crimson-600 text-white" data-cat="all">All</button>
-            <button onclick="filterPinyin('initials')" class="pinyin-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" data-cat="initials">Initials</button>
-            <button onclick="filterPinyin('finals')" class="pinyin-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" data-cat="finals">Finals</button>
-          </div>
-        </div>
-
-        <div id="pinyinGrid" class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 gap-2.5">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- Tone Tips -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Quick Tone Tips</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Small rules that make your Mandarin sound far more natural.</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="text-2xl mb-1"><svg class=ic><use href=#i-smile></use></svg></div>
-            <div class="text-sm font-extrabold text-slate-900 dark:text-white">The Neutral Tone</div>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Some syllables are short and light with no fixed pitch, like the second 妈 in <span class="font-bold">māma</span>.</p>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="text-2xl mb-1"><svg class=ic><use href=#i-repeat></use></svg></div>
-            <div class="text-sm font-extrabold text-slate-900 dark:text-white">Third-Tone Change</div>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">When two 3rd tones meet, the first becomes 2nd: <span class="font-bold">nǐ hǎo</span> is spoken as <span class="font-bold">ní hǎo</span>.</p>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="text-2xl mb-1"><svg class=ic><use href=#i-ban></use></svg></div>
-            <div class="text-sm font-extrabold text-slate-900 dark:text-white">The Word 不 (bù)</div>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Before a 4th tone it turns into 2nd tone: <span class="font-bold">bú yào</span> (don't want), <span class="font-bold">bú shì</span> (is not).</p>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-            <div class="text-2xl mb-1"><svg class=ic><use href=#i-one></use></svg></div>
-            <div class="text-sm font-extrabold text-slate-900 dark:text-white">The Word 一 (yī)</div>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Before a 4th tone it becomes <span class="font-bold">yí</span>; before 1st, 2nd or 3rd tones it becomes <span class="font-bold">yì</span>.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MODULE 2: FLASHCARD ARENA -->
-    <section id="tab-flashcards" class="tab-content hidden space-y-6">
-      <div class="max-w-2xl mx-auto">
-        
-        <!-- Top Status Bar -->
-        <div class="flex items-center justify-between mb-4">
-          <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            Card <span id="fcCurrent" class="text-crimson-600 dark:text-crimson-400">1</span> of <span id="fcTotal">8</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <button onclick="shuffleFlashcards()" title="Shuffle deck" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition"><svg class=ic><use href=#i-shuffle></use></svg> Shuffle</button>
-            <button onclick="toggleCardBookmark()" id="fcBookmarkBtn" title="Save to notebook" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 transition">
-              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-4">
-          <div id="fcProgressBar" class="progress-fill h-full bg-crimson-600 rounded-full" style="width: 0%"></div>
-        </div>
-
-        <!-- 3D Card Area -->
-        <div id="flashcardBox" onclick="flipFlashcard()" class="perspective-1000 w-full h-80 sm:h-96 cursor-pointer group">
-          <div id="flashcardInner" class="transform-style-3d relative w-full h-full duration-500 transition-transform">
-            
-            <!-- Front -->
-            <div class="backface-hidden absolute inset-0 bg-white dark:bg-slate-900 rounded-3xl border-2 border-slate-200 dark:border-slate-800 p-8 shadow-md flex flex-col justify-between items-center text-center">
-              <div class="w-full flex justify-between items-center text-xs font-bold text-slate-400">
-                <span id="fcCategory" class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Category</span>
-                <span class="flex items-center space-x-1"><span>Tap to Flip</span> <svg class=ic><use href=#i-refresh></use></svg></span>
-              </div>
-              <div class="my-auto space-y-2">
-                <div id="fcHanzi" class="text-6xl sm:text-7xl font-black text-slate-900 dark:text-white">你好</div>
-                <div id="fcPinyin" class="text-2xl font-extrabold text-crimson-600 dark:text-crimson-400">nǐ hǎo</div>
-              </div>
-              <button onclick="event.stopPropagation(); speakText(document.getElementById('fcHanzi').innerText)" class="px-4 py-2 bg-crimson-50 dark:bg-slate-800 text-crimson-600 dark:text-crimson-400 rounded-xl text-xs font-bold hover:bg-crimson-100 transition flex items-center space-x-2">
-                <span><svg class=ic><use href=#i-speaker></use></svg> Pronounce</span>
-              </button>
-            </div>
-
-            <!-- Back -->
-            <div class="rotate-y-180 backface-hidden absolute inset-0 bg-slate-900 text-white rounded-3xl p-8 shadow-md flex flex-col justify-between items-center text-center border-2 border-crimson-600/50">
-              <div class="w-full flex justify-between items-center text-xs font-bold text-slate-400">
-                <span>Meaning & Usage</span>
-                <span>Tap to Flip <svg class=ic><use href=#i-refresh></use></svg></span>
-              </div>
-              <div class="my-auto space-y-4 max-w-md">
-                <div id="fcEnglish" class="text-2xl sm:text-3xl font-extrabold text-white">Hello / Hi</div>
-                <div id="fcExample" class="text-xs sm:text-sm text-slate-300 bg-slate-800 p-3.5 rounded-xl border border-slate-700">
-                  Example: 你好！很高兴认识你。
-                </div>
-              </div>
-              <span class="text-[11px] text-slate-500">Rate your recall strength below</span>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Controls -->
-        <div class="grid grid-cols-2 gap-4 mt-6">
-          <button onclick="handleFlashcardResult(false)" class="py-3 px-4 bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 rounded-xl text-xs font-extrabold transition active:scale-98">
-            <svg class=ic><use href=#i-x></use></svg> Study Again (+0 XP)
-          </button>
-          <button onclick="handleFlashcardResult(true)" class="py-3 px-4 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs font-extrabold transition active:scale-98">
-            <svg class=ic><use href=#i-check></use></svg> Got It (+15 XP)
-          </button>
-        </div>
-        <p class="hidden sm:block text-center text-[11px] text-slate-400 mt-4">
-          Keyboard: <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Space</kbd> flip ·
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">←</kbd> study again ·
-          <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">→</kbd> got it
-        </p>
-
-      </div>
-    </section>
-
-    <!-- MODULE 3: STROKE CANVAS STUDIO -->
-    <section id="tab-strokes" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Controls Sidebar -->
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-6">
-          <div>
-            <span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Canvas Studio</span>
-            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">Character Stroke Practice</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Practice writing characters in correct proportions inside the Tianzige grid.</p>
-
-            <!-- Character Selection Grid -->
-            <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mt-4 mb-2">Select Character:</label>
-            <div id="strokeCharList" class="grid grid-cols-5 gap-2">
-              <!-- Populated by JS -->
-            </div>
-
-            <!-- Active Spec Box -->
-            <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="text-xs text-slate-500">Character:</span>
-                <span id="canvasCharDisplay" class="text-2xl font-black text-crimson-600 dark:text-crimson-400">你</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-xs text-slate-500">Pinyin:</span>
-                <span id="canvasPinyinDisplay" class="text-xs font-bold text-slate-800 dark:text-slate-200">nǐ</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-xs text-slate-500">English:</span>
-                <span id="canvasMeaningDisplay" class="text-xs font-bold text-slate-800 dark:text-slate-200">You</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-xs text-slate-500">Strokes:</span>
-                <span id="canvasStrokesDisplay" class="text-xs font-bold text-slate-800 dark:text-slate-200">7</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="space-y-2">
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="clearStrokeCanvas()" class="py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition">Clear</button>
-              <button onclick="toggleCanvasGuide()" class="py-2.5 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 text-xs font-bold rounded-xl transition">Guide Overlay</button>
-            </div>
-            <button onclick="evaluateStrokeAccuracy()" class="w-full py-3 bg-crimson-600 hover:bg-crimson-700 text-white font-extrabold text-xs rounded-xl shadow transition active:scale-98">
-              <svg class=ic><use href=#i-sparkle></use></svg> Evaluate Accuracy & Earn XP
-            </button>
-          </div>
-        </div>
-
-        <!-- Drawing Grid Container -->
-        <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center relative">
-          
-          <div class="relative w-72 h-72 sm:w-96 sm:h-96 border-2 border-crimson-600/40 rounded-2xl tianzige-grid bg-white dark:bg-slate-950 overflow-hidden shadow-inner">
-            <!-- Ghost Text Guide -->
-            <div id="canvasGuideText" class="absolute inset-0 flex items-center justify-center text-slate-200 dark:text-slate-800 text-[180px] sm:text-[230px] font-bold select-none pointer-events-none transition-opacity duration-200">
-              你
-            </div>
-            <!-- Canvas -->
-            <canvas id="strokeCanvas" class="absolute inset-0 w-full h-full cursor-crosshair z-10 touch-none"></canvas>
-          </div>
-
-          <!-- Evaluation Overlay Banner -->
-          <div id="evalResultBanner" class="hidden mt-4 p-3 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 rounded-xl text-xs font-extrabold text-center w-full max-w-sm">
-            Evaluating strokes...
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- MODULE 4: ESSENTIAL PHRASEBOOK -->
-    <section id="tab-phrasebook" class="tab-content hidden space-y-6">
-      
-      <!-- Search & Filters Header -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="relative flex-grow max-w-md">
-          <input 
-            type="text" 
-            id="phraseSearchInput" 
-            oninput="renderPhrasebook()" 
-            placeholder="Search phrases in English, Pinyin, or Hanzi..."
-            class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-crimson-600 text-slate-900 dark:text-white"
-          />
-          <svg class="w-4 h-4 absolute left-3 top-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-
-        <!-- Categories -->
-        <div class="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar">
-          <button onclick="setPhraseCat('All')" class="phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-crimson-600 text-white" data-cat="All">All</button>
-          <button onclick="setPhraseCat('Greetings')" class="phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800" data-cat="Greetings"><svg class=ic><use href=#i-smile></use></svg> Greetings</button>
-          <button onclick="setPhraseCat('Dining')" class="phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800" data-cat="Dining"><svg class=ic><use href=#i-utensils></use></svg> Dining</button>
-          <button onclick="setPhraseCat('Travel')" class="phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800" data-cat="Travel"><svg class=ic><use href=#i-plane></use></svg> Travel</button>
-          <button onclick="setPhraseCat('Shopping')" class="phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800" data-cat="Shopping"><svg class=ic><use href=#i-bag></use></svg> Shopping</button>
-          <button onclick="setPhraseCat('Emergency')" class="phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800" data-cat="Emergency">🆘 Emergency</button>
-        </div>
-      </div>
-
-      <!-- Phrase Grid -->
-      <div id="phraseGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Populated via JS -->
-      </div>
-      <div id="phraseEmptyState" class="hidden text-center py-12">
-        <div class="text-4xl mb-2"><svg class=ic><use href=#i-search></use></svg></div>
-        <p class="text-xs text-slate-400 font-semibold">No phrases match your search. Try another word or category.</p>
-      </div>
-    </section>
-
-    <!-- MODULE 5: ARCADE QUIZ -->
-    <section id="tab-quiz" class="tab-content hidden space-y-6">
-      <div class="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
-        
-        <!-- Header status -->
-        <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-200 dark:border-slate-800">
-          <div>
-            <span class="text-xs font-extrabold uppercase tracking-widest text-crimson-600 dark:text-crimson-400">Arcade Arena</span>
-            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Mandarin Practice Quiz</h2>
-          </div>
-          <div class="text-right">
-            <span class="text-xs text-slate-400 block">Score</span>
-            <span id="quizScoreDisplay" class="text-2xl font-black text-emerald-600 dark:text-emerald-400">0</span>
-          </div>
-        </div>
-
-        <!-- Question View -->
-        <div id="quizContainer">
-          <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-5">
-            <div id="quizProgressBar" class="progress-fill h-full bg-crimson-600 rounded-full" style="width: 0%"></div>
-          </div>
-          <div class="mb-6">
-            <span id="quizNumDisplay" class="text-xs font-bold text-slate-400">Question 1 of 5</span>
-            <div id="quizQuestionText" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
-              Loading Question...
-            </div>
-          </div>
-
-          <!-- Options Grid -->
-          <div id="quizOptionsList" class="grid grid-cols-1 gap-3 mb-6">
-            <!-- Dynamic option buttons -->
-          </div>
-
-          <!-- Feedback Banner -->
-          <div id="quizFeedbackBox" class="hidden p-4 rounded-xl text-xs font-extrabold mb-4"></div>
-
-          <button id="nextQuizBtn" onclick="nextQuizStep()" class="hidden w-full py-3 bg-crimson-600 hover:bg-crimson-700 text-white text-xs font-extrabold rounded-xl shadow transition active:scale-98">
-            Next Question ➔
-          </button>
-        </div>
-
-        <!-- Summary View -->
-        <div id="quizSummaryBox" class="hidden text-center py-8 space-y-4">
-          <div class="text-5xl"><svg class=ic><use href=#i-trophy></use></svg></div>
-          <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">Quiz Complete!</h3>
-          <p class="text-sm text-slate-600 dark:text-slate-300">
-            You scored <span id="quizFinalScore" class="font-extrabold text-crimson-600">0</span> correct answers and earned <span id="quizXPEarned" class="font-extrabold text-emerald-600">+0 XP</span>!
-          </p>
-          <button onclick="resetQuiz()" class="py-3 px-6 bg-crimson-600 hover:bg-crimson-700 text-white rounded-xl text-xs font-extrabold shadow transition active:scale-98">
-            Play Again
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- MODULE 6: NUMBERS & BASICS -->
-    <section id="tab-vocab" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="max-w-3xl">
-          <span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Core Vocabulary</span>
-          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Numbers &amp; Everyday Basics</h2>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
-            Tap a card to hear it spoken, or use the bookmark to save it to your notebook.
-          </p>
-        </div>
-      </div>
-      <div id="vocabGroups" class="space-y-6">
-        <!-- Populated by JS -->
-      </div>
-    </section>
-
-    <!-- HOME PAGE -->
-    <section id="tab-home" class="tab-content space-y-8">
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-crimson-600 via-crimson-700 to-crimson-900 text-white p-8 sm:p-14 shadow-lg">
-        <span class="float-char absolute top-6 right-8 text-7xl font-black opacity-10" style="animation-delay:0s">福</span>
-        <span class="float-char absolute bottom-6 right-1/4 text-6xl font-black opacity-10" style="animation-delay:1s">爱</span>
-        <span class="float-char absolute top-1/2 left-1/2 text-8xl font-black opacity-10" style="animation-delay:2s">水</span>
-        <span class="float-char absolute bottom-10 left-6 text-5xl font-black opacity-10" style="animation-delay:3s">山</span>
-        <div class="relative max-w-2xl">
-          <span id="homeHello" class="inline-block px-3 py-1 rounded-full bg-white/15 border border-white/25 text-[11px] font-black tracking-widest uppercase">Interactive Mandarin Mastery</span>
-          <h1 class="mt-4 text-4xl sm:text-6xl font-black tracking-tight leading-tight">Learn Chinese<br>the fun way</h1>
-          <p class="mt-4 text-sm sm:text-base text-white/85">HanziHero Pro teaches you Mandarin through tones you can hear, flashcards that adapt to you, characters you write yourself, real phrases, quizzes and daily goals. Free to use, right in your browser.</p>
-          <div class="mt-7 flex flex-wrap gap-3">
-            <button onclick="switchTab('pinyin')" class="px-6 py-3 bg-white text-crimson-700 rounded-2xl text-sm font-extrabold shadow hover:scale-105 transition flex items-center gap-2">Start Learning <svg class=ic><use href=#i-arrow></use></svg></button>
-            <button onclick="switchTab('quiz')" class="px-6 py-3 bg-white/10 border border-white/30 rounded-2xl text-sm font-extrabold hover:bg-white/20 transition flex items-center gap-2"><svg class=ic><use href=#i-bolt></use></svg> Take a Quiz</button>
-          </div>
-        </div>
-      </div>
-      <div id="homeStats" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
-      <div id="dailyWord" class="bg-gradient-to-r from-imperial-500 to-imperial-700 text-white rounded-2xl p-5 flex items-center justify-between shadow-sm"></div>
-      <div>
-        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-4">Everything you need to speak Mandarin</h2>
-        <div id="homeFeatures" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-      </div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-4">How it works</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60"><div class="w-9 h-9 rounded-full bg-crimson-600 text-white font-black flex items-center justify-center mb-2">1</div><div class="font-extrabold text-sm dark:text-white">Listen &amp; learn</div><p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Hear the four tones and pinyin sounds, then build vocabulary with flashcards.</p></div>
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60"><div class="w-9 h-9 rounded-full bg-crimson-600 text-white font-black flex items-center justify-center mb-2">2</div><div class="font-extrabold text-sm dark:text-white">Practice daily</div><p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Write characters, drill tones and build sentences to lock it in.</p></div>
-          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60"><div class="w-9 h-9 rounded-full bg-crimson-600 text-white font-black flex items-center justify-center mb-2">3</div><div class="font-extrabold text-sm dark:text-white">Level up</div><p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Earn XP, keep your streak and unlock badges as you improve.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MODULE: PRACTICE LAB -->
-    <section id="tab-practice" class="tab-content hidden space-y-6">
-      <div class="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="max-w-3xl"><span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Practice Lab</span><h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Train Your Ear &amp; Hands</h2></div>
-        <div class="flex flex-wrap items-center gap-2 mt-4">
-          <button onclick="setPractice('tone')" class="prac-btn" data-m="tone">Tone Drill</button>
-          <button onclick="setPractice('listen')" class="prac-btn" data-m="listen">Listening</button>
-          <button onclick="setPractice('type')" class="prac-btn" data-m="type">Pinyin Typing</button>
-          <button onclick="setPractice('build')" class="prac-btn" data-m="build">Sentence Builder</button>
-          <button onclick="setPractice('timed')" class="prac-btn" data-m="timed">Timed 60s</button>
-          <button onclick="toggleSlow()" id="slowBtn" class="ml-auto px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"><svg class=ic><use href=#i-speaker></use></svg> Normal speed</button>
-        </div>
-        <div class="text-xs text-slate-400 mt-3">Session score: <span id="pracScore" class="font-extrabold text-emerald-600">0</span> (+10 XP each)</div>
-        <div id="pracArea" class="mt-4 space-y-4"></div>
-      </div>
-    </section>
-
-    <!-- MODULE: EXPLORE -->
-    <section id="tab-explore" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="max-w-3xl"><span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Explore</span><h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Go Deeper</h2></div><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Radicals, an HSK 1 checklist and cultural notes. Tap any character to hear it.</p></div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Radicals: Building Blocks of Characters</h3><div id="radicalGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div></div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="flex items-center justify-between mb-2"><h3 class="text-lg font-bold text-slate-900 dark:text-white">HSK 1 Starter List</h3><span id="hskCount" class="text-xs font-bold text-slate-500"></span></div><div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-4"><div id="hskBar" class="progress-fill h-full bg-emerald-500" style="width:0%"></div></div><div id="hskGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div></div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Culture Corner</h3><div id="cultureGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div></div>
-    </section>
-
-    <!-- MODULE: PROGRESS -->
-    <section id="tab-progress" class="tab-content hidden space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="text-xs font-extrabold uppercase tracking-widest text-crimson-600">Level</div><div id="lvlName" class="text-2xl font-black text-slate-900 dark:text-white"></div><div class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden my-3"><div id="lvlBar" class="progress-fill h-full bg-crimson-600" style="width:0%"></div></div><div id="lvlText" class="text-xs text-slate-500"></div><button onclick="shareProgress()" class="mt-3 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"><svg class=ic><use href=#i-share></use></svg> Share progress</button></div>
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-5"><svg viewBox="0 0 80 80" class="w-24 h-24 -rotate-90"><circle cx=40 cy=40 r=34 fill=none stroke="currentColor" class="text-slate-200 dark:text-slate-800" stroke-width=8 /><circle id="goalRing" cx=40 cy=40 r=34 fill=none stroke="#10b981" stroke-width=8 stroke-linecap=round stroke-dasharray="213.6" stroke-dashoffset="213.6" /></svg><div><div class="text-xs font-extrabold uppercase tracking-widest text-emerald-600">Daily Goal</div><div id="goalText" class="text-2xl font-black text-slate-900 dark:text-white"></div><div class="text-xs text-slate-500">Target: 50 XP per day</div></div></div>
-      </div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3"><svg class=ic><use href=#i-chart></use></svg> Weekly XP</h3><div id="weekChart" class="text-slate-500"></div></div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3"><svg class=ic><use href=#i-award></use></svg> Badges</h3><div id="badgeGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="flex items-center justify-between mb-3"><h3 class="text-lg font-bold text-slate-900 dark:text-white"><svg class=ic><use href=#i-repeat></use></svg> Review Mistakes</h3><button onclick="clearMistakes()" class="text-xs text-rose-600 font-bold hover:underline">Clear all</button></div><div id="mistakeGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div></div>
-    </section>
-
-    <!-- MODULE: LESSONS -->
-    <section id="tab-lessons" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><span class="px-2.5 py-1 rounded-md bg-crimson-100 dark:bg-crimson-950 text-crimson-700 dark:text-crimson-400 text-xs font-black uppercase tracking-wider">Learning Path</span><h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Mini Lessons</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Finish each unit with 4 of 5 correct to unlock the next one (+50 XP).</p></div>
-      <div id="lessonArea" class="space-y-3"></div>
-    </section>
-
-    <!-- MODULE: SETTINGS -->
-    <section id="tab-settings" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">Settings</h2>
-        <div><label class="block text-xs font-bold mb-1">Your name</label><input id="setName" maxlength="20" oninput="saveSet('name',this.value.trim())" placeholder="Shown on the Home page" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-crimson-600"></div>
-        <div><label class="block text-xs font-bold mb-2">Theme color</label><div class="flex gap-2"><button onclick="saveSet('accent',0)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Red</button><button onclick="saveSet('accent',130)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Jade</button><button onclick="saveSet('accent',35)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Gold</button></div></div>
-        <div><label class="block text-xs font-bold mb-2">Text size</label><div class="flex gap-2"><button onclick="saveSet('size','s')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">A-</button><button onclick="saveSet('size','m')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">A</button><button onclick="saveSet('size','l')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">A+</button></div></div>
-        <div><label class="block text-xs font-bold mb-2">Pinyin (hard mode hides it)</label><div class="flex gap-2"><button onclick="saveSet('pinyin',true)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Show</button><button onclick="saveSet('pinyin',false)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Hide</button></div></div>
-        <div class="text-xs text-slate-600 dark:text-slate-300"><svg class=ic><use href=#i-fire></use></svg> Streak freezes left: <span id="freezeCount" class="font-extrabold">1</span> (saves your streak if you miss one day; earn one every 7 days)</div>
-        <div class="flex flex-wrap gap-2"><button id="installBtn" onclick="installApp()" class="hidden px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Install app</button><button onclick="exportAll()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"><svg class=ic><use href=#i-download></use></svg> Backup</button><label class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">Restore<input type="file" accept=".json" class="hidden" onchange="importAll(this.files[0])"></label><button onclick="resetAll()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300">Reset progress</button></div>
-        <p class="text-[11px] text-slate-400">To add this app to your phone: open your browser menu and choose Add to Home screen.</p>
-      </div>
-    </section>
-
-    <!-- MODULE 7: SAVED NOTEBOOK -->
-    <section id="tab-saved" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Your Saved Vocabulary</h2>
-            <p class="text-xs text-slate-500">Review phrases and flashcards stored in your local notebook.</p>
-          </div>
-          <div class="flex items-center gap-3"><input id="savedSearch" oninput="renderSavedGrid()" placeholder="Search notebook..." class="w-36 sm:w-48 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-crimson-600"><button onclick="exportNotebook()" class="text-xs text-slate-600 dark:text-slate-300 hover:underline font-bold"><svg class=ic><use href=#i-download></use></svg> Export</button><button onclick="clearAllBookmarks()" class="text-xs text-rose-600 hover:underline font-bold">Clear All</button></div>
-        </div>
-
-        <div id="savedGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Populated by JS -->
-        </div>
-
-        <div id="savedEmptyState" class="hidden text-center py-12">
-          <div class="text-4xl mb-2"><svg class=ic><use href=#i-pin></use></svg></div>
-          <p class="text-xs text-slate-400 font-semibold">Your notebook is empty. Click the bookmark icon on any item to save it here.</p>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
-      <p>© 2026 HanziHero Pro. Interactive Mandarin Chinese Learning System.</p>
-      <p class="text-[10px] text-slate-400">Audio sweep generated via Web Audio API & Native Speech Synthesis.</p>
-    </div>
-  </footer>
-
-  <!-- TOAST NOTIFICATIONS -->
-  <div id="toastBox" class="fixed bottom-5 right-5 z-50 flex flex-col items-end space-y-2 pointer-events-none"></div>
-
-  <!-- CORE SCRIPT LOGIC -->
-  <script>
-    const ic = (n) => `<svg class="ic"><use href="#i-${n}"></use></svg>`;
-
-    // APP DATA STORES
-    const pinyinList = [
-      { pinyin: "b", cat: "initials" }, { pinyin: "p", cat: "initials" }, { pinyin: "m", cat: "initials" }, { pinyin: "f", cat: "initials" },
-      { pinyin: "d", cat: "initials" }, { pinyin: "t", cat: "initials" }, { pinyin: "n", cat: "initials" }, { pinyin: "l", cat: "initials" },
-      { pinyin: "g", cat: "initials" }, { pinyin: "k", cat: "initials" }, { pinyin: "h", cat: "initials" }, { pinyin: "j", cat: "initials" },
-      { pinyin: "q", cat: "initials" }, { pinyin: "x", cat: "initials" }, { pinyin: "zh", cat: "initials" }, { pinyin: "ch", cat: "initials" },
-      { pinyin: "sh", cat: "initials" }, { pinyin: "r", cat: "initials" }, { pinyin: "z", cat: "initials" }, { pinyin: "c", cat: "initials" },
-      { pinyin: "s", cat: "initials" }, { pinyin: "y", cat: "initials" }, { pinyin: "w", cat: "initials" },
-      { pinyin: "a", cat: "finals" }, { pinyin: "o", cat: "finals" }, { pinyin: "e", cat: "finals" }, { pinyin: "i", cat: "finals" },
-      { pinyin: "u", cat: "finals" }, { pinyin: "ü", cat: "finals" }, { pinyin: "ai", cat: "finals" }, { pinyin: "ao", cat: "finals" },
-      { pinyin: "ei", cat: "finals" }, { pinyin: "ou", cat: "finals" }, { pinyin: "an", cat: "finals" }, { pinyin: "en", cat: "finals" },
-      { pinyin: "ang", cat: "finals" }, { pinyin: "eng", cat: "finals" }, { pinyin: "ong", cat: "finals" }, { pinyin: "ia", cat: "finals" },
-      { pinyin: "ie", cat: "finals" }, { pinyin: "iao", cat: "finals" }, { pinyin: "iu", cat: "finals" }, { pinyin: "ian", cat: "finals" },
-      { pinyin: "in", cat: "finals" }, { pinyin: "ing", cat: "finals" }, { pinyin: "ua", cat: "finals" }, { pinyin: "uo", cat: "finals" },
-      { pinyin: "ui", cat: "finals" }, { pinyin: "üe", cat: "finals" }
-    ];
-
-    const flashcardsData = [
-      { id: "fc1", hanzi: "你好", pinyin: "nǐ hǎo", english: "Hello / Hi", category: "Greetings", example: "你好！很高兴认识你。(Hi! Nice to meet you.)" },
-      { id: "fc2", hanzi: "谢谢", pinyin: "xiè xie", english: "Thank you", category: "Polite", example: "非常谢谢你的帮助！(Thank you very much for your help!)" },
-      { id: "fc3", hanzi: "再见", pinyin: "zài jiàn", english: "Goodbye", category: "Greetings", example: "明天见，再见！(See you tomorrow, goodbye!)" },
-      { id: "fc4", hanzi: "对不起", pinyin: "duì bu qǐ", english: "Sorry / Excuse me", category: "Polite", example: "对不起，我来晚了。(Sorry, I arrived late.)" },
-      { id: "fc5", hanzi: "好吃", pinyin: "hǎo chī", english: "Delicious", category: "Dining", example: "这个中国菜很好吃。(This Chinese food is delicious.)" },
-      { id: "fc6", hanzi: "多少钱", pinyin: "duō shao qián", english: "How much money?", category: "Shopping", example: "请问这个水果多少钱？(Excuse me, how much is this fruit?)" },
-      { id: "fc7", hanzi: "朋友", pinyin: "péng you", english: "Friend", category: "Social", example: "我们是好朋友。(We are good friends.)" },
-      { id: "fc8", hanzi: "加油", pinyin: "jiā yóu", english: "Come on! / Go for it!", category: "Idiom", example: "考试加油！(Good luck on your exam!)" },
-      { id: "fc9", hanzi: "请", pinyin: "qǐng", english: "Please", category: "Polite", example: "请坐，喝杯茶。(Please sit down and have some tea.)" },
-      { id: "fc10", hanzi: "没关系", pinyin: "méi guān xi", english: "It's okay / No problem", category: "Polite", example: "没关系，不用担心。(It's okay, no need to worry.)" },
-      { id: "fc11", hanzi: "欢迎", pinyin: "huān yíng", english: "Welcome", category: "Greetings", example: "欢迎来到中国！(Welcome to China!)" },
-      { id: "fc12", hanzi: "我爱你", pinyin: "wǒ ài nǐ", english: "I love you", category: "Social", example: "妈妈，我爱你！(Mom, I love you!)" },
-      { id: "fc13", hanzi: "米饭", pinyin: "mǐ fàn", english: "Cooked rice", category: "Dining", example: "我想要一碗米饭。(I would like a bowl of rice.)" },
-      { id: "fc14", hanzi: "学习", pinyin: "xué xí", english: "To study / Learn", category: "Daily", example: "我每天学习中文。(I study Chinese every day.)" },
-      { id: "fc15", hanzi: "今天", pinyin: "jīn tiān", english: "Today", category: "Time", example: "今天天气很好。(The weather is great today.)" },
-      { id: "fc16", hanzi: "明天", pinyin: "míng tiān", english: "Tomorrow", category: "Time", example: "明天你有空吗？(Are you free tomorrow?)" },
-      { id: "fc17", hanzi: "慢一点", pinyin: "màn yì diǎn", english: "A little slower", category: "Daily", example: "请说慢一点。(Please speak a little slower.)" },
-      { id: "fc18", hanzi: "祝你好运", pinyin: "zhù nǐ hǎo yùn", english: "Good luck to you", category: "Idiom", example: "面试祝你好运！(Good luck with your interview!)" }
-    ];
-
-    const strokeCharData = [
-      { char: "你", pinyin: "nǐ", meaning: "You", strokes: 7 },
-      { char: "好", pinyin: "hǎo", meaning: "Good", strokes: 6 },
-      { char: "爱", pinyin: "ài", meaning: "Love", strokes: 10 },
-      { char: "水", pinyin: "shuǐ", meaning: "Water", strokes: 4 },
-      { char: "火", pinyin: "huǒ", meaning: "Fire", strokes: 4 },
-      { char: "山", pinyin: "shān", meaning: "Mountain", strokes: 3 },
-      { char: "木", pinyin: "mù", meaning: "Tree", strokes: 4 },
-      { char: "日", pinyin: "rì", meaning: "Sun", strokes: 4 },
-      { char: "月", pinyin: "yuè", meaning: "Moon", strokes: 4 },
-      { char: "福", pinyin: "fú", meaning: "Blessing", strokes: 13 },
-      { char: "人", pinyin: "rén", meaning: "Person", strokes: 2 },
-      { char: "大", pinyin: "dà", meaning: "Big", strokes: 3 },
-      { char: "小", pinyin: "xiǎo", meaning: "Small", strokes: 3 },
-      { char: "中", pinyin: "zhōng", meaning: "Middle", strokes: 4 },
-      { char: "口", pinyin: "kǒu", meaning: "Mouth", strokes: 3 },
-      { char: "手", pinyin: "shǒu", meaning: "Hand", strokes: 4 },
-      { char: "心", pinyin: "xīn", meaning: "Heart", strokes: 4 },
-      { char: "天", pinyin: "tiān", meaning: "Sky", strokes: 4 },
-      { char: "家", pinyin: "jiā", meaning: "Home", strokes: 10 },
-      { char: "学", pinyin: "xué", meaning: "Study", strokes: 8 }
-    ];
-
-    const phraseData = [
-      { id: "pr1", hanzi: "早上好！", pinyin: "zǎo shang hǎo!", english: "Good morning!", cat: "Greetings" },
-      { id: "pr2", hanzi: "你叫什么名字？", pinyin: "nǐ jiào shén me míng zi?", english: "What is your name?", cat: "Greetings" },
-      { id: "pr3", hanzi: "买单，谢谢！", pinyin: "mǎi dān, xiè xie!", english: "Check, please!", cat: "Dining" },
-      { id: "pr4", hanzi: "我要这个。", pinyin: "wǒ yào zhè ge.", english: "I would like this one.", cat: "Dining" },
-      { id: "pr5", hanzi: "太贵了！", pinyin: "tài guì le!", english: "Too expensive!", cat: "Shopping" },
-      { id: "pr6", hanzi: "洗手间在哪里？", pinyin: "xǐ shǒu jiān zài nǎ lǐ?", english: "Where is the restroom?", cat: "Travel" },
-      { id: "pr7", hanzi: "请问地铁站在哪里？", pinyin: "qǐng wèn dì tiě zhàn zài nǎ lǐ?", english: "Where is the subway station?", cat: "Travel" },
-      { id: "pr8", hanzi: "救命！", pinyin: "jiù mìng!", english: "Help!", cat: "Emergency" },
-      { id: "pr9", hanzi: "晚上好！", pinyin: "wǎn shang hǎo!", english: "Good evening!", cat: "Greetings" },
-      { id: "pr10", hanzi: "你好吗？", pinyin: "nǐ hǎo ma?", english: "How are you?", cat: "Greetings" },
-      { id: "pr11", hanzi: "很高兴认识你。", pinyin: "hěn gāo xìng rèn shi nǐ.", english: "Nice to meet you.", cat: "Greetings" },
-      { id: "pr12", hanzi: "我想点菜。", pinyin: "wǒ xiǎng diǎn cài.", english: "I would like to order.", cat: "Dining" },
-      { id: "pr13", hanzi: "不要辣。", pinyin: "bú yào là.", english: "Not spicy, please.", cat: "Dining" },
-      { id: "pr14", hanzi: "请给我一杯水。", pinyin: "qǐng gěi wǒ yì bēi shuǐ.", english: "Please give me a glass of water.", cat: "Dining" },
-      { id: "pr15", hanzi: "可以便宜一点吗？", pinyin: "kě yǐ pián yi yì diǎn ma?", english: "Can it be a little cheaper?", cat: "Shopping" },
-      { id: "pr16", hanzi: "我可以试一下吗？", pinyin: "wǒ kě yǐ shì yí xià ma?", english: "May I try it on?", cat: "Shopping" },
-      { id: "pr17", hanzi: "可以刷卡吗？", pinyin: "kě yǐ shuā kǎ ma?", english: "Can I pay by card?", cat: "Shopping" },
-      { id: "pr18", hanzi: "我迷路了。", pinyin: "wǒ mí lù le.", english: "I am lost.", cat: "Travel" },
-      { id: "pr19", hanzi: "机场怎么走？", pinyin: "jī chǎng zěn me zǒu?", english: "How do I get to the airport?", cat: "Travel" },
-      { id: "pr20", hanzi: "请带我去这个地址。", pinyin: "qǐng dài wǒ qù zhè ge dì zhǐ.", english: "Please take me to this address.", cat: "Travel" },
-      { id: "pr21", hanzi: "我需要医生。", pinyin: "wǒ xū yào yī shēng.", english: "I need a doctor.", cat: "Emergency" },
-      { id: "pr22", hanzi: "请叫救护车！", pinyin: "qǐng jiào jiù hù chē!", english: "Please call an ambulance!", cat: "Emergency" },
-      { id: "pr23", hanzi: "我的护照丢了。", pinyin: "wǒ de hù zhào diū le.", english: "I lost my passport.", cat: "Emergency" }
-    ];
-
-    const vocabGroups = [
-      { title: "Numbers 0–10", icon: "<svg class=ic><use href=#i-hash></use></svg>", cols: "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6", items: [
-        ["零", "líng", "Zero (0)"], ["一", "yī", "One (1)"], ["二", "èr", "Two (2)"], ["三", "sān", "Three (3)"],
-        ["四", "sì", "Four (4)"], ["五", "wǔ", "Five (5)"], ["六", "liù", "Six (6)"], ["七", "qī", "Seven (7)"],
-        ["八", "bā", "Eight (8)"], ["九", "jiǔ", "Nine (9)"], ["十", "shí", "Ten (10)"], ["百", "bǎi", "Hundred (100)"]
-      ]},
-      { title: "Family Members", icon: "<svg class=ic><use href=#i-users></use></svg>", cols: "grid-cols-2 sm:grid-cols-4", items: [
-        ["爸爸", "bà ba", "Dad"], ["妈妈", "mā ma", "Mom"], ["哥哥", "gē ge", "Older brother"], ["姐姐", "jiě jie", "Older sister"],
-        ["弟弟", "dì di", "Younger brother"], ["妹妹", "mèi mei", "Younger sister"], ["爷爷", "yé ye", "Grandpa (paternal)"], ["奶奶", "nǎi nai", "Grandma (paternal)"]
-      ]},
-      { title: "Colors", icon: "<svg class=ic><use href=#i-palette></use></svg>", cols: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6", items: [
-        ["红色", "hóng sè", "Red"], ["黄色", "huáng sè", "Yellow"], ["蓝色", "lán sè", "Blue"],
-        ["绿色", "lǜ sè", "Green"], ["黑色", "hēi sè", "Black"], ["白色", "bái sè", "White"]
-      ]},
-      { title: "Days of the Week", icon: "<svg class=ic><use href=#i-calendar></use></svg>", cols: "grid-cols-2 sm:grid-cols-4", items: [
-        ["星期一", "xīng qī yī", "Monday"], ["星期二", "xīng qī èr", "Tuesday"], ["星期三", "xīng qī sān", "Wednesday"],
-        ["星期四", "xīng qī sì", "Thursday"], ["星期五", "xīng qī wǔ", "Friday"], ["星期六", "xīng qī liù", "Saturday"],
-        ["星期日", "xīng qī rì", "Sunday"]
-      ]},
-      { title: "Food & Drink", icon: ic("cards"), cols: "grid-cols-2 sm:grid-cols-4", items: [["茶","chá","Tea"],["咖啡","kā fēi","Coffee"],["牛奶","niú nǎi","Milk"],["面条","miàn tiáo","Noodles"],["鸡肉","jī ròu","Chicken"],["鱼","yú","Fish"],["苹果","píng guǒ","Apple"],["蔬菜","shū cài","Vegetables"]]},
-      { title: "Body Parts", icon: ic("users"), cols: "grid-cols-2 sm:grid-cols-4", items: [["头","tóu","Head"],["眼睛","yǎn jing","Eyes"],["耳朵","ěr duo","Ears"],["嘴","zuǐ","Mouth"],["手","shǒu","Hand"],["脚","jiǎo","Foot"],["心","xīn","Heart"],["肚子","dù zi","Stomach"]]},
-      { title: "Months", icon: ic("calendar"), cols: "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6", items: ["一|yī|January","二|èr|February","三|sān|March","四|sì|April","五|wǔ|May","六|liù|June","七|qī|July","八|bā|August","九|jiǔ|September","十|shí|October","十一|shí yī|November","十二|shí èr|December"].map(x=>{const a=x.split("|");return [a[0]+"月",a[1]+" yuè",a[2]]}) },
-      { title: "Common Verbs", icon: ic("bolt"), cols: "grid-cols-2 sm:grid-cols-4", items: [["吃","chī","To eat"],["喝","hē","To drink"],["去","qù","To go"],["来","lái","To come"],["看","kàn","To look / watch"],["听","tīng","To listen"],["说","shuō","To speak"],["买","mǎi","To buy"]]},
-      { title: "Question Words", icon: ic("chat"), cols: "grid-cols-2 sm:grid-cols-3", items: [["谁","shéi","Who"],["什么","shén me","What"],["哪里","nǎ lǐ","Where"],["什么时候","shén me shí hou","When"],["为什么","wèi shén me","Why"],["怎么","zěn me","How"]]}
-    ];
-
-    const quizData = [
-      {
-        question: "What does '谢谢' (xièxie) mean?",
-        options: ["Sorry", "Thank you", "Goodbye", "Hello"],
-        correct: 1
-      },
-      {
-        question: "Which tone corresponds to 'mǎ' (马 - Horse)?",
-        options: ["First Tone (Flat)", "Second Tone (Rising)", "Third Tone (Dipping)", "Fourth Tone (Falling)"],
-        correct: 2
-      },
-      {
-        question: "How do you ask 'How much is it?' in Chinese?",
-        options: ["Duō shao qián", "Nǐ hǎo", "Zài jiàn", "Duì bu qǐ"],
-        correct: 0
-      },
-      {
-        question: "What is the meaning of '水' (shuǐ)?",
-        options: ["Fire", "Water", "Wood", "Mountain"],
-        correct: 1
-      },
-      {
-        question: "Which expression means 'Good morning'?",
-        options: ["Zǎo shang hǎo", "Wǎn an", "Xiè xie", "Bú kè qi"],
-        correct: 0
-      },
-      {
-        question: "Which tone is 'mā' (妈 - Mother)?",
-        options: ["First Tone (High Flat)", "Second Tone (Rising)", "Third Tone (Dipping)", "Fourth Tone (Falling)"],
-        correct: 0
-      },
-      {
-        question: "What does '再见' (zài jiàn) mean?",
-        options: ["Hello", "Goodbye", "Please", "Delicious"],
-        correct: 1
-      },
-      {
-        question: "Which character means 'Fire'?",
-        options: ["水", "火", "山", "木"],
-        correct: 1
-      },
-      {
-        question: "How do you say 'Help!' in Chinese?",
-        options: ["Jiù mìng!", "Hǎo chī", "Péng you", "Jiā yóu"],
-        correct: 0
-      },
-      {
-        question: "What does '好吃' (hǎo chī) mean?",
-        options: ["Good luck", "Friend", "Delicious", "Expensive"],
-        correct: 2
-      },
-      {
-        question: "What number is '八' (bā)?",
-        options: ["Six", "Seven", "Eight", "Nine"],
-        correct: 2
-      }
-    ];
-
-    // STATE VARIABLES
-    let xpPoints = parseInt(localStorage.getItem('hh_xp') || '0');
-    let streakCount = parseInt(localStorage.getItem('hh_streak') || '1');
-    let savedBookmarks = JSON.parse(localStorage.getItem('hh_bookmarks') || '[]');
-
-    let currentFcIndex = 0;
-    let isFcFlipped = false;
-    let activeStrokeChar = strokeCharData[0];
-    let selectedPhraseCat = "All";
-
-    let quizIndex = 0;
-    let quizScore = 0;
-    let quizAnswered = false;
-
-    let correctCount = parseInt(localStorage.getItem('hh_correct') || '0');
-    let attemptCount = parseInt(localStorage.getItem('hh_attempts') || '0');
-
-    // AUDIO CONTEXT FOR TONE SWEEPS
-    let audioCtx = null;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      initTheme();
-      initStreak();
-      updateStatsUI();
-      renderPinyinGrid('all');
-      renderFlashcard();
-      initCanvas();
-      renderStrokeCharSelector();
-      renderPhrasebook();
-      renderVocab();
-      renderExplore();
-      renderHome();
-      renderDailyWord();
-      initHistory();
-      applySettings();
-      initExtras();
-      setPractice('tone', true);
-      buildQuiz();
-      renderQuizQuestion();
-      renderSavedGrid();
-      initKeyboardShortcuts();
-    });
-
-    // THEME CONTROLLER
-    function initTheme() {
-      const isDark = localStorage.getItem('hh_theme') === 'dark';
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        document.getElementById('sunIcon').classList.remove('hidden');
-        document.getElementById('moonIcon').classList.add('hidden');
-      }
-    }
-
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('hh_theme', isDark ? 'dark' : 'light');
-      document.getElementById('sunIcon').classList.toggle('hidden', !isDark);
-      document.getElementById('moonIcon').classList.toggle('hidden', isDark);
-    }
-
-    // STATS & PERSISTENCE
-    function updateStatsUI() {
-      document.getElementById('statXP').textContent = xpPoints;
-      document.getElementById('statStreak').textContent = streakCount;
-      document.getElementById('statSaved').textContent = savedBookmarks.length;
-      document.getElementById('statAccuracy').textContent =
-        attemptCount === 0 ? '100%' : Math.round((correctCount / attemptCount) * 100) + '%';
-      localStorage.setItem('hh_correct', correctCount);
-      localStorage.setItem('hh_attempts', attemptCount);
-      localStorage.setItem('hh_xp', xpPoints);
-      localStorage.setItem('hh_streak', streakCount);
-      localStorage.setItem('hh_bookmarks', JSON.stringify(savedBookmarks));
-    }
-
-    function addXP(amount) {
-      xpPoints += amount;
-      const d = getDaily(), k = new Date().toDateString(); d[k] = (d[k] || 0) + amount;
-      localStorage.setItem('hh_daily', JSON.stringify(d));
-      updateStatsUI();
-      showToast(`<svg class=ic><use href=#i-bolt></use></svg> +${amount} XP`);
-    }
-
-    function recordAttempt(isCorrect) {
-      attemptCount++;
-      if (navigator.vibrate) navigator.vibrate(isCorrect ? 15 : [40, 40, 40]);
-      if (isCorrect) correctCount++;
-      updateStatsUI();
-    }
-
-    // Daily streak: +1 for each consecutive day the app is opened
-    function initStreak() {
-      const today = new Date().toDateString();
-      const last = localStorage.getItem('hh_last_visit');
-      if (last === today) return;
-      if (last) {
-        const dAgo = n => new Date(Date.now() - n * 86400000).toDateString();
-        let fz = parseInt(localStorage.getItem('hh_freeze') ?? '1');
-        if (last === dAgo(1)) streakCount++;
-        else if (last === dAgo(2) && fz > 0) { fz--; streakCount++; }
-        else streakCount = 1;
-        if (streakCount % 7 === 0) fz = Math.min(fz + 1, 2);
-        localStorage.setItem('hh_freeze', fz);
-      }
-      localStorage.setItem('hh_last_visit', today);
-    }
-
-    // Small pop-up message (bottom-right)
-    function showToast(message) {
-      const box = document.getElementById('toastBox');
-      if (!box) return;
-      const el = document.createElement('div');
-      el.className = 'px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-extrabold rounded-xl shadow-lg';
-      el.innerHTML = message;
-      box.appendChild(el);
-      setTimeout(() => el.remove(), 1600);
-    }
-
-    // TAB NAVIGATION
-    let currentTab = 'home', exitArmed = false;
-    function switchTab(tabId, fromPop) {
-      if (!fromPop) {
-        if (tabId === currentTab) return;
-        history.pushState({ tab: tabId }, '');
-      }
-      currentTab = tabId;
-      syncMobileNavigation(tabId);
-      window.scrollTo(0, 0);
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        if (btn.dataset.tab === tabId) {
-          btn.className = "tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 bg-crimson-600 text-white shadow-sm";
-        } else {
-          btn.className = "tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800";
-        }
-      });
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-      if (tabId === 'progress') renderProgress();
-      if (tabId === 'lessons') renderLessons();
-      if (tabId === 'settings') applySettings();
-      if (tabId === 'strokes') {
-        setTimeout(resizeCanvas, 50);
-      }
-    }
-
-
-    // Mobile navigation helpers; these only call the existing tab switcher.
-    const mobileTabMeta = [
-      ['home','Home','home'],['lessons','Lessons','book'],['pinyin','Pinyin & Tones','music'],
-      ['flashcards','Flashcards','cards'],['strokes','Stroke Practice','pen'],
-      ['phrasebook','Phrasebook','chat'],['quiz','Arcade Quiz','bolt'],
-      ['vocab','Numbers & Basics','hash'],['practice','Practice Lab','headphones'],
-      ['explore','Explore','compass'],['progress','Progress','award'],
-      ['settings','Settings','gear'],['saved','Saved Notebook','pin']
-    ];
-    function mobileIcon(name) {
-      const paths = {
-        home:'<path d="m3 10 9-7 9 7v10h-6v-6H9v6H3z"/>',
-        book:'<path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',
-        music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
-        cards:'<rect x="3" y="7" width="13" height="13" rx="2"/><path d="M8 7V4h13v13h-5"/>',
-        pen:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
-        chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-5.5A8 8 0 1 1 21 12z"/>',
-        bolt:'<path d="m13 2-9 12h7l-1 8 9-12h-7z"/>',
-        hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',
-        headphones:'<path d="M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/>',
-        compass:'<circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/>',
-        award:'<circle cx="12" cy="8" r="6"/><path d="m8 14-1 8 5-3 5 3-1-8"/>',
-        gear:'<circle cx="12" cy="12" r="3"/><path d="m19 12 2-1-2-4-2 1-2-1-1-2h-4L9 7 7 8 5 7l-2 4 2 1v2l-2 1 2 4 2-1 2 1 1 2h4l1-2 2-1 2 1 2-4-2-1z"/>',
-        pin:'<path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21z"/>'
-      };
-      return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.book}</svg>`;
-    }
-    function buildMobileMenu() {
-      const grid = document.getElementById('iosMoreGrid');
-      if (!grid || grid.childElementCount) return;
-      grid.innerHTML = mobileTabMeta.map(([id,label,icon]) =>
-        `<button class="ios-more-link" data-mobile-menu-tab="${id}" onclick="mobileNavigate('${id}')">${mobileIcon(icon)}<span>${label}</span></button>`
-      ).join('');
-    }
-    function toggleMobileMenu(force) {
-      const panel = document.getElementById('iosMorePanel');
-      const button = document.getElementById('iosSearchButton');
-      const open = typeof force === 'boolean' ? force : panel.classList.contains('hidden');
-      panel.classList.toggle('hidden', !open);
-      button.classList.toggle('active', open);
-      if (open) buildMobileMenu();
-    }
-    function mobileNavigate(tab) {
-      toggleMobileMenu(false);
-      switchTab(tab);
-    }
-    function syncMobileNavigation(tab) {
-      document.querySelectorAll('[data-mobile-tab]').forEach(el => {
-        el.classList.toggle('active', el.dataset.mobileTab === tab);
-      });
-      document.querySelectorAll('[data-mobile-menu-tab]').forEach(el => {
-        el.classList.toggle('active', el.dataset.mobileMenuTab === tab);
-      });
-    }
-
-    // WEB AUDIO API + TTS PRONUNCIATION
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'zh-CN';
-        utterance.rate = speechRate;
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    function playTone(toneNum, pinyinText, hanziChar) {
-      // 1. Play TTS
-      speakText(hanziChar);
-
-      // 2. Synthesize Pure Pitch Frequency Sweep via Web Audio API
-      try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        const now = audioCtx.currentTime;
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-
-        if (toneNum === 1) { // High Flat (55)
-          osc.frequency.setValueAtTime(320, now);
-          osc.frequency.setValueAtTime(320, now + 0.4);
-        } else if (toneNum === 2) { // Rising (35)
-          osc.frequency.setValueAtTime(220, now);
-          osc.frequency.exponentialRampToValueAtTime(340, now + 0.4);
-        } else if (toneNum === 3) { // Dipping (214)
-          osc.frequency.setValueAtTime(240, now);
-          osc.frequency.exponentialRampToValueAtTime(180, now + 0.2);
-          osc.frequency.exponentialRampToValueAtTime(300, now + 0.45);
-        } else if (toneNum === 4) { // Falling (51)
-          osc.frequency.setValueAtTime(360, now);
-          osc.frequency.exponentialRampToValueAtTime(160, now + 0.35);
-        }
-
-        osc.start(now);
-        osc.stop(now + 0.45);
-      } catch(e) {
-        // Fallback gracefully if Web Audio is restricted
-      }
-    }
-
-    // PINYIN TAB LOGIC
-    function filterPinyin(cat) {
-      document.querySelectorAll('.pinyin-filter-btn').forEach(b => {
-        if (b.dataset.cat === cat) {
-          b.className = "pinyin-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-crimson-600 text-white";
-        } else {
-          b.className = "pinyin-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
-        }
-      });
-      renderPinyinGrid(cat);
-    }
-
-    function renderPinyinGrid(cat) {
-      const grid = document.getElementById('pinyinGrid');
-      const items = cat === 'all' ? pinyinList : pinyinList.filter(i => i.cat === cat);
-      grid.innerHTML = items.map(i => `
-        <button onclick="speakText('${i.pinyin}')" class="p-3 bg-slate-50 dark:bg-slate-800 hover:bg-crimson-50 dark:hover:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 transition flex flex-col items-center justify-center group active:scale-95">
-          <span class="text-base font-extrabold text-slate-800 dark:text-white group-hover:text-crimson-600 dark:group-hover:text-crimson-400">${i.pinyin}</span>
-          <span class="text-[10px] text-slate-400"><svg class=ic><use href=#i-speaker></use></svg></span>
-        </button>
-      `).join('');
-    }
-
-    // FLASHCARD LOGIC
-    function renderFlashcard() {
-      const card = flashcardsData[currentFcIndex];
-      document.getElementById('fcCategory').textContent = card.category;
-      document.getElementById('fcHanzi').textContent = card.hanzi;
-      document.getElementById('fcPinyin').textContent = card.pinyin;
-      document.getElementById('fcEnglish').textContent = card.english;
-      document.getElementById('fcExample').textContent = card.example;
-      document.getElementById('fcCurrent').textContent = currentFcIndex + 1;
-      document.getElementById('fcTotal').textContent = flashcardsData.length;
-      document.getElementById('fcProgressBar').style.width = ((currentFcIndex + 1) / flashcardsData.length * 100) + '%';
-
-      isFcFlipped = false;
-      document.getElementById('flashcardInner').classList.remove('rotate-y-180');
-
-      const isSaved = savedBookmarks.some(b => b.id === card.id);
-      document.getElementById('fcBookmarkBtn').className = `p-2 rounded-xl transition ${isSaved ? 'bg-crimson-100 text-crimson-600 dark:bg-crimson-950 dark:text-crimson-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`;
-    }
-
-    function flipFlashcard() {
-      isFcFlipped = !isFcFlipped;
-      document.getElementById('flashcardInner').classList.toggle('rotate-y-180', isFcFlipped);
-    }
-
-    function shuffleFlashcards() {
-      for (let i = flashcardsData.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [flashcardsData[i], flashcardsData[j]] = [flashcardsData[j], flashcardsData[i]];
-      }
-      currentFcIndex = 0;
-      renderFlashcard();
-      showToast('<svg class=ic><use href=#i-shuffle></use></svg> Deck shuffled');
-    }
-
-    function handleFlashcardResult(gotIt) {
-      recordAttempt(gotIt);
-      if (!gotIt) addMistake(flashcardsData[currentFcIndex].hanzi, flashcardsData[currentFcIndex].pinyin, flashcardsData[currentFcIndex].english);
-      if (gotIt) addXP(15);
-      markSrs(gotIt);
-      currentFcIndex = nextSrsIndex();
-      renderFlashcard();
-    }
-
-    function toggleCardBookmark() {
-      const card = flashcardsData[currentFcIndex];
-      const idx = savedBookmarks.findIndex(b => b.id === card.id);
-      if (idx > -1) {
-        savedBookmarks.splice(idx, 1);
-      } else {
-        savedBookmarks.push({ id: card.id, hanzi: card.hanzi, pinyin: card.pinyin, english: card.english });
-      }
-      updateStatsUI();
-      renderFlashcard();
-      renderSavedGrid();
-    }
-
-    // STROKE CANVAS LOGIC
-    let canvas, ctx, isDrawing = false;
-    let canvasGuideVisible = true;
-
-    function initCanvas() {
-      canvas = document.getElementById('strokeCanvas');
-      ctx = canvas.getContext('2d');
-      resizeCanvas();
-
-      canvas.addEventListener('mousedown', startDraw);
-      canvas.addEventListener('mousemove', draw);
-      canvas.addEventListener('mouseup', stopDraw);
-      canvas.addEventListener('mouseleave', stopDraw);
-
-      canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        isDrawing = true;
-        ctx.beginPath();
-        ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-      });
-
-      canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (!isDrawing) return;
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        ctx.lineWidth = 14;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = '#dc2626';
-        ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-        ctx.stroke();
-      });
-
-      canvas.addEventListener('touchend', stopDraw);
-    }
-
-    function resizeCanvas() {
-      if (!canvas) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-    }
-
-    function startDraw(e) {
-      isDrawing = true;
-      const rect = canvas.getBoundingClientRect();
-      ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    }
-
-    function draw(e) {
-      if (!isDrawing) return;
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineWidth = 14;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#dc2626';
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      ctx.stroke();
-    }
-
-    function stopDraw() { isDrawing = false; }
-
-    function clearStrokeCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      document.getElementById('evalResultBanner').classList.add('hidden');
-    }
-
-    function toggleCanvasGuide() {
-      canvasGuideVisible = !canvasGuideVisible;
-      document.getElementById('canvasGuideText').style.opacity = canvasGuideVisible ? '1' : '0';
-    }
-
-    function renderStrokeCharSelector() {
-      const list = document.getElementById('strokeCharList');
-      list.innerHTML = strokeCharData.map((item, idx) => `
-        <button onclick="selectStrokeChar(${idx})" class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-crimson-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-xl font-bold text-lg border border-slate-200 dark:border-slate-700 transition">
-          ${item.char}
-        </button>
-      `).join('');
-    }
-
-    function selectStrokeChar(idx) {
-      activeStrokeChar = strokeCharData[idx];
-      document.getElementById('canvasCharDisplay').textContent = activeStrokeChar.char;
-      document.getElementById('canvasPinyinDisplay').textContent = activeStrokeChar.pinyin;
-      document.getElementById('canvasMeaningDisplay').textContent = activeStrokeChar.meaning;
-      document.getElementById('canvasStrokesDisplay').textContent = activeStrokeChar.strokes;
-      document.getElementById('canvasGuideText').textContent = activeStrokeChar.char;
-      clearStrokeCanvas();
-    }
-
-    function evaluateStrokeAccuracy() {
-      const banner = document.getElementById('evalResultBanner');
-      banner.classList.remove('hidden');
-      const W = canvas.width, H = canvas.height, ch = activeStrokeChar.char;
-      const g = document.createElement('canvas'); g.width = W; g.height = H;
-      const gx = g.getContext('2d');
-      gx.font = `bold ${W * 0.62}px 'Noto Sans SC', sans-serif`; gx.textAlign = 'center'; gx.textBaseline = 'middle';
-      gx.fillText(ch, W / 2, H * 0.52);
-      const guide = gx.getImageData(0, 0, W, H).data;
-      gx.lineWidth = W * 0.07; gx.lineJoin = 'round'; gx.strokeText(ch, W / 2, H * 0.52);
-      const wide = gx.getImageData(0, 0, W, H).data, dr = ctx.getImageData(0, 0, W, H).data;
-      let G = 0, D = 0, ov = 0, ow = 0;
-      for (let i = 3; i < dr.length; i += 4) {
-        const a = guide[i] > 100, w = wide[i] > 100, d = dr[i] > 100;
-        if (a) G++; if (d) { D++; if (w) ow++; } if (a && d) ov++;
-      }
-      if (D < 150) { banner.textContent = 'Draw the character first, then press Evaluate.'; return; }
-      const score = Math.round(100 * (0.5 * Math.min(1, ov / G / 0.5) + 0.5 * ow / D));
-      banner.innerHTML = `${ic('target')} Match: ${score}% ${score >= 50 ? '· +20 XP' : '· trace the grey guide more closely'}`;
-      if (score >= 50) { addXP(20); speakText(ch); }
-    }
-
-    // PHRASEBOOK LOGIC
-    function setPhraseCat(cat) {
-      selectedPhraseCat = cat;
-      document.querySelectorAll('.phrase-cat-btn').forEach(b => {
-        if (b.dataset.cat === cat) {
-          b.className = "phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-crimson-600 text-white";
-        } else {
-          b.className = "phrase-cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800";
-        }
-      });
-      renderPhrasebook();
-    }
-
-    function renderPhrasebook() {
-      const search = document.getElementById('phraseSearchInput').value.toLowerCase().trim();
-      const grid = document.getElementById('phraseGrid');
-
-      const filtered = phraseData.filter(p => {
-        const catMatch = selectedPhraseCat === "All" || p.cat === selectedPhraseCat;
-        const searchMatch = search === "" || 
-          p.hanzi.toLowerCase().includes(search) || 
-          p.pinyin.toLowerCase().includes(search) || 
-          p.english.toLowerCase().includes(search);
-        return catMatch && searchMatch;
-      });
-
-      document.getElementById('phraseEmptyState').classList.toggle('hidden', filtered.length > 0);
-
-      grid.innerHTML = filtered.map(p => {
-        const isSaved = savedBookmarks.some(b => b.id === p.id);
-        return `
-          <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-            <div class="space-y-1">
-              <div class="text-xl font-extrabold text-slate-900 dark:text-white">${p.hanzi}</div>
-              <div class="py text-xs font-bold text-crimson-600 dark:text-crimson-400">${p.pinyin}</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">${p.english}</div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button onclick="speakText('${p.hanzi}')" class="p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl transition active:scale-95">
-                <svg class=ic><use href=#i-speaker></use></svg>
-              </button>
-              <button onclick="togglePhraseBookmark('${p.id}')" class="p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl transition active:scale-95">
-                <svg class="w-4 h-4 ${isSaved ? 'text-crimson-600 fill-current' : 'text-slate-400'}" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function togglePhraseBookmark(id) {
-      const item = phraseData.find(p => p.id === id);
-      const idx = savedBookmarks.findIndex(b => b.id === id);
-      if (idx > -1) {
-        savedBookmarks.splice(idx, 1);
-      } else {
-        savedBookmarks.push({ id: item.id, hanzi: item.hanzi, pinyin: item.pinyin, english: item.english });
-      }
-      updateStatsUI();
-      renderPhrasebook();
-      renderSavedGrid();
-    }
-
-    // ARCADE QUIZ LOGIC
-    function renderQuizQuestion() {
-      const q = quizData[quizIndex];
-      quizAnswered = false;
-      document.getElementById('quizProgressBar').style.width = (quizIndex / quizData.length * 100) + '%';
-      document.getElementById('quizNumDisplay').textContent = `Question ${quizIndex + 1} of ${quizData.length}`;
-      document.getElementById('quizQuestionText').textContent = q.question;
-
-      const opts = document.getElementById('quizOptionsList');
-      opts.innerHTML = q.options.map((opt, idx) => `
-        <button onclick="submitQuizOption(${idx})" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-crimson-500 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition active:scale-98">
-          ${opt}
-        </button>
-      `).join('');
-
-      document.getElementById('quizFeedbackBox').classList.add('hidden');
-      document.getElementById('nextQuizBtn').classList.add('hidden');
-    }
-
-    function submitQuizOption(idx) {
-      if (quizAnswered) return; // one answer per question
-      quizAnswered = true;
-      const q = quizData[quizIndex];
-      const feedback = document.getElementById('quizFeedbackBox');
-      const nextBtn = document.getElementById('nextQuizBtn');
-
-      document.querySelectorAll('#quizOptionsList button').forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === q.correct) btn.classList.add('ring-2', 'ring-emerald-500');
-        else if (i === idx) btn.classList.add('ring-2', 'ring-rose-500');
-      });
-      recordAttempt(idx === q.correct);
-
-      if (idx === q.correct) {
-        quizScore++;
-        addXP(25);
-        document.getElementById('quizScoreDisplay').textContent = quizScore;
-        feedback.className = "p-4 rounded-xl text-xs font-extrabold mb-4 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300";
-        feedback.innerHTML = "<svg class=ic><use href=#i-star></use></svg> Correct Answer! +25 XP Earned.";
-      } else {
-        feedback.className = "p-4 rounded-xl text-xs font-extrabold mb-4 bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300";
-        feedback.innerHTML = `<svg class=ic><use href=#i-x></use></svg> Incorrect. Correct choice was: "${q.options[q.correct]}"`;
-      }
-
-      feedback.classList.remove('hidden');
-      nextBtn.classList.remove('hidden');
-    }
-
-    function nextQuizStep() {
-      quizIndex++;
-      if (quizIndex < quizData.length) {
-        renderQuizQuestion();
-      } else {
-        document.getElementById('quizProgressBar').style.width = '100%';
-        document.getElementById('quizContainer').classList.add('hidden');
-        document.getElementById('quizSummaryBox').classList.remove('hidden');
-        document.getElementById('quizFinalScore').textContent = `${quizScore}/${quizData.length}`;
-        document.getElementById('quizXPEarned').textContent = `+${quizScore * 25} XP`;
-        if (quizScore / quizData.length >= 0.7) confetti();
-        if (quizScore === quizData.length) localStorage.setItem('hh_perfect', '1');
-      }
-    }
-
-    function resetQuiz() {
-      quizIndex = 0;
-      quizScore = 0;
-      buildQuiz();
-      document.getElementById('quizScoreDisplay').textContent = "0";
-      document.getElementById('quizContainer').classList.remove('hidden');
-      document.getElementById('quizSummaryBox').classList.add('hidden');
-      renderQuizQuestion();
-    }
-
-    // NUMBERS & BASICS LOGIC
-    function vocabId(gi, ii) { return `vb${gi}-${ii}`; }
-
-    function renderVocab() {
-      const container = document.getElementById('vocabGroups');
-      container.innerHTML = vocabGroups.map((g, gi) => `
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">${g.icon} ${g.title}</h3>
-          <div class="grid ${g.cols} gap-3">
-            ${g.items.map(([hanzi, pinyin, english], ii) => {
-              const id = vocabId(gi, ii);
-              const isSaved = savedBookmarks.some(b => b.id === id);
-              return `
-                <div class="relative p-4 bg-slate-50 dark:bg-slate-800 hover:bg-crimson-50 dark:hover:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 text-center transition cursor-pointer active:scale-95" onclick="speakText('${hanzi}')">
-                  <button onclick="event.stopPropagation(); toggleVocabBookmark(${gi}, ${ii})" title="Save to notebook" class="absolute top-2 right-2 p-1">
-                    <svg class="w-3.5 h-3.5 ${isSaved ? 'text-crimson-600 fill-current' : 'text-slate-400 fill-current'}" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-                  </button>
-                  <div class="text-2xl font-black text-slate-900 dark:text-white">${hanzi}</div>
-                  <div class="py text-xs font-bold text-crimson-600 dark:text-crimson-400 mt-1">${pinyin}</div>
-                  <div class="text-[11px] text-slate-500 dark:text-slate-400">${english}</div>
-                </div>`;
-            }).join('')}
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function toggleVocabBookmark(gi, ii) {
-      const [hanzi, pinyin, english] = vocabGroups[gi].items[ii];
-      const id = vocabId(gi, ii);
-      const idx = savedBookmarks.findIndex(b => b.id === id);
-      if (idx > -1) {
-        savedBookmarks.splice(idx, 1);
-      } else {
-        savedBookmarks.push({ id, hanzi, pinyin, english });
-        showToast('<svg class=ic><use href=#i-pin></use></svg> Saved to notebook');
-      }
-      updateStatsUI();
-      renderVocab();
-      renderSavedGrid();
-    }
-
-    // KEYBOARD SHORTCUTS (Flashcard tab only)
-    function initKeyboardShortcuts() {
-      document.addEventListener('keydown', (e) => {
-        const tag = (e.target.tagName || '').toLowerCase();
-        if (tag === 'input' || tag === 'textarea') return;
-        if (document.getElementById('tab-flashcards').classList.contains('hidden')) return;
-        if (e.code === 'Space') { e.preventDefault(); flipFlashcard(); }
-        else if (e.code === 'ArrowRight') handleFlashcardResult(true);
-        else if (e.code === 'ArrowLeft') handleFlashcardResult(false);
-      });
-    }
-
-    // ===== SHARED HELPERS =====
-    const rnd = a => a[Math.floor(Math.random() * a.length)];
-    const shuf = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
-    const getDaily = () => JSON.parse(localStorage.getItem('hh_daily') || '{}');
-    let speechRate = 0.85;
-    const card = 'bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl';
-
-    // ===== SPACED REPETITION (Leitner boxes) =====
-    const srs = JSON.parse(localStorage.getItem('hh_srs') || '{}');
-    function markSrs(ok) {
-      const c = flashcardsData[currentFcIndex], e = srs[c.id] || { box: 0 };
-      e.box = ok ? Math.min(e.box + 1, 4) : 0;
-      e.due = Date.now() + [0.5, 2, 10, 60, 1440][e.box] * 60000;
-      srs[c.id] = e;
-      localStorage.setItem('hh_srs', JSON.stringify(srs));
-    }
-    function nextSrsIndex() {
-      let best = 0, bd = Infinity;
-      flashcardsData.forEach((c, i) => { const d = (srs[c.id] || { due: 0 }).due; if (i !== currentFcIndex && d < bd) { bd = d; best = i; } });
-      return best;
-    }
-
-    // ===== QUIZ VARIETY =====
-    const quizBase = quizData.slice();
-    function buildQuiz() {
-      const gen = shuf(flashcardsData).slice(0, 6).map((c, i) => {
-        const o = shuf(flashcardsData.filter(x => x !== c)).slice(0, 3);
-        return i % 2 ? { question: `Which pinyin matches '${c.english}'?`, options: [c.pinyin, ...o.map(x => x.pinyin)], correct: 0 }
-                     : { question: `What does '${c.hanzi}' mean?`, options: [c.english, ...o.map(x => x.english)], correct: 0 };
-      });
-      const all = shuf(quizBase.concat(gen)).slice(0, 10);
-      all.forEach(q => { const t = q.options[q.correct]; q.options = shuf(q.options); q.correct = q.options.indexOf(t); });
-      quizData.length = 0; quizData.push(...all);
-    }
-    function confetti() {
-      for (let i = 0; i < 40; i++) {
-        const e = document.createElement('i');
-        e.style.cssText = `position:fixed;top:-10px;left:${Math.random() * 100}vw;width:8px;height:12px;background:hsl(${Math.random() * 360},80%,55%);z-index:60;pointer-events:none;animation:confettiFall ${1.5 + Math.random() * 1.5}s linear forwards`;
-        document.body.appendChild(e); setTimeout(() => e.remove(), 3200);
-      }
-    }
-
-    // ===== HOME PAGE =====
-    const homeFeatures = [['pinyin', 'music', 'Pinyin & 4 Tones', 'Hear every tone and syllable with live audio.'], ['flashcards', 'cards', 'Flashcard Arena', 'Smart flashcards that repeat what you miss.'], ['strokes', 'pen', 'Stroke Canvas', 'Write characters on a Tianzige grid.'], ['phrasebook', 'chat', 'Essential Phrasebook', 'Real phrases for dining, travel and shopping.'], ['practice', 'headphones', 'Practice Lab', 'Tone drills, listening and sentence building.'], ['quiz', 'bolt', 'Arcade Quiz', 'Fresh mixed questions every round.'], ['vocab', 'hash', 'Numbers & Basics', 'Numbers, family, colors, food and more.'], ['explore', 'compass', 'Explore', 'Radicals, HSK 1 list and culture notes.'], ['progress', 'award', 'Progress', 'Levels, daily goal, chart and badges.'], ['lessons', 'book', 'Mini Lessons', 'A guided path of units that unlock as you learn.'], ['settings', 'gear', 'Settings', 'Name, text size, pinyin mode, backup and more.']];
-    function renderHome() {
-      const words = flashcardsData.length + phraseData.length + hsk.length + vocabGroups.reduce((n, g) => n + g.items.length, 0);
-      const st = [['music', '4', 'Mandarin tones'], ['cards', words + '+', 'Words & phrases'], ['pen', strokeCharData.length, 'Characters to write'], ['award', '8', 'Badges to earn']];
-      document.getElementById('homeStats').innerHTML = st.map(x => `<div class="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm text-center"><div class="text-crimson-600 dark:text-crimson-400 text-2xl">${ic(x[0])}</div><div class="text-3xl font-black text-slate-900 dark:text-white">${x[1]}</div><div class="text-xs text-slate-500">${x[2]}</div></div>`).join('');
-      document.getElementById('homeFeatures').innerHTML = homeFeatures.map(f => `<button onclick="switchTab('${f[0]}')" class="group text-left p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:-translate-y-1 hover:border-crimson-500 hover:shadow-md transition"><div class="w-11 h-11 rounded-xl bg-crimson-100 dark:bg-crimson-950 text-crimson-600 dark:text-crimson-400 flex items-center justify-center text-xl mb-3 group-hover:bg-crimson-600 group-hover:text-white transition">${ic(f[1])}</div><div class="font-extrabold text-slate-900 dark:text-white">${f[2]}</div><p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${f[3]}</p></button>`).join('');
-    }
-
-    // ===== BACK BUTTON: steps back through the app, never closes it by accident =====
-    function initHistory() {
-      history.replaceState({ root: true }, '');
-      history.pushState({ tab: 'home' }, '');
-      switchTab('home', true);
-      window.addEventListener('popstate', (e) => {
-        const st = e.state || {};
-        if (st.tab) { switchTab(st.tab, true); return; }
-        if (exitArmed) { exitArmed = false; history.back(); return; }
-        exitArmed = true;
-        showToast(`${ic('x')} Press back again to exit`);
-        history.pushState({ tab: 'home' }, '');
-        switchTab('home', true);
-        setTimeout(() => { exitArmed = false; }, 2000);
-      });
-    }
-
-    // ===== DAILY WORD =====
-    function renderDailyWord() {
-      const c = flashcardsData[Math.floor(Date.now() / 86400000) % flashcardsData.length];
-      document.getElementById('dailyWord').innerHTML = `<div><div class="text-[11px] font-extrabold uppercase tracking-widest opacity-80">${ic('sparkle')} Word of the Day</div>
-        <div class="text-3xl font-black">${c.hanzi} <span class="text-lg font-bold opacity-90">${c.pinyin}</span></div><div class="text-sm opacity-90">${c.english}</div></div>
-        <button onclick="speakText('${c.hanzi}')" class="p-3 bg-white/20 hover:bg-white/30 rounded-xl text-lg">${ic('speaker')}</button>`;
-    }
-
-    // ===== PRACTICE LAB =====
-    const toneSet = [[1, 'mā', '妈'], [2, 'má', '麻'], [3, 'mǎ', '马'], [4, 'mà', '骂']];
-    const toneNames = ['1st Tone (High Flat)', '2nd Tone (Rising)', '3rd Tone (Dipping)', '4th Tone (Falling)'];
-    const sentences = [[['我', '爱', '你'], 'I love you'], [['你', '好', '吗'], 'How are you?'], [['我', '想', '喝', '水'], 'I want to drink water'], [['今天', '天气', '很', '好'], 'The weather is nice today'], [['他', '是', '我', '的', '朋友'], 'He is my friend']];
-    let pracMode = 'tone', pracAns = null, pracScore = 0, built = [], pracItem = null;
-    const norm = t => t.normalize('NFD').replace(/[\u0300-\u036f\s]/g, '').toLowerCase();
-    function toggleSlow() {
-      speechRate = speechRate === 0.85 ? 0.5 : 0.85;
-      document.getElementById('slowBtn').innerHTML = `${ic('speaker')} ${speechRate === 0.5 ? 'Slow speed' : 'Normal speed'}`;
-    }
-    function setPractice(m, silent) {
-      pracMode = m;
-      if (tTimer) { clearInterval(tTimer); tTimer = null; }
-      document.querySelectorAll('.prac-btn').forEach(b => b.className = 'prac-btn px-3 py-1.5 rounded-lg text-xs font-bold ' + (b.dataset.m === m ? 'bg-crimson-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'));
-      if (m === 'timed') { startTimed(); return; }
-      nextPractice(silent);
-    }
-    const choices = (opts, fn = 'answerPrac') => `<div class="grid grid-cols-1 gap-3">${opts.map((o, i) => `<button onclick="${fn}(${i})" class="w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-crimson-500 ${card.split(' ').slice(0, 2).join(' ')} text-sm font-bold">${o}</button>`).join('')}</div>`;
-    const replay = (js) => `<button onclick="${js}" class="px-4 py-2 bg-crimson-50 dark:bg-slate-800 text-crimson-600 dark:text-crimson-400 rounded-xl text-xs font-bold">${ic('speaker')} Play again</button>`;
-    function nextPractice(silent) {
-      const a = document.getElementById('pracArea'); built = [];
-      if (pracMode === 'tone') {
-        const t = rnd(toneSet); pracAns = t[0] - 1; if (!silent) playTone(t[0], t[1], t[2]);
-        a.innerHTML = `<p class="text-sm font-bold">Which tone did you hear?</p>${replay(`playTone(${t[0]},'${t[1]}','${t[2]}')`)}${choices(toneNames)}`;
-      } else if (pracMode === 'listen') {
-        const c = rnd(flashcardsData), o = shuf([c, ...shuf(flashcardsData.filter(x => x !== c)).slice(0, 3)]);
-        pracAns = o.indexOf(c); pracItem = c; if (!silent) speakText(c.hanzi);
-        a.innerHTML = `<p class="text-sm font-bold">Listen and choose the matching word.</p>${replay(`speakText('${c.hanzi}')`)}${choices(o.map(x => x.hanzi))}`;
-      } else if (pracMode === 'type') {
-        pracItem = rnd(flashcardsData);
-        a.innerHTML = `<p class="text-sm font-bold">Type the pinyin (tone marks optional).</p><div class="text-5xl font-black text-center py-3">${pracItem.hanzi}</div><div class="text-center text-xs text-slate-500">${pracItem.english}</div>
-          <input id="pracInput" onkeydown="if(event.key==='Enter')checkTyping()" class="w-full px-4 py-3 ${card} text-sm focus:outline-none focus:ring-2 focus:ring-crimson-600" placeholder="e.g. ni hao"><button onclick="checkTyping()" class="w-full py-3 bg-crimson-600 hover:bg-crimson-700 text-white text-xs font-extrabold rounded-xl">Check</button>`;
-      } else {
-        pracItem = rnd(sentences); pracAns = pracItem[0].join('');
-        a.innerHTML = `<p class="text-sm font-bold">Arrange the words: <span class="text-crimson-600">${pracItem[1]}</span></p><div id="bBuilt" class="min-h-[3.5rem] p-3 ${card} flex flex-wrap gap-2"></div>
-          <div class="flex flex-wrap gap-2">${shuf(pracItem[0].map((w, i) => [w, i])).map(([w, i]) => `<button id="chip${i}" onclick="addChip('${w}',${i})" class="px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-lg font-black">${w}</button>`).join('')}</div>
-          <div class="grid grid-cols-2 gap-3"><button onclick="setPractice('build')" class="py-3 ${card} text-xs font-bold">${ic('refresh')} Reset</button><button onclick="checkBuild()" class="py-3 bg-crimson-600 text-white text-xs font-extrabold rounded-xl">Check</button></div>`;
-      }
-    }
-    function pracResult(ok) {
-      recordAttempt(ok);
-      if (!ok && (pracMode === 'listen' || pracMode === 'type')) addMistake(pracItem.hanzi, pracItem.pinyin, pracItem.english);
-      if (ok) { pracScore++; document.getElementById('pracScore').textContent = pracScore; addXP(10); }
-      else showToast(`${ic('x')} Not quite, try the next one`);
-      setTimeout(() => nextPractice(), 700);
-    }
-    const answerPrac = i => pracResult(i === pracAns);
-    const checkTyping = () => pracResult(norm(document.getElementById('pracInput').value) === norm(pracItem.pinyin));
-    function addChip(w, i) { built.push(w); document.getElementById('chip' + i).classList.add('hidden'); document.getElementById('bBuilt').innerHTML += `<span class="px-3 py-1 bg-crimson-100 dark:bg-crimson-950 rounded-lg text-lg font-black">${w}</span>`; }
-    const checkBuild = () => { if (built.length) { speakText(built.join('')); pracResult(built.join('') === pracAns); } };
-
-    // ===== EXPLORE =====
-    const radicals = [['氵', 'Water', '河 海 洗'], ['口', 'Mouth', '吃 喝 叫'], ['亻', 'Person', '你 他 住'], ['木', 'Tree', '林 树 桌'], ['火', 'Fire', '灯 烧 炒'], ['心', 'Heart', '想 念 爱'], ['扌', 'Hand', '打 找 拿'], ['讠', 'Speech', '说 请 谢'], ['女', 'Woman', '妈 好 姐'], ['日', 'Sun', '明 早 时'], ['艹', 'Grass', '花 茶 草'], ['钅', 'Metal', '钱 铁 银']];
-    const hsk = '我|wǒ|I / me;你|nǐ|you;他|tā|he;她|tā|she;是|shì|to be;不|bù|not;有|yǒu|to have;好|hǎo|good;吃|chī|to eat;喝|hē|to drink;去|qù|to go;来|lái|to come;看|kàn|to look;说|shuō|to speak;买|mǎi|to buy;学校|xué xiào|school;老师|lǎo shī|teacher;学生|xué sheng|student;中国|zhōng guó|China;北京|běi jīng|Beijing;钱|qián|money;水|shuǐ|water;茶|chá|tea;苹果|píng guǒ|apple;书|shū|book;大|dà|big;小|xiǎo|small;多|duō|many;谁|shéi|who;什么|shén me|what'.split(';').map(x => x.split('|'));
-    let hskDone = JSON.parse(localStorage.getItem('hh_hsk') || '[]');
-    const culture = [['star', 'Red Envelopes (红包)', 'Money given in red envelopes at Lunar New Year, weddings and birthdays brings luck and good wishes.'], ['pin', 'Tea Culture (茶)', 'Tea is offered to guests as a sign of respect. Tap the table twice with two fingers to say thank you when someone pours.'], ['users', 'Respecting Elders', 'Greet elders first and use polite forms such as 您 (nín). Age is honored in family and work life.'], ['sparkle', 'Chopstick Etiquette', 'Never stick chopsticks upright in rice, as it resembles incense offerings for the dead.'], ['calendar', 'Lunar New Year (春节)', 'The biggest holiday of the year: family reunions, dumplings, fireworks and lanterns across two weeks.']];
-    function renderExplore() {
-      document.getElementById('radicalGrid').innerHTML = radicals.map(r => `<div class="p-4 ${card} text-center"><div class="text-4xl font-black text-crimson-600 dark:text-crimson-400">${r[0]}</div><div class="text-xs font-bold mb-2">${r[1]}</div><div class="flex justify-center gap-2">${r[2].split(' ').map(c => `<button onclick="speakText('${c}')" class="text-xl font-bold hover:text-crimson-600">${c}</button>`).join('')}</div></div>`).join('');
-      document.getElementById('hskGrid').innerHTML = hsk.map((w, i) => `<label class="flex items-center gap-3 p-3 ${card} cursor-pointer"><input type="checkbox" ${hskDone.includes(i) ? 'checked' : ''} onchange="toggleHsk(${i})" class="accent-emerald-600"><span class="text-lg font-black">${w[0]}</span><span class="text-xs"><span class="py font-bold text-crimson-600 dark:text-crimson-400">${w[1]}</span><br><span class="text-slate-500">${w[2]}</span></span><button type="button" onclick="event.preventDefault();speakText('${w[0]}')" class="ml-auto text-slate-400 hover:text-crimson-600">${ic('speaker')}</button></label>`).join('');
-      document.getElementById('cultureGrid').innerHTML = culture.map(c => `<div class="p-4 ${card}"><div class="text-sm font-extrabold mb-1 text-crimson-600 dark:text-crimson-400">${ic(c[0])} ${c[1]}</div><p class="text-xs text-slate-600 dark:text-slate-300">${c[2]}</p></div>`).join('');
-      document.getElementById('hskCount').textContent = `${hskDone.length} / ${hsk.length} learned`;
-      document.getElementById('hskBar').style.width = (hskDone.length / hsk.length * 100) + '%';
-    }
-    function toggleHsk(i) {
-      hskDone = hskDone.includes(i) ? hskDone.filter(x => x !== i) : [...hskDone, i];
-      localStorage.setItem('hh_hsk', JSON.stringify(hskDone));
-      document.getElementById('hskCount').textContent = `${hskDone.length} / ${hsk.length} learned`;
-      document.getElementById('hskBar').style.width = (hskDone.length / hsk.length * 100) + '%';
-    }
-
-    // ===== PROGRESS: LEVELS, GOAL, CHART, BADGES =====
-    const levels = [[0, 'Beginner'], [100, 'Learner'], [300, 'Explorer'], [600, 'Speaker'], [1000, 'Scholar'], [1600, 'Master']];
-    function renderProgress() {
-      let li = 0; levels.forEach((l, i) => { if (xpPoints >= l[0]) li = i; });
-      const next = levels[li + 1], base = levels[li][0];
-      document.getElementById('lvlName').textContent = `Lv ${li + 1} · ${levels[li][1]}`;
-      document.getElementById('lvlBar').style.width = (next ? (xpPoints - base) / (next[0] - base) * 100 : 100) + '%';
-      document.getElementById('lvlText').textContent = next ? `${xpPoints} XP · ${next[0] - xpPoints} XP to ${next[1]}` : `${xpPoints} XP · Max level reached`;
-      const d = getDaily(), today = d[new Date().toDateString()] || 0;
-      document.getElementById('goalText').textContent = `${Math.min(today, 50)} / 50`;
-      document.getElementById('goalRing').style.strokeDashoffset = 213.6 * (1 - Math.min(today / 50, 1));
-      const days = Array.from({ length: 7 }, (_, i) => { const t = new Date(Date.now() - (6 - i) * 86400000); return [t.toLocaleDateString('en', { weekday: 'short' }), d[t.toDateString()] || 0]; });
-      const mx = Math.max(50, ...days.map(x => x[1]));
-      document.getElementById('weekChart').innerHTML = `<svg viewBox="0 0 280 110" class="w-full max-w-md">${days.map((x, i) => { const h = x[1] / mx * 70; return `<rect x="${i * 40 + 8}" y="${80 - h}" width="24" height="${h}" rx="4" fill="#dc2626" opacity="${x[1] ? 1 : 0.2}"/><text x="${i * 40 + 20}" y="98" text-anchor="middle" font-size="10" fill="currentColor">${x[0]}</text><text x="${i * 40 + 20}" y="${76 - h}" text-anchor="middle" font-size="9" fill="currentColor">${x[1] || ''}</text>`; }).join('')}</svg>`;
-      renderMistakes();
-      const badges = [['bolt', 'First Steps', 'Earn your first XP', xpPoints >= 1], ['star', 'Century', 'Reach 100 XP', xpPoints >= 100], ['fire', '3-Day Streak', 'Study 3 days in a row', streakCount >= 3], ['fire', '7-Day Streak', 'Study 7 days in a row', streakCount >= 7], ['pin', 'Collector', 'Save 5 words', savedBookmarks.length >= 5], ['trophy', 'Perfect Quiz', 'Score 100% in a quiz', localStorage.getItem('hh_perfect') === '1'], ['target', 'Sharp Mind', '90% accuracy (20+ answers)', attemptCount >= 20 && correctCount / attemptCount >= 0.9], ['check', 'HSK Starter', 'Learn 15 HSK 1 words', hskDone.length >= 15]];
-      document.getElementById('badgeGrid').innerHTML = badges.map(b => `<div class="p-4 ${card} text-center ${b[3] ? '' : 'opacity-40 grayscale'}"><div class="text-3xl ${b[3] ? 'text-imperial-500' : ''}">${ic(b[0])}</div><div class="text-xs font-extrabold mt-1">${b[1]}</div><div class="text-[10px] text-slate-500">${b[2]}</div></div>`).join('');
-    }
-    function exportNotebook() {
-      const csv = 'hanzi,pinyin,english\n' + savedBookmarks.map(b => [b.hanzi, b.pinyin, b.english].map(v => `"${v}"`).join(',')).join('\n');
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv' }));
-      a.download = 'hanzihero_notebook.csv'; a.click();
-    }
-
-    // ===== SETTINGS =====
-    let settings = JSON.parse(localStorage.getItem('hh_settings') || '{}'), deferredInstall = null;
-    function saveSet(k, v) { settings[k] = v; localStorage.setItem('hh_settings', JSON.stringify(settings)); applySettings(); }
-    function applySettings() {
-      const r = document.documentElement;
-      r.style.fontSize = { s: '15px', m: '16px', l: '19px' }[settings.size || 'm'];
-      r.classList.toggle('no-pinyin', settings.pinyin === false);
-      r.style.filter = settings.accent ? `hue-rotate(${settings.accent}deg)` : '';
-      document.getElementById('homeHello').textContent = settings.name ? `Welcome back, ${settings.name}` : 'Interactive Mandarin Mastery';
-      const n = document.getElementById('setName'); if (n && document.activeElement !== n) n.value = settings.name || '';
-      document.getElementById('freezeCount').textContent = localStorage.getItem('hh_freeze') ?? '1';
-    }
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstall = e; document.getElementById('installBtn').classList.remove('hidden'); });
-    function installApp() { if (deferredInstall) { deferredInstall.prompt(); deferredInstall = null; } }
-    function exportAll() {
-      const o = {}; Object.keys(localStorage).filter(k => k.startsWith('hh_')).forEach(k => o[k] = localStorage.getItem(k));
-      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(o)], { type: 'application/json' }));
-      a.download = 'hanzihero_backup.json'; a.click();
-    }
-    function importAll(f) {
-      if (!f) return;
-      f.text().then(t => { const o = JSON.parse(t); Object.keys(o).filter(k => k.startsWith('hh_')).forEach(k => localStorage.setItem(k, o[k])); location.reload(); }).catch(() => showToast('Invalid backup file'));
-    }
-    function resetAll() {
-      if (!confirm('Reset all progress, saved words and settings? This cannot be undone.')) return;
-      Object.keys(localStorage).filter(k => k.startsWith('hh_')).forEach(k => localStorage.removeItem(k)); location.reload();
-    }
-    function shareProgress() {
-      let li = 0; levels.forEach((l, i) => { if (xpPoints >= l[0]) li = i; });
-      const t = `I'm Lv ${li + 1} ${levels[li][1]} on HanziHero Pro with ${xpPoints} XP and a ${streakCount}-day streak!`;
-      if (navigator.share) navigator.share({ text: t }).catch(() => {});
-      else if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => showToast('Copied to clipboard'));
-    }
-    function initExtras() {
-      let x0 = null; const b = document.getElementById('flashcardBox');
-      b.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-      b.addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 70) handleFlashcardResult(dx > 0); });
-    }
-
-    // ===== MISTAKES REVIEW =====
-    let mistakes = JSON.parse(localStorage.getItem('hh_mistakes') || '{}');
-    function addMistake(h, p, e) { mistakes[h] = { hanzi: h, pinyin: p, english: e }; localStorage.setItem('hh_mistakes', JSON.stringify(mistakes)); }
-    function dropMistake(h) { delete mistakes[h]; localStorage.setItem('hh_mistakes', JSON.stringify(mistakes)); renderMistakes(); }
-    function clearMistakes() { mistakes = {}; localStorage.setItem('hh_mistakes', '{}'); renderMistakes(); }
-    function renderMistakes() {
-      const l = Object.values(mistakes);
-      document.getElementById('mistakeGrid').innerHTML = l.length ? l.map(m => `<div class="p-3 ${card} flex items-center justify-between"><div><div class="text-xl font-black">${m.hanzi}</div><div class="py text-xs font-bold text-crimson-600 dark:text-crimson-400">${m.pinyin}</div><div class="text-xs text-slate-500">${m.english}</div></div><div class="flex gap-2"><button onclick="speakText('${m.hanzi}')" class="p-2 bg-white dark:bg-slate-700 rounded-xl">${ic('speaker')}</button><button onclick="dropMistake('${m.hanzi}')" class="p-2 text-emerald-600" title="Mark as learned">${ic('check')}</button></div></div>`).join('') : '<p class="text-xs text-slate-400">No mistakes to review. Words you miss will appear here.</p>';
-    }
-
-    // ===== TIMED 60s MODE =====
-    let tTimer = null, tLeft = 60, tScore = 0;
-    function startTimed() {
-      tLeft = 60; tScore = 0; tTimer = setInterval(() => {
-        tLeft--; if (tLeft <= 0) renderTimed(); else { const e = document.getElementById('tLeftEl'); if (e) e.textContent = tLeft + 's'; }
-      }, 1000); renderTimed();
-    }
-    function renderTimed() {
-      const a = document.getElementById('pracArea');
-      if (tLeft <= 0) {
-        clearInterval(tTimer); tTimer = null;
-        const hi = Math.max(tScore, parseInt(localStorage.getItem('hh_hi') || '0')); localStorage.setItem('hh_hi', hi);
-        if (tScore) addXP(tScore * 2);
-        a.innerHTML = `<div class="text-center py-6 space-y-2"><div class="text-4xl text-imperial-500">${ic('trophy')}</div><div class="text-2xl font-black">${tScore} correct</div><div class="text-xs text-slate-500">Best: ${hi} · +${tScore * 2} XP</div><button onclick="startTimed()" class="mt-2 px-5 py-2 bg-crimson-600 text-white rounded-xl text-xs font-extrabold">Play again</button></div>`;
-        return;
-      }
-      const c = rnd(flashcardsData), o = shuf([c, ...shuf(flashcardsData.filter(x => x !== c)).slice(0, 3)]);
-      pracItem = c; pracAns = o.indexOf(c);
-      a.innerHTML = `<div class="flex justify-between text-sm font-extrabold"><span>${ic('bolt')} ${tScore}</span><span id="tLeftEl">${tLeft}s</span></div><div class="text-5xl font-black text-center py-3">${c.hanzi}</div>${choices(o.map(x => x.english), 'answerTimed')}`;
-    }
-    function answerTimed(i) {
-      const ok = i === pracAns; recordAttempt(ok);
-      if (ok) tScore++; else addMistake(pracItem.hanzi, pracItem.pinyin, pracItem.english);
-      renderTimed();
-    }
-
-    // ===== MINI LESSONS =====
-    const units = [
-      ['Greetings', 'chat', [['你好', 'nǐ hǎo', 'Hello'], ['谢谢', 'xiè xie', 'Thank you'], ['再见', 'zài jiàn', 'Goodbye'], ['对不起', 'duì bu qǐ', 'Sorry'], ['请', 'qǐng', 'Please'], ['欢迎', 'huān yíng', 'Welcome']]],
-      ['Numbers', 'hash', [['一', 'yī', 'One'], ['二', 'èr', 'Two'], ['三', 'sān', 'Three'], ['四', 'sì', 'Four'], ['五', 'wǔ', 'Five'], ['十', 'shí', 'Ten']]],
-      ['Food', 'utensils', [['水', 'shuǐ', 'Water'], ['茶', 'chá', 'Tea'], ['米饭', 'mǐ fàn', 'Rice'], ['好吃', 'hǎo chī', 'Delicious'], ['面条', 'miàn tiáo', 'Noodles'], ['苹果', 'píng guǒ', 'Apple']]],
-      ['Travel', 'plane', [['地铁', 'dì tiě', 'Subway'], ['机场', 'jī chǎng', 'Airport'], ['洗手间', 'xǐ shǒu jiān', 'Restroom'], ['多少钱', 'duō shao qián', 'How much?'], ['迷路', 'mí lù', 'Get lost'], ['医生', 'yī shēng', 'Doctor']]]
-    ];
-    let unitsDone = JSON.parse(localStorage.getItem('hh_units') || '[]'), lq = null;
-    const lessonBtn = 'w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4';
-    function renderLessons() {
-      document.getElementById('lessonArea').innerHTML = units.map((u, i) => {
-        const done = unitsDone.includes(i), open = i === 0 || unitsDone.includes(i - 1);
-        return `<button ${open ? `onclick="openUnit(${i})"` : 'disabled'} class="${lessonBtn} ${open ? 'hover:border-crimson-500' : 'opacity-50'}"><span class="w-11 h-11 rounded-xl flex items-center justify-center text-xl ${done ? 'bg-emerald-100 text-emerald-600' : 'bg-crimson-100 dark:bg-crimson-950 text-crimson-600'}">${ic(done ? 'check' : open ? u[1] : 'lock')}</span><span><span class="block font-extrabold dark:text-white">Unit ${i + 1}: ${u[0]}</span><span class="block text-xs text-slate-500">${done ? 'Completed' : open ? '6 words · 5-question test' : 'Locked'}</span></span></button>`;
-      }).join('');
-    }
-    function openUnit(i) {
-      document.getElementById('lessonArea').innerHTML = `<div class="${lessonBtn} flex-col items-stretch"><div class="font-extrabold dark:text-white">Unit ${i + 1}: ${units[i][0]}</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${units[i][2].map(w => `<div onclick="speakText('${w[0]}')" class="p-3 ${card} flex items-center gap-3"><span class="text-2xl font-black">${w[0]}</span><span class="text-xs"><span class="py font-bold text-crimson-600 dark:text-crimson-400">${w[1]}</span><br>${w[2]}</span><span class="ml-auto text-slate-400">${ic('speaker')}</span></div>`).join('')}</div><div class="grid grid-cols-2 gap-3"><button onclick="renderLessons()" class="py-3 ${card} text-xs font-bold">Back</button><button onclick="startTest(${i})" class="py-3 bg-crimson-600 text-white rounded-xl text-xs font-extrabold">Start test</button></div></div>`;
-    }
-    function startTest(i) { lq = { i, n: 0, s: 0, qs: shuf(units[i][2]).slice(0, 5) }; lessonQ(); }
-    function lessonQ() {
-      const w = lq.qs[lq.n], pool = units.flatMap(u => u[2]).filter(x => x[0] !== w[0]);
-      const o = shuf([w, ...shuf(pool).slice(0, 3)]); lq.ans = o.indexOf(w); lq.w = w;
-      document.getElementById('lessonArea').innerHTML = `<div class="${lessonBtn} flex-col items-stretch"><div class="text-xs font-bold text-slate-400">Question ${lq.n + 1} of 5</div><div class="text-5xl font-black text-center py-2">${w[0]}</div>${choices(o.map(x => x[2]), 'lessonAns')}</div>`;
-    }
-    function lessonAns(k) {
-      const ok = k === lq.ans; recordAttempt(ok);
-      if (ok) lq.s++; else addMistake(lq.w[0], lq.w[1], lq.w[2]);
-      if (++lq.n < 5) return lessonQ();
-      const pass = lq.s >= 4;
-      if (pass && !unitsDone.includes(lq.i)) { unitsDone.push(lq.i); localStorage.setItem('hh_units', JSON.stringify(unitsDone)); addXP(50); }
-      if (pass) confetti();
-      document.getElementById('lessonArea').innerHTML = `<div class="${lessonBtn} flex-col items-center text-center"><div class="text-4xl ${pass ? 'text-imperial-500' : 'text-slate-400'}">${ic(pass ? 'trophy' : 'refresh')}</div><div class="text-2xl font-black dark:text-white">${lq.s} / 5</div><p class="text-xs text-slate-500">${pass ? 'Unit complete! The next unit is unlocked.' : 'You need 4 correct to pass. Try again!'}</p><button onclick="renderLessons()" class="px-6 py-3 bg-crimson-600 text-white rounded-xl text-xs font-extrabold">Continue</button></div>`;
-    }
-
-    // SAVED NOTEBOOK LOGIC
-    function renderSavedGrid() {
-      const container = document.getElementById('savedGrid');
-      const emptyState = document.getElementById('savedEmptyState');
-
-      if (savedBookmarks.length === 0) {
-        container.innerHTML = "";
-        emptyState.classList.remove('hidden');
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-      const sq = (document.getElementById('savedSearch').value || '').toLowerCase().trim();
-      container.innerHTML = savedBookmarks.filter(b => !sq || (b.hanzi + b.pinyin + b.english).toLowerCase().includes(sq)).map(b => `
-        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-          <div>
-            <div class="text-xl font-black text-slate-900 dark:text-white">${b.hanzi}</div>
-            <div class="text-xs font-bold text-crimson-600 dark:text-crimson-400">${b.pinyin}</div>
-            <div class="text-xs text-slate-500">${b.english}</div>
-          </div>
-          <div class="flex items-center space-x-2">
-            <button onclick="speakText('${b.hanzi}')" class="p-2 bg-white dark:bg-slate-700 rounded-xl shadow-sm"><svg class=ic><use href=#i-speaker></use></svg></button>
-            <button onclick="removeBookmark('${b.id}')" class="p-2 text-rose-600"><svg class=ic><use href=#i-trash></use></svg></button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function removeBookmark(id) {
-      savedBookmarks = savedBookmarks.filter(b => b.id !== id);
-      updateStatsUI();
-      renderSavedGrid();
-      renderFlashcard();
-      renderPhrasebook();
-      renderVocab();
-    }
-
-    function clearAllBookmarks() {
-      savedBookmarks = [];
-      updateStatsUI();
-      renderSavedGrid();
-      renderFlashcard();
-      renderPhrasebook();
-      renderVocab();
-    }
-  </script>
+  <div class="row"><span>🔈</span><input type="range" id="vol" min="0" max="100" value="80"><span>🔊</span></div>
+</div>
+
+<form id="form" class="glass" autocomplete="off">
+  <input id="txt" placeholder="Or type: play music Believer">
+  <button type="submit">Send</button>
+</form>
+
+<iframe id="yt" allow="autoplay; encrypted-media" title="audio"></iframe>
+
+<script>
+const $=id=>document.getElementById(id);
+const orb=$('orbWrap'),statusEl=$('status'),heard=$('heard'),yt=$('yt'),np=$('np');
+let results=[],idx=0,playing=false,duration=0,volume=80,paused=false;
+
+function setState(s,t){orb.className=s;if(t)statusEl.textContent=t}
+function say(t){
+  setState('speaking',t);
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);u.rate=1.02;
+    u.onend=u.onerror=()=>setState('', t);
+    speechSynthesis.speak(u);
+  }catch(e){setState('',t)}
+}
+
+/* ---------- YouTube (hidden iframe, controlled via postMessage) ---------- */
+function ytCmd(func,args=[]){try{yt.contentWindow.postMessage(JSON.stringify({event:'command',func,args}),'*')}catch(e){}}
+function loadVideo(v){
+  playing=true;paused=false;
+  $('title').textContent=v.title||'Playing';np.classList.add('on');
+  yt.src='https://www.youtube.com/embed/'+v.id+'?autoplay=1&enablejsapi=1&playsinline=1&controls=0&rel=0';
+  yt.onload=()=>{
+    yt.contentWindow.postMessage(JSON.stringify({event:'listening',id:1}),'*');
+    setTimeout(()=>ytCmd('setVolume',[volume]),800);
+    setTimeout(()=>ytCmd('playVideo'),500);
+  };
+  updatePlayIcon();
+}
+window.addEventListener('message',e=>{
+  if(!String(e.origin).includes('youtube'))return;
+  let d;try{d=JSON.parse(e.data)}catch(_){return}
+  if(d.event==='onError'&&pending)pending(false);
+  if(d.event==='infoDelivery'&&d.info){
+    const i=d.info;
+    if(i.duration)duration=i.duration;
+    if(i.currentTime!=null&&duration)$('prog').style.width=(i.currentTime/duration*100)+'%';
+    if(i.videoData&&i.videoData.title){$('title').textContent=i.videoData.title;if(pending)pending(matches(i.videoData.title,pendingQ))}
+    if(i.playerState===0){nextTrack(true)}
+    if(i.playerState===1){paused=false;updatePlayIcon()}
+    if(i.playerState===2){paused=true;updatePlayIcon()}
+  }
+});
+function updatePlayIcon(){$('bPlay').textContent=paused?'▶︎':'⏸'}
+
+const APIS=[
+ async q=>{const r=await fetch('https://pipedapi.kavin.rocks/search?filter=music_songs&q='+encodeURIComponent(q));const j=await r.json();return j.items.filter(x=>x.url).map(x=>({id:x.url.split('v=')[1],title:x.title+(x.uploaderName?' – '+x.uploaderName:'')}))},
+ async q=>{const r=await fetch('https://yewtu.be/api/v1/search?type=video&q='+encodeURIComponent(q));const j=await r.json();return j.map(x=>({id:x.videoId,title:x.title}))},
+ async q=>{const r=await fetch('https://inv.nadeko.net/api/v1/search?type=video&q='+encodeURIComponent(q));const j=await r.json();return j.map(x=>({id:x.videoId,title:x.title}))}
+];
+function withTimeout(p,ms=6000){return Promise.race([p,new Promise((_,rj)=>setTimeout(()=>rj('t'),ms))])}
+async function search(q){
+  const m=q.match(/(?:v=|youtu\.be\/)([\w-]{11})/);if(m)return[{id:m[1],title:'YouTube link'}];
+  if(/^[\w-]{11}$/.test(q.trim()))return[{id:q.trim(),title:'YouTube video'}];
+  for(const f of APIS){try{const r=await withTimeout(f(q));if(r&&r.length)return r.filter(x=>x.id)}catch(e){}}
+  return null;
+}
+
+/* ---------- Smart auto-find: search APIs first, then Claude suggests videos and the player verifies the title ---------- */
+let pending=null,pendingQ='',sampleFn=null,dict=null,dictBuf='';
+try{claude.use('sample').then(s=>sampleFn=s).catch(()=>{});claude.use('dictation').then(d=>{dict=d;if(!d)return;
+  d.onPartial(({text})=>{heard.textContent=text});
+  d.onFinal(({text})=>{dictBuf+=' '+text});
+  d.onState(({state})=>{if(state==='idle'){listening=false;const t=dictBuf.trim();dictBuf='';if(t)handle(t);else setState('','Tap the orb to talk')}});
+}).catch(()=>{})}catch(e){}
+function matches(t,kw){if(!Array.isArray(kw)||!kw.length)return true;if(/[^\x00-\x7F]/.test(t))return true;const T=t.toLowerCase();return kw.some(x=>T.includes(String(x).toLowerCase()))}
+function waitCheck(q){return new Promise(res=>{pendingQ=q;const t=setTimeout(()=>{pending=null;res(true)},9000);pending=ok=>{clearTimeout(t);pending=null;res(ok)}})}
+async function aiResolve(q){
+  if(!sampleFn)return null;
+  let c;
+  try{c=await sampleFn.json('Return ONLY a JSON array (max 3 items) of the most likely YouTube videos for this music request: "'+q+'". If the request is generic (a festival, mood, genre or language), choose the most popular, well-known specific tracks that fit it, for example famous artists for that theme. Never return an empty array. Each item: {"id":"<11-character YouTube video id>","title":"<expected video title>","keywords":["1-3 lowercase Latin-letter words likely in the video title, such as the artist or song name"]}. Prefer official audio or music videos. No other text.')}catch(e){return null}
+  if(!Array.isArray(c))return null;
+  c=c.filter(v=>v&&/^[\w-]{11}$/.test(v.id||''));
+  for(let k=0;k<c.length;k++){
+    const w=waitCheck(c[k].keywords||[]);loadVideo(c[k]);
+    if(await w){results=c;idx=k;return c[k]}
+  }
+  yt.src='about:blank';np.classList.remove('on');
+  return null;
+}
+async function playMusic(q){
+  setState('thinking','Finding “'+q+'”…');
+  const r=await search(q);
+  if(r){results=r;idx=0;loadVideo(r[0]);return say('Playing '+q)}
+  const v=await aiResolve(q);
+  if(v)return say('Playing '+q);
+  say('Sorry, I couldn’t find “'+q+'”. Try adding the artist name, for example play music Believer Imagine Dragons.');
+}
+function nextTrack(auto){
+  if(idx+1<results.length){idx++;loadVideo(results[idx]);if(!auto)say('Next song')}
+  else if(!auto)say('No more results in this list');
+}
+
+/* ---------- Commands ---------- */
+function handle(raw){
+  const t=raw.toLowerCase().trim();heard.textContent='“'+raw+'”';
+  let m;
+  if((m=t.match(/^(?:play|start)\s+(?:music|song|mosic)?\s*(.+)$/))&&!/^(it|again|music)$/.test(m[1])){return playMusic(m[1].replace(/^["“”']|["“”']$/g,''))}
+  if(/^(pause|stop)( music| song)?$/.test(t)){ytCmd('pauseVideo');paused=true;updatePlayIcon();return say('Paused')}
+  if(/^(play|resume|continue)( music| song| it)?$/.test(t)){ytCmd('playVideo');paused=false;updatePlayIcon();return say('Resuming')}
+  if(/(next|skip)/.test(t))return nextTrack();
+  if(/(previous|restart|replay|back)/.test(t)){ytCmd('seekTo',[0,true]);return say('From the top')}
+  if((m=t.match(/volume (?:to |at )?(\d{1,3})/))){setVol(+m[1]);return say('Volume '+volume)}
+  if(/(volume up|louder|turn it up)/.test(t)){setVol(volume+20);return say('Louder')}
+  if(/(volume down|quieter|lower|turn it down)/.test(t)){setVol(volume-20);return say('Quieter')}
+  if(/(mute)/.test(t)){setVol(0);return say('Muted')}
+  if(/(close|dismiss|exit)/.test(t)){ytCmd('stopVideo');yt.src='about:blank';np.classList.remove('on');return say('Music stopped')}
+  if(/time/.test(t))return say('It is '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}));
+  if(/(hello|hi|hey)/.test(t))return say('Hey! Tell me a song to play.');
+  say('Try saying: play music, followed by a song name.');
+}
+function setVol(v){volume=Math.max(0,Math.min(100,v));$('vol').value=volume;ytCmd('setVolume',[volume])}
+
+/* ---------- Voice input ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,listening=false;
+function listen(){
+  if(dict){
+    if(listening){dict.stop();return}
+    speechSynthesis.cancel();dictBuf='';heard.textContent='';
+    listening=true;setState('listening','Listening…');
+    dict.start().catch(e=>{listening=false;setState('','Microphone unavailable – type your command below')});
+    return;
+  }
+  if(!SR){say('Voice input isn’t supported in this browser. Type your command below.');return}
+  if(listening){rec&&rec.stop();return}
+  speechSynthesis.cancel();
+  rec=new SR();rec.lang='en-US';rec.interimResults=true;rec.maxAlternatives=1;
+  let final='';
+  rec.onstart=()=>{listening=true;setState('listening','Listening…')};
+  rec.onresult=e=>{let s='';for(const r of e.results){s+=r[0].transcript;if(r.isFinal)final=s}heard.textContent=s};
+  rec.onerror=e=>{listening=false;setState('',e.error==='not-allowed'?'Microphone blocked – use the text box':'Didn’t catch that')};
+  rec.onend=()=>{listening=false;if(final)handle(final);else if(orb.className==='listening')setState('','Tap the orb to talk')};
+  try{rec.start()}catch(e){}
+}
+orb.addEventListener('click',listen);
+$('form').addEventListener('submit',e=>{e.preventDefault();const v=$('txt').value.trim();if(v){$('txt').value='';handle(v)}});
+$('bPlay').onclick=()=>{paused?handle('resume'):handle('pause')};
+$('bNext').onclick=()=>nextTrack();
+$('bPrev').onclick=()=>{ytCmd('seekTo',[0,true])};
+$('vol').oninput=e=>setVol(+e.target.value);
+</script>
 </body>
 </html>
