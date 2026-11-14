@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AURA">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f4f5f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0e15" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
 <title>AURA — Voice AI</title>
 
 <style>
@@ -543,6 +550,63 @@ body{
 .nav-mic:active{transform:scale(.9)}
 .nav-mic.on{color:#fff;background:linear-gradient(145deg,rgba(229,139,145,.95),rgba(189,82,106,.95));border-color:rgba(255,255,255,.5);box-shadow:0 10px 28px rgba(189,82,106,.42),0 0 0 5px rgba(229,139,145,.2),inset 0 1px 1px rgba(255,255,255,.55)}
 .nav-mic.on .mic-slash{opacity:0}
+
+/* ===== iOS 26 feel ===== */
+*{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","DM Sans",system-ui,sans-serif!important}
+body{padding-top:env(safe-area-inset-top)}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+.edge-glow{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;transition:opacity .6s;padding:5px;border-radius:44px;background:conic-gradient(from var(--a),#ff6ec7,#7b6cff,#4fd6ff,#5cf2a8,#ffd36e,#ff6ec7);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);filter:blur(12px);animation:spin 5s linear infinite}
+body.mic-on .edge-glow{opacity:.85}
+.nav-mic{transition:width .55s cubic-bezier(.3,1.35,.5,1),border-radius .5s,transform .2s,background .3s,color .3s,box-shadow .3s}
+.nav-mic .wave{display:none;align-items:center;gap:4px;height:28px}
+.nav-mic .wave i{width:4px;height:100%;border-radius:4px;background:#fff;transform:scaleY(.3);animation:wv .9s ease-in-out infinite}
+.nav-mic .wave i:nth-child(2){animation-delay:.12s}.nav-mic .wave i:nth-child(3){animation-delay:.24s}.nav-mic .wave i:nth-child(4){animation-delay:.36s}.nav-mic .wave i:nth-child(5){animation-delay:.48s}
+@keyframes wv{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+.nav-mic.on{width:108px}
+.nav-mic.on svg{display:none}.nav-mic.on .wave{display:flex}
+.live{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%);width:min(520px,88vw);text-align:center;font-size:26px;font-weight:600;line-height:1.3;color:#2b2f45;z-index:30;pointer-events:none;opacity:0;transition:opacity .4s}
+.live.show{opacity:1}.live .n{animation:wi .45s ease both}
+@keyframes wi{from{opacity:0;filter:blur(6px);transform:translateY(6px)}to{opacity:1;filter:none;transform:none}}
+.mini{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(92px + env(safe-area-inset-bottom));width:min(382px,calc(100vw - 24px));z-index:49;display:none;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-radius:30px;background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(255,255,255,.65);box-shadow:0 10px 28px rgba(40,45,80,.14),inset 0 1px 1px rgba(255,255,255,.95);color:#2b2f45;cursor:pointer}
+.mini.show{display:flex;animation:mi .5s cubic-bezier(.3,1.35,.5,1) both}
+@keyframes mi{from{opacity:0;transform:translate(-50%,24px) scale(.94)}to{opacity:1;transform:translate(-50%,0)}}
+.mini-eq{width:18px;height:18px;border-radius:6px;flex:none;background:linear-gradient(135deg,#69cbb5,#9a8ce0,#e4a5ad)}
+.mini.playing .mini-eq{animation:eq .65s ease-in-out infinite alternate}
+.mini-txt{flex:1;min-width:0}.mini-txt b{display:block;font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-txt small{display:block;font-size:10px;opacity:.6;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini button,.sheet-btns button{display:flex;align-items:center;justify-content:center;border:0;padding:0;color:inherit;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.mini button{width:38px;height:38px;border-radius:50%}.mini button:active,.sheet-btns button:active{transform:scale(.88)}
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(10,12,25,.32);opacity:0;pointer-events:none;transition:opacity .35s}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:50%;bottom:0;z-index:61;width:min(480px,100vw);transform:translate(-50%,110%);transition:transform .55s cubic-bezier(.3,1.1,.4,1);padding:10px 26px calc(28px + env(safe-area-inset-bottom));border-radius:36px 36px 0 0;text-align:center;background:rgba(250,250,254,.72);-webkit-backdrop-filter:blur(34px) saturate(200%);backdrop-filter:blur(34px) saturate(200%);border:1px solid rgba(255,255,255,.7);box-shadow:0 -12px 50px rgba(30,34,60,.22),inset 0 1px 1px #fff;color:#2b2f45}
+.sheet.open{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:5px;margin:4px auto 18px;background:rgba(100,105,130,.35);cursor:pointer}
+.sheet-art{width:150px;height:150px;margin:0 auto 18px;border-radius:30px;background:linear-gradient(135deg,#69cbb5,#9a8ce0,#e4a5ad);box-shadow:0 18px 40px rgba(120,110,200,.35)}
+.sheet b{display:block;font-size:19px;font-weight:700;padding:0 6px}.sheet small{display:block;font-size:13px;opacity:.6;margin-top:5px}
+.sheet-btns{display:flex;justify-content:center;align-items:center;gap:34px;margin:22px 0}
+.sheet-btns button{width:54px;height:54px;border-radius:50%}
+.sheet-btns .big{width:72px;height:72px;color:#fff;background:radial-gradient(circle at 30% 22%,#5d6486,#2b3047 55%,#151827);box-shadow:0 10px 24px rgba(30,34,60,.36),inset 0 1px 1px rgba(255,255,255,.28)}
+.sheet-btns .big svg{width:28px;height:28px}
+/* iOS capsule sliders */
+.music-panel .volume-control input,#sheetVol{-webkit-appearance:none;appearance:none;height:10px;border-radius:99px;outline:0;background:linear-gradient(to right,#8b83d5 var(--v,65%),rgba(120,125,160,.22) var(--v,65%));transition:height .2s}
+#sheetVol{width:100%}
+.music-panel .volume-control input:active,#sheetVol:active{height:18px}
+.music-panel .volume-control input::-webkit-slider-thumb,#sheetVol::-webkit-slider-thumb{-webkit-appearance:none;width:0;height:0}
+.music-panel .volume-control input::-moz-range-thumb,#sheetVol::-moz-range-thumb{width:0;height:0;border:0}
+/* auto dark mode */
+@media (prefers-color-scheme:dark){
+html,body{background:#0d0e15!important;color:#e8eaf4}
+.assistant-name,.response,.live,.mini,.sheet,.music-meta strong{color:#eceef7!important}
+.subtitle,.command-hint,.command-hint span,.music-meta small,.volume-control{color:#8f93aa!important}
+.control,.music-panel{background:rgba(34,36,54,.62)!important;border-color:rgba(255,255,255,.08)!important;color:#d9dcef}
+.music-actions button{background:rgba(48,51,74,.85)!important;color:#dfe2f4!important;border-color:rgba(255,255,255,.08)!important}
+.tabbar,.nav-mic,.mini{background:rgba(32,34,52,.5);border-color:rgba(255,255,255,.12);box-shadow:0 14px 36px rgba(0,0,0,.45),inset 0 1px 1px rgba(255,255,255,.14)}
+.nav-mic{color:#cfd2e6}.nav-mic.on{color:#fff}
+.tab{color:#8f93aa}.tab.active{color:#a9a2ff}
+.tab-ind{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(150,155,220,.1));box-shadow:inset 0 1px 1px rgba(255,255,255,.22)}
+.sheet{background:rgba(26,28,44,.78);border-color:rgba(255,255,255,.1)}
+.sheet-btns button:not(.big){color:#eceef7}
+}
 </style>
 </head>
 
@@ -614,10 +678,17 @@ body{
   <div id="ytPlayerHost" aria-hidden="true"></div>
 
   <footer class="bottom">AURA  ·  PERSONAL VOICE ASSISTANT</footer>
-<div class="dock"><nav class="tabbar" id="tabbar" aria-label="Main"><span class="tab-ind"></span><button type="button" class="tab active" data-tab="talk" aria-label="Talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Talk</span></button><button type="button" class="tab" data-tab="music" aria-label="Music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Music</span></button><button type="button" class="tab" data-tab="notes" aria-label="Notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Notes</span></button><button type="button" class="tab" data-tab="voice" aria-label="Voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Voice</span></button></nav><button type="button" class="nav-mic" id="navMic" aria-label="Microphone on or off" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path class="mic-slash" d="M4 4l16 16"/></svg></button></div>
+<div class="dock"><nav class="tabbar" id="tabbar" aria-label="Main"><span class="tab-ind"></span><button type="button" class="tab active" data-tab="talk" aria-label="Talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Talk</span></button><button type="button" class="tab" data-tab="music" aria-label="Music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Music</span></button><button type="button" class="tab" data-tab="notes" aria-label="Notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Notes</span></button><button type="button" class="tab" data-tab="voice" aria-label="Voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Voice</span></button></nav><button type="button" class="nav-mic" id="navMic" aria-label="Microphone on or off" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path class="mic-slash" d="M4 4l16 16"/></svg><span class="wave"><i></i><i></i><i></i><i></i><i></i></span></button></div>
 
 </div>
 
+<div class="edge-glow" id="edgeGlow"></div>
+<div class="live" id="live" aria-live="polite"></div>
+<div class="mini" id="mini"><span class="mini-eq"></span><div class="mini-txt"><b id="miniTitle">Nothing playing</b><small id="miniArtist"></small></div><button type="button" id="miniPlay" aria-label="Play or pause"></button><button type="button" id="miniNext" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.8 5H18v14h-2.2z"/><path d="M4 5.2v13.6L14.8 12z"/></svg></button></div>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet"><div class="grab" id="grab"></div><div class="sheet-art"></div><b id="sheetTitle">Nothing playing</b><small id="sheetArtist"></small>
+<div class="sheet-btns"><button type="button" id="sheetPrev" aria-label="Previous"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 5h2.2v14H6z"/><path d="M20 5.2v13.6L9.2 12z"/></svg></button><button type="button" id="sheetPlay" class="big" aria-label="Play or pause"></button><button type="button" id="sheetNext" aria-label="Next"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.8 5H18v14h-2.2z"/><path d="M4 5.2v13.6L14.8 12z"/></svg></button></div>
+<input type="range" id="sheetVol" min="0" max="100" value="65" aria-label="Volume"></div>
 <script>
 const orbContainer = document.getElementById("orbContainer");
 const responseBox = document.getElementById("response");
@@ -1310,6 +1381,48 @@ document.getElementById("muteBtn").addEventListener("click", () => {
   new MutationObserver(sync).observe(micBtn,{attributes:true,attributeFilter:["class"]});
   nm.addEventListener("click",()=>{unlockAudio();micBtn.click();});
   sync();
+})();
+
+/* ===== iOS 26 layers (nothing above is removed) ===== */
+(function(){
+  const $=id=>document.getElementById(id);
+  const mini=$("mini"),sheet=$("sheet"),scrim=$("scrim"),sheetVol=$("sheetVol");
+  const fill=el=>el.style.setProperty("--v",el.value+"%");
+  // volume sliders stay in sync
+  const _av=applyVolume;applyVolume=function(){_av();sheetVol.value=musicVolume;fill(sheetVol);fill(musicVolumeInput);};
+  sheetVol.addEventListener("input",()=>{musicVolume=Number(sheetVol.value);applyVolume();});
+  applyVolume();
+  // mini player + sheet mirror the music panel
+  function sync(){
+    const pl=musicPanel.classList.contains("playing");
+    $("miniTitle").textContent=$("sheetTitle").textContent=musicTitle.textContent;
+    $("miniArtist").textContent=$("sheetArtist").textContent=musicArtist.textContent;
+    $("miniPlay").innerHTML=$("sheetPlay").innerHTML=pl?ICON_PAUSE:ICON_PLAY;
+    mini.classList.toggle("show",musicQueue.length>0);mini.classList.toggle("playing",pl);
+  }
+  new MutationObserver(sync).observe(musicPanel,{subtree:true,childList:true,characterData:true,attributes:true});sync();
+  const openSheet=()=>{sheet.classList.add("open");scrim.classList.add("open");},closeSheet=()=>{sheet.classList.remove("open");scrim.classList.remove("open");};
+  mini.addEventListener("click",e=>{if(!e.target.closest("button"))openSheet();});
+  scrim.addEventListener("click",closeSheet);$("grab").addEventListener("click",closeSheet);
+  let y0=null;sheet.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;},{passive:true});
+  sheet.addEventListener("touchend",e=>{if(y0!==null&&e.changedTouches[0].clientY-y0>70)closeSheet();y0=null;});
+  $("miniPlay").addEventListener("click",musicPlayPause);$("sheetPlay").addEventListener("click",musicPlayPause);
+  $("miniNext").addEventListener("click",playNextTrack);$("sheetNext").addEventListener("click",playNextTrack);$("sheetPrev").addEventListener("click",playPreviousTrack);
+  document.querySelector('[data-tab="music"]').addEventListener("click",()=>{if(musicQueue.length)openSheet();});
+  // Siri-style edge glow while listening or speaking
+  const glow=()=>document.body.classList.toggle("mic-on",micBtn.classList.contains("listening")||orbContainer.classList.contains("speaking"));
+  [micBtn,orbContainer].forEach(el=>new MutationObserver(glow).observe(el,{attributes:true,attributeFilter:["class"]}));glow();
+  // live word-by-word transcript
+  if(recognition){
+    const live=$("live");let prev=0,hide;
+    recognition.addEventListener("result",e=>{
+      let txt="";for(let i=e.resultIndex;i<e.results.length;i++)txt+=e.results[i][0].transcript;
+      const w=txt.trim().split(/\s+/).filter(Boolean);live.textContent="";
+      w.forEach((x,i)=>{const sp=document.createElement("span");sp.textContent=x+" ";if(i>=prev)sp.className="n";live.appendChild(sp);});
+      prev=w.length;live.classList.add("show");clearTimeout(hide);
+      if(e.results[e.results.length-1].isFinal)hide=setTimeout(()=>{live.classList.remove("show");prev=0;},1800);
+    });
+  }
 })();
 </script>
 
