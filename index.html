@@ -4,15 +4,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F3F4FA">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo.png">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="AURA">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#f4f5f9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d0e15" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
-<link rel="manifest" href="manifest.webmanifest">
-<title>AURA — Voice AI</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Demax">
+<title>Demax</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
@@ -307,7 +306,7 @@ body {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  cursor: pointer;
+  cursor: Default;
   color: #55514c;
   transition: .25s;
 }
@@ -413,7 +412,7 @@ body {
 .music-panel.playing .music-eq{background:repeating-linear-gradient(90deg,#75cbb7 0 3px,transparent 3px 5px);animation:eq .65s ease-in-out infinite alternate}
 @keyframes eq{from{clip-path:inset(55% 0 0)}to{clip-path:inset(5% 0 0)}}
 .music-actions{display:flex;align-items:center;gap:7px}
-.music-actions button{width:31px;height:31px;border:1px solid #ebe7e0;background:#fff;border-radius:50%;color:#45413c;cursor:pointer;font-size:11px}
+.music-actions button{width:31px;height:31px;border:1px solid #ebe7e0;background:#fff;border-radius:50%;color:#45413c;cursor:default;font-size:11px}
 .music-actions button:nth-child(2){background:#242424;color:#fff;width:36px;height:36px;border:0}
 .volume-control{grid-column:1/-1;display:flex;align-items:center;gap:9px;font-size:9px;color:#999187;letter-spacing:.7px}
 .volume-control input{flex:1;accent-color:#7770bd;height:3px}
@@ -423,7 +422,7 @@ body {
 @media(max-width:600px){.music-panel{margin-top:12px;padding:9px 11px}.music-meta strong{max-width:175px}}
 
 
-/* AURA iOS-inspired glass refinement */
+/* Demax iOS-inspired glass refinement */
 :root{--ink:#171820;--muted:#858894;--glass:rgba(255,255,255,.66);--glass-line:rgba(255,255,255,.86)}
 html{min-height:100%;background:#f4f5f9}
 body{
@@ -536,7 +535,7 @@ body{
 .center{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
 .tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));z-index:50;width:min(360px,calc(100vw - 32px));padding:6px;display:grid;grid-template-columns:repeat(4,1fr);border-radius:34px;background:rgba(255,255,255,.34);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(255,255,255,.65);box-shadow:0 14px 36px rgba(40,45,80,.16),0 2px 6px rgba(40,45,80,.06),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(255,255,255,.35)}
 .tab-ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/4);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(150,155,200,.16));box-shadow:0 3px 10px rgba(60,65,110,.14),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(120,125,170,.15);transform:translateX(calc(var(--i,0)*100%));transition:transform .5s cubic-bezier(.3,1.35,.5,1)}
-.tab{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border:0;background:none;color:#7b7f92;font:600 10px/1 "DM Sans",-apple-system,sans-serif;letter-spacing:.01em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .25s,transform .2s}
+.tab{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border:0;background:none;color:#7b7f92;font:600 10px/1 "DM Sans",-apple-system,sans-serif;letter-spacing:.01em;cursor:default;-webkit-tap-highlight-color:transparent;transition:color .25s,transform .2s}
 .tab svg{width:24px;height:24px}
 .tab:active{transform:scale(.9)}
 .tab.active{color:#6a62d2}
@@ -546,7 +545,7 @@ body{
 .controls #micBtn{display:none!important}
 .dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;width:min(382px,calc(100vw - 24px))}
 .dock .tabbar{position:relative;left:auto;bottom:auto;transform:none;flex:1;width:auto;min-width:0}
-.nav-mic{position:relative;flex:none;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#555a70;background:rgba(255,255,255,.34);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(255,255,255,.65);box-shadow:0 14px 36px rgba(40,45,80,.16),0 2px 6px rgba(40,45,80,.06),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(255,255,255,.35);transition:transform .2s,background .3s,color .3s,box-shadow .3s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.nav-mic{position:relative;flex:none;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;cursor:default;color:#555a70;background:rgba(255,255,255,.34);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(255,255,255,.65);box-shadow:0 14px 36px rgba(40,45,80,.16),0 2px 6px rgba(40,45,80,.06),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(255,255,255,.35);transition:transform .2s,background .3s,color .3s,box-shadow .3s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .nav-mic svg{width:26px;height:26px}
 .nav-mic .mic-slash{opacity:1;transition:opacity .2s}
 .nav-mic:active{transform:scale(.9)}
@@ -570,19 +569,19 @@ body.mic-on .edge-glow{opacity:.85}
 .live{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%);width:min(520px,88vw);text-align:center;font-size:26px;font-weight:600;line-height:1.3;color:#2b2f45;z-index:30;pointer-events:none;opacity:0;transition:opacity .4s}
 .live.show{opacity:1}.live .n{animation:wi .45s ease both}
 @keyframes wi{from{opacity:0;filter:blur(6px);transform:translateY(6px)}to{opacity:1;filter:none;transform:none}}
-.mini{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(92px + env(safe-area-inset-bottom));width:min(382px,calc(100vw - 24px));z-index:49;display:none;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-radius:30px;background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(255,255,255,.65);box-shadow:0 10px 28px rgba(40,45,80,.14),inset 0 1px 1px rgba(255,255,255,.95);color:#2b2f45;cursor:pointer}
+.mini{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(92px + env(safe-area-inset-bottom));width:min(382px,calc(100vw - 24px));z-index:49;display:none;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-radius:30px;background:rgba(255,255,255,.4);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(255,255,255,.65);box-shadow:0 10px 28px rgba(40,45,80,.14),inset 0 1px 1px rgba(255,255,255,.95);color:#2b2f45;cursor:default}
 .mini.show{display:flex;animation:mi .5s cubic-bezier(.3,1.35,.5,1) both}
 @keyframes mi{from{opacity:0;transform:translate(-50%,24px) scale(.94)}to{opacity:1;transform:translate(-50%,0)}}
 .mini-eq{width:18px;height:18px;border-radius:6px;flex:none;background:linear-gradient(135deg,#69cbb5,#9a8ce0,#e4a5ad)}
 .mini.playing .mini-eq{animation:eq .65s ease-in-out infinite alternate}
 .mini-txt{flex:1;min-width:0}.mini-txt b{display:block;font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-txt small{display:block;font-size:10px;opacity:.6;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini button,.sheet-btns button{display:flex;align-items:center;justify-content:center;border:0;padding:0;color:inherit;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.mini button,.sheet-btns button{display:flex;align-items:center;justify-content:center;border:0;padding:0;color:inherit;background:none;cursor:default;-webkit-tap-highlight-color:transparent;transition:transform .15s}
 .mini button{width:38px;height:38px;border-radius:50%}.mini button:active,.sheet-btns button:active{transform:scale(.88)}
 .scrim{position:fixed;inset:0;z-index:60;background:rgba(10,12,25,.32);opacity:0;pointer-events:none;transition:opacity .35s}
 .scrim.open{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:50%;bottom:0;z-index:61;width:min(480px,100vw);transform:translate(-50%,110%);transition:transform .55s cubic-bezier(.3,1.1,.4,1);padding:10px 26px calc(28px + env(safe-area-inset-bottom));border-radius:36px 36px 0 0;text-align:center;background:rgba(250,250,254,.72);-webkit-backdrop-filter:blur(34px) saturate(200%);backdrop-filter:blur(34px) saturate(200%);border:1px solid rgba(255,255,255,.7);box-shadow:0 -12px 50px rgba(30,34,60,.22),inset 0 1px 1px #fff;color:#2b2f45}
 .sheet.open{transform:translate(-50%,0)}
-.grab{width:40px;height:5px;border-radius:5px;margin:4px auto 18px;background:rgba(100,105,130,.35);cursor:pointer}
+.grab{width:40px;height:5px;border-radius:5px;margin:4px auto 18px;background:rgba(100,105,130,.35);cursor:default}
 .sheet-art{width:150px;height:150px;margin:0 auto 18px;border-radius:30px;background:linear-gradient(135deg,#69cbb5,#9a8ce0,#e4a5ad);box-shadow:0 18px 40px rgba(120,110,200,.35)}
 .sheet b{display:block;font-size:19px;font-weight:700;padding:0 6px}.sheet small{display:block;font-size:13px;opacity:.6;margin-top:5px}
 .sheet-btns{display:flex;justify-content:center;align-items:center;gap:34px;margin:22px 0}
@@ -609,23 +608,6 @@ html,body{background:#0d0e15!important;color:#e8eaf4}
 .sheet{background:rgba(26,28,44,.78);border-color:rgba(255,255,255,.1)}
 .sheet-btns button:not(.big){color:#eceef7}
 }
-
-/* ultra */
-.island{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top));z-index:70;height:34px;max-width:min(320px,86vw);padding:0 18px;border-radius:20px;background:#000;color:#fff;font-size:13px;font-weight:600;line-height:34px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateX(-50%) scale(.6);transition:opacity .3s,transform .5s cubic-bezier(.3,1.4,.5,1);pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
-.island.show{opacity:1;transform:translateX(-50%) scale(1)}
-.sheet{max-height:92vh;overflow:auto}
-.sheet-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
-.sheet-row button{border:0;border-radius:99px;padding:8px 14px;font-size:12px;font-weight:600;color:inherit;background:rgba(120,125,170,.16);cursor:pointer}
-.sheet-row button.on{background:#8b83d5;color:#fff}
-.sheet-q{margin:14px 0;max-height:120px;overflow:auto;text-align:left;font-size:13px}
-.sheet-q div{padding:7px 6px;border-radius:10px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sheet-q div.cur{color:#6a62d2;font-weight:700}
-.orb,.orb-glow{transition:filter .6s}
-body.mood-listening .orb,body.mood-listening .orb-glow{filter:hue-rotate(170deg) saturate(1.2)}
-body.mood-speaking .orb,body.mood-speaking .orb-glow{filter:hue-rotate(-40deg) saturate(1.2)}
-body.thinking .orb,body.thinking .orb-glow{filter:hue-rotate(60deg) saturate(1.3)}
-body.thinking .orb{animation:think 1.1s ease-in-out infinite}
-@keyframes think{50%{transform:scale(.95)}}
 </style>
 </head>
 
@@ -634,7 +616,7 @@ body.thinking .orb{animation:think 1.1s ease-in-out infinite}
 <div class="app">
 
   <header class="top">
-    <div class="logo">AURA<span> AI</span></div>
+    <div class="logo">Demax<span> AI</span></div>
     <div class="status">
       <span class="dot" id="dot"></span>
       <span id="statusText">Ready to talk</span>
@@ -653,11 +635,11 @@ body.thinking .orb{animation:think 1.1s ease-in-out infinite}
       </div>
     </div>
 
-    <div class="assistant-name">AURA</div>
+    <div class="assistant-name">Demax</div>
     <div class="subtitle" id="subtitle">A calmer way to get things done</div>
 
     <div class="response" id="response">
-      Tap once to talk. AURA will listen until you stop.
+      Tap once to talk. Demax will listen until you stop.
     </div>
 
     <div class="controls">
@@ -696,19 +678,18 @@ body.thinking .orb{animation:think 1.1s ease-in-out infinite}
   </main>
   <div id="ytPlayerHost" aria-hidden="true"></div>
 
-  <footer class="bottom">AURA  ·  PERSONAL VOICE ASSISTANT</footer>
+  <footer class="bottom">Demax  ·  PERSONAL VOICE ASSISTANT</footer>
 <div class="dock"><nav class="tabbar" id="tabbar" aria-label="Main"><span class="tab-ind"></span><button type="button" class="tab active" data-tab="talk" aria-label="Talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Talk</span></button><button type="button" class="tab" data-tab="music" aria-label="Music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Music</span></button><button type="button" class="tab" data-tab="notes" aria-label="Notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Notes</span></button><button type="button" class="tab" data-tab="voice" aria-label="Voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Voice</span></button></nav><button type="button" class="nav-mic" id="navMic" aria-label="Microphone on or off" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path class="mic-slash" d="M4 4l16 16"/></svg><span class="wave"><i></i><i></i><i></i><i></i><i></i></span></button></div>
 
 </div>
 
-<div class="island" id="island"><span id="islandTxt"></span></div>
 <div class="edge-glow" id="edgeGlow"></div>
 <div class="live" id="live" aria-live="polite"></div>
 <div class="mini" id="mini"><span class="mini-eq"></span><div class="mini-txt"><b id="miniTitle">Nothing playing</b><small id="miniArtist"></small></div><button type="button" id="miniPlay" aria-label="Play or pause"></button><button type="button" id="miniNext" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.8 5H18v14h-2.2z"/><path d="M4 5.2v13.6L14.8 12z"/></svg></button></div>
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet"><div class="grab" id="grab"></div><div class="sheet-art"></div><b id="sheetTitle">Nothing playing</b><small id="sheetArtist"></small>
 <div class="sheet-btns"><button type="button" id="sheetPrev" aria-label="Previous"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 5h2.2v14H6z"/><path d="M20 5.2v13.6L9.2 12z"/></svg></button><button type="button" id="sheetPlay" class="big" aria-label="Play or pause"></button><button type="button" id="sheetNext" aria-label="Next"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.8 5H18v14h-2.2z"/><path d="M4 5.2v13.6L14.8 12z"/></svg></button></div>
-<div class="sheet-row"><button type="button" id="sheetFav">♡ Favourite</button><button type="button" data-sleep="15">Sleep 15m</button><button type="button" data-sleep="30">30m</button><button type="button" data-sleep="60">60m</button></div><div class="sheet-q" id="sheetQ"></div><input type="range" id="sheetVol" min="0" max="100" value="65" aria-label="Volume"></div>
+<input type="range" id="sheetVol" min="0" max="100" value="65" aria-label="Volume"></div>
 <script>
 const orbContainer = document.getElementById("orbContainer");
 const responseBox = document.getElementById("response");
@@ -884,7 +865,7 @@ function setState(state) {
   } else if (state === "speaking") {
     orbContainer.classList.add("speaking");
     statusText.textContent = "Speaking";
-    subtitle.textContent = "AURA is responding";
+    subtitle.textContent = "Demax is responding";
     dot.classList.add("active");
   } else {
     statusText.textContent = "Ready to talk";
@@ -1026,96 +1007,31 @@ function speak(text) {
   responseBox.textContent = text;
 
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = /[\u0900-\u097F]/.test(text) ? "hi-IN" : "en-IN";
+  utterance.lang = "en-IN";
   utterance.rate = 1;
   utterance.pitch = 1.02;
   utterance.volume = 1;
-  if(utterance.lang==="hi-IN"){const hv=speechSynthesis.getVoices().find(v=>/^hi/i.test(v.lang));if(hv)utterance.voice=hv;}else if(window.auraVoice) utterance.voice=window.auraVoice;
+  if(window.auraVoice) utterance.voice=window.auraVoice;
 
   utterance.onend = () => {
     speaking = false;
-    if (resumeMic||window.auraBarge) { window.auraBarge=false; startRecognition(); }
+    if (resumeMic) startRecognition();
     else setState("idle");
   };
 
   utterance.onerror = () => {
     speaking = false;
-    if (resumeMic||window.auraBarge) { window.auraBarge=false; startRecognition(); }
+    if (resumeMic) startRecognition();
     else setState("idle");
   };
 
   speechSynthesis.speak(utterance);
 }
 
-/* ===== ULTRA: AI brain, weather, wiki, Hindi, favourites, sleep timer ===== */
-const AI_ENDPOINT=""; // put your Vercel URL here, e.g. "https://your-app.vercel.app/api/chat"
-let auraLang="en-IN",aiHistory=[],sleepTimer=null,sleepEnd=0;
-const favs=()=>{try{return JSON.parse(localStorage.getItem("auraFavs")||"[]");}catch(e){return [];}};
-const saveFavs=a=>{try{localStorage.setItem("auraFavs",JSON.stringify(a));}catch(e){}};
-const trackKey=t=>t.src+":"+(t.id||t.url);
-function normalizeInput(x){
-  const map={"प्ले":"play","म्यूजिक":"music","म्यूज़िक":"music","सॉन्ग":"song","गाना":"song","गाने":"song","बजाओ":"play","चलाओ":"play","पॉज":"pause","नेक्स्ट":"next","वॉल्यूम":"volume","मौसम":"weather","टाइमर":"timer","हेलो":"hello","बंद":"stop"};
-  for(const k in map)x=x.split(k).join(" "+map[k]+" ");
-  x=x.replace(/\b(song|music)\s+play\b/gi,"play $1").replace(/\s+/g," ").trim();
-  return x.replace(/^(?:hey|hi|ok|okay|hello)\s+(?:l?aura|ora|aurora)\b[\s,.:]*/i,"").trim();
-}
-function setSleep(min){clearTimeout(sleepTimer);sleepEnd=Date.now()+min*60000;sleepTimer=setTimeout(()=>{pauseMusic();sleepEnd=0;},min*60000);}
-function toggleFav(){
-  const t=curTrack();if(!t)return "Play a song first.";
-  const a=favs(),k=trackKey(t),i=a.findIndex(x=>trackKey(x)===k);
-  if(i>=0){a.splice(i,1);saveFavs(a);return "Removed from favourites.";}
-  a.push(t);saveFavs(a);return "Saved to favourites.";
-}
-function wmo(c){return c===0?"clear":c<4?"partly cloudy":c<50?"foggy":c<60?"drizzling":c<70?"raining":c<80?"snowing":c<90?"showery":"stormy";}
-async function getWeather(city){
-  try{
-    let lat,lon,name=city;
-    if(!city){const pos=await new Promise((res,rej)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}):rej());lat=pos.coords.latitude;lon=pos.coords.longitude;name="your location";}
-    else{const g=await fetchJSON("https://geocoding-api.open-meteo.com/v1/search?count=1&name="+encodeURIComponent(city),7000);if(!g.results)return "I couldn't find a place called "+city+".";lat=g.results[0].latitude;lon=g.results[0].longitude;name=g.results[0].name;}
-    const w=await fetchJSON("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,weather_code&daily=precipitation_probability_max&forecast_days=2&timezone=auto",7000);
-    const d=w.daily.precipitation_probability_max;
-    return "Right now in "+name+" it's "+Math.round(w.current.temperature_2m)+" degrees and "+wmo(w.current.weather_code)+". Rain chance today is "+d[0]+" percent, tomorrow "+d[1]+" percent.";
-  }catch(e){return "I couldn't get the weather. Try saying, weather in Delhi.";}
-}
-async function askWiki(input){
-  const m=input.match(/^(?:who is|who was|what is|what are|what was|tell me about|define)\s+(.+?)\??$/i);if(!m)return null;
-  try{
-    const s=await fetchJSON("https://en.wikipedia.org/w/api.php?action=opensearch&limit=1&format=json&origin=*&search="+encodeURIComponent(m[1]),7000);
-    if(!s[1]||!s[1][0])return null;
-    const r=await fetchJSON("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(s[1][0]),7000);
-    return r.extract?r.extract.split(". ").slice(0,2).join(". ").replace(/\.?$/,"."):null;
-  }catch(e){return null;}
-}
-async function askAI(input){
-  if(!AI_ENDPOINT)return null;
-  aiHistory.push({role:"user",content:input});aiHistory=aiHistory.slice(-12);
-  try{
-    const r=await fetch(AI_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:aiHistory,lang:auraLang})});
-    const d=await r.json();if(!d.reply)throw new Error("empty");
-    aiHistory.push({role:"assistant",content:d.reply});return d.reply;
-  }catch(e){aiHistory.pop();return null;}
-}
-async function extraCommands(input){
-  const t=input.toLowerCase().replace(/[^\w\s]/g," ").replace(/\s+/g," ").trim();
-  if(!t)return "Yes, I'm listening.";
-  if(/\bhindi (mein|me)\b|\b(speak|talk|reply)\b.*\bhindi\b/.test(t)){auraLang="hi-IN";if(recognition)recognition.lang="hi-IN";return "ठीक है, अब मैं हिंदी में बात करूँगा।";}
-  if(/\benglish (mein|me)\b|\b(speak|talk|reply)\b.*\benglish\b/.test(t)){auraLang="en-IN";if(recognition)recognition.lang="en-IN";return "Okay, I'll speak English now.";}
-  const sm=t.match(/(?:sleep timer|(?:stop|pause) (?:the )?music in|music off in)\s*(?:for\s*)?(\d+)\s*(sec\w*|min\w*|hour\w*|hr\w*)?/);
-  if(sm){const u=sm[2]||"min",n=+sm[1];setSleep(/^h/.test(u)?n*60:/^s/.test(u)?n/60:n);return "Sleep timer set for "+n+" "+u+".";}
-  if(/\b(cancel|stop) (the )?sleep timer\b/.test(t)){clearTimeout(sleepTimer);sleepEnd=0;return "Sleep timer cancelled.";}
-  if(/\b(play|start) (my )?favou?rites?\b/.test(t)){const a=favs();if(!a.length)return "You have no favourites yet. Say, save this song.";musicQueue=a.slice();playTrack(0);return "Playing your favourites.";}
-  if(/\b(save|like|favou?rite|unfavou?rite)\b.*\b(this|song|track)\b/.test(t))return toggleFav();
-  if(/\b(weather|rain|baarish|barish|temperature|mausam|forecast)\b/.test(t)){const m=t.match(/\b(?:in|at|for|of)\s+([a-z ]{2,30})$/);return await getWeather(m?m[1].replace(/\b(today|tomorrow|now)\b/g,"").trim():"");}
-  return null;
-}
-
 /* CONVERSATION ENGINE */
 function loadNotes(){try{return JSON.parse(localStorage.getItem("auraNotes")||"[]")}catch(e){return []}}
 
 async function getReply(input) {
-  input = normalizeInput(input);
-  const ex = await extraCommands(input);
-  if (ex) return ex;
   const t = input.toLowerCase().replace(/[^\w\s]/g, "").trim();
 
   // Music commands are handled before general conversation rules.
@@ -1153,10 +1069,10 @@ async function getReply(input) {
     const amount=Number(timerMatch[1]),unit=timerMatch[2]||"seconds";
     const factor=unit.startsWith("hour")?3600000:unit.startsWith("min")?60000:1000;
     if(window.auraTimer)clearTimeout(window.auraTimer);
-    window.auraTimerEnd=Date.now()+amount*factor;window.auraTimer=setTimeout(()=>{window.auraTimerEnd=0;responseBox.textContent="Your timer is complete.";if(!muted)speak("Your timer is complete.");},amount*factor);
+    window.auraTimer=setTimeout(()=>{responseBox.textContent="Your timer is complete.";if(!muted)speak("Your timer is complete.");},amount*factor);
     return "Timer set for "+amount+" "+unit+".";
   }
-  if(/\b(cancel|stop)\s+(the\s+)?timer\b/.test(t)){if(window.auraTimer)clearTimeout(window.auraTimer);window.auraTimerEnd=0;return "Your timer has been cancelled.";}
+  if(/\b(cancel|stop)\s+(the\s+)?timer\b/.test(t)){if(window.auraTimer)clearTimeout(window.auraTimer);return "Your timer has been cancelled.";}
 
   if(t.startsWith("remember ")||t.startsWith("save a note ")){
     const note=input.replace(/^(remember|save a note)\s*/i,"").trim();
@@ -1332,8 +1248,6 @@ async function getReply(input) {
   }
 
 
-  const smart = await askAI(input) || await askWiki(input);
-  if (smart) return smart;
   if (lastTopic === "space") {
     return "That's interesting. Space has many mysteries. You can ask me about planets, stars, galaxies or black holes.";
   }
@@ -1363,9 +1277,7 @@ function cycleVoice(){
 async function handleInput(text) {
   responseBox.textContent = "You said: " + text;
   let reply;
-  document.body.classList.add("thinking");
   try { reply = await getReply(text); } catch (e) { reply = "Sorry, something went wrong. Please try again."; }
-  document.body.classList.remove("thinking");
   setTimeout(() => speak(reply), 250);
 }
 
@@ -1390,9 +1302,9 @@ async function startRecognition() {
     recognition.start();
   } catch(error) {
     const message = error && error.name === "NotAllowedError"
-      ? "Microphone access is blocked. Allow it once in your browser site settings, then reload AURA."
+      ? "Microphone access is blocked. Allow it once in your browser site settings, then reload Demax."
       : error && error.message === "Microphone requires HTTPS or localhost."
-        ? "For saved microphone permission, open AURA on HTTPS or localhost instead of file://."
+        ? "For saved microphone permission, open Demax on HTTPS or localhost instead of file://."
         : "Microphone could not start. Check browser permissions and try again.";
     responseBox.textContent = message;
     subtitle.textContent = "Microphone access needed";
@@ -1407,7 +1319,7 @@ function stopListening() {
   clearTimeout(restartTimer);
   cancelAnimationFrame(animationFrame);
   audioEnergy = 0;
-  // Keep micStream alive while this page is open so restarting AURA
+  // Keep micStream alive while this page is open so restarting Demax
   // does not trigger another getUserMedia permission request.
 
   if (recognition) {
@@ -1512,39 +1424,6 @@ document.getElementById("muteBtn").addEventListener("click", () => {
       if(e.results[e.results.length-1].isFinal)hide=setTimeout(()=>{live.classList.remove("show");prev=0;},1800);
     });
   }
-})();
-/* ===== ULTRA UI layers ===== */
-(function(){
-  const $=id=>document.getElementById(id);
-  const isl=$("island"),it=$("islandTxt");
-  setInterval(()=>{
-    let txt="";
-    if(window.auraTimerEnd>Date.now()){const s=Math.ceil((window.auraTimerEnd-Date.now())/1000);txt="⏱ "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
-    else if(orbContainer.classList.contains("speaking"))txt="Speaking…";
-    else if(document.body.classList.contains("thinking"))txt="Thinking…";
-    else if(micBtn.classList.contains("listening"))txt="Listening…";
-    else if(musicPanel.classList.contains("playing")&&curTrack())txt="♪ "+curTrack().title;
-    else if(sleepEnd>Date.now())txt="Sleep in "+Math.ceil((sleepEnd-Date.now())/60000)+"m";
-    it.textContent=txt;isl.classList.toggle("show",!!txt);
-  },400);
-  // ducking + moods
-  const dk=()=>{const on=micBtn.classList.contains("listening")||orbContainer.classList.contains("speaking"),m=on?.3:1;try{musicAudio.volume=musicVolume/100*m;if(ytPlayer&&ytPlayer.setVolume)ytPlayer.setVolume(musicVolume*m);}catch(e){}};
-  const mood=()=>{const b=document.body,sp=orbContainer.classList.contains("speaking");b.classList.toggle("mood-speaking",sp);b.classList.toggle("mood-listening",!sp&&micBtn.classList.contains("listening"));dk();};
-  [micBtn,orbContainer].forEach(el=>new MutationObserver(mood).observe(el,{attributes:true,attributeFilter:["class"]}));
-  const _av=applyVolume;applyVolume=function(){_av();dk();};
-  // tap orb to interrupt AURA
-  orbContainer.addEventListener("click",()=>{if(speaking){window.auraBarge=true;speechSynthesis.cancel();}});
-  // sheet: favourite, sleep chips, queue
-  function render(){
-    const t=curTrack(),f=$("sheetFav"),on=!!t&&favs().some(x=>trackKey(x)===trackKey(t));
-    f.classList.toggle("on",on);f.textContent=(on?"♥":"♡")+" Favourite";
-    const q=$("sheetQ");q.textContent="";
-    musicQueue.slice(0,40).forEach((x,i)=>{const d=document.createElement("div");d.textContent=(i+1)+". "+x.title;if(i===musicIndex)d.className="cur";d.onclick=()=>playTrack(i);q.appendChild(d);});
-  }
-  new MutationObserver(render).observe(musicPanel,{subtree:true,childList:true,attributes:true});render();
-  $("sheetFav").addEventListener("click",()=>{responseBox.textContent=toggleFav();render();});
-  document.querySelectorAll("[data-sleep]").forEach(b=>b.addEventListener("click",()=>{setSleep(+b.dataset.sleep);responseBox.textContent="Music will stop in "+b.dataset.sleep+" minutes.";}));
-  if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
 </script>
 
